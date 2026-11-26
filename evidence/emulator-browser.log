@@ -1,0 +1,16 @@
+127.0.0.1 - - [26/Nov/2026 13:35:41] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [26/Nov/2026 13:35:41] "GET /style.css HTTP/1.1" 200 -
+127.0.0.1 - - [26/Nov/2026 13:35:41] "GET /main.js HTTP/1.1" 200 -
+127.0.0.1 - - [26/Nov/2026 13:35:41] code 404, message File not found
+127.0.0.1 - - [26/Nov/2026 13:35:41] "GET /fonts/archivo-latin.woff2 HTTP/1.1" 404 -
+127.0.0.1 - - [26/Nov/2026 13:35:41] "GET /tryout.js HTTP/1.1" 200 -
+127.0.0.1 - - [26/Nov/2026 13:35:41] "GET /fwsc.js HTTP/1.1" 200 -
+127.0.0.1 - - [26/Nov/2026 13:35:41] "GET /persistence.js HTTP/1.1" 200 -
+127.0.0.1 - - [26/Nov/2026 13:35:41] "GET /firmwares.json HTTP/1.1" 200 -
+127.0.0.1 - - [26/Nov/2026 13:35:41] "GET /fm1_web.wasm HTTP/1.1" 200 -
+127.0.0.1 - - [26/Nov/2026 13:35:41] code 404, message File not found
+127.0.0.1 - - [26/Nov/2026 13:35:41] "GET /shots/shots.json HTTP/1.1" 404 -
+127.0.0.1 - - [26/Nov/2026 13:35:42] code 404, message File not found
+127.0.0.1 - - [26/Nov/2026 13:35:42] "GET /smk37/firmwares.json HTTP/1.1" 404 -
+127.0.0.1 - - [26/Nov/2026 13:35:42] "GET /worklet.js HTTP/1.1" 200 -
+optimist-0.4.1-dev-d1fbcf9 · 100 MHz · 2.0x real time · load 50% · 2.8 s

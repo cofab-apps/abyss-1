@@ -1,0 +1,4 @@
+firmware: classic (Optimist's own build)
+configuration errors:
+  Wi-Fi + Link on Optimist's own firmware runs its manager on the serial console: switch on USB_CONSOLE (or Wi-Fi off; the release runs it on fm1-base's own Wi-Fi stack)
+  the USB MIDI host is the release's (fm1-base's USB host): Optimist's own firmware has none (USB_HOST off, or build the release)
