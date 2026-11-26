@@ -2,7 +2,7 @@
 
 ## Play the firmware in the web emulator
 
-[Launch ABYSS-1 in the simulator](https://abyss-one-fm1-simulator.aware-field-4307.chatgpt.site/?fw=abyss-1&embed=1). Tap **Start** for audio. On the S22, turn the phone sideways and tap the keys. The hosted package is the four-part build of Optimist.
+[Launch ABYSS-1 in the simulator](https://abyss-one-fm1-simulator.aware-field-4307.chatgpt.site/?fw=abyss-1&embed=1&mhz=60). Tap **Start** for audio. The link selects a 60 MHz emulated clock. On the S22, the 100 MHz setting was observed running at 0.5× real time. Turn the phone sideways and tap the keys. The hosted package is the four-part build of Optimist.
 
 ### Load a different package manually
 
