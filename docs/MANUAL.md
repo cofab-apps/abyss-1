@@ -22,6 +22,8 @@ python3 -m http.server 8765 --bind 127.0.0.1 --directory simulator
 
 ## Play the creature prototype
 
+[Open the creature instrument](https://abyss-one-fm1-simulator.aware-field-4307.chatgpt.site/creatures/index.html) and tap **Demo groove** to hear all four tracks.
+
 From the repository root, run the following command and open <http://127.0.0.1:8000/abyss1/>. GitHub’s HTML file viewer displays the source.
 
 ```sh

@@ -1,0 +1,14 @@
+{
+ "ok": true,
+ "name": "mots-config",
+ "hash": "35bff045",
+ "sizes": {
+  "flash": 556140,
+  "ram": 79288,
+  "pool": 55816,
+  "ramtext": 39492,
+  "app_slot": 823228
+ },
+ "fwsc": "/workspace/scratch/fbe8af710c0b/refs/optimist/build/optimist-0.4.1-dev-d1fbcf9.fwsc",
+ "sdzip": null
+}

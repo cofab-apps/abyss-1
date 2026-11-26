@@ -16,6 +16,8 @@ The release pulls fm1base and its nested BSP. The warning about a private submod
 | Mocky | web/mocky.js converts native-size images to high-byte-first RGB565, with optional ordered dithering; RLE and display firmware are available. GPL-3.0-only. Hosted app retrieval failed in discovery; source was cloned and inspected. | Asset conversion reference. Device gallery testing requires an approved later hardware session. |
 | Community firmware directory | Official stock/update reference and firmware index. Its descriptions sometimes simplify vendor licensing and compatibility. | Use to locate releases. Verify package, licence and device compatibility against the authors’ own materials. |
 
+The original measurements below describe the Phase 0 builds. See [current wired firmware](HARDWARE.md) for the replacement package and its measurements.
+
 ## Resource and integration findings
 
 The board support describes 1 MiB of flash, two processor cores, a 240 × 240 ST7789-family panel, seven rotary encoders, a master pot, 14 buttons and 27 note keys. The chosen release’s actual linker report takes precedence over older classic-builder budget tables. Physical CPU frequency depends on the boot environment. Pin the measured device clock, audio deadline misses and display redraw time in the hardware test record. The simulator’s 100 MHz setting is a test parameter.

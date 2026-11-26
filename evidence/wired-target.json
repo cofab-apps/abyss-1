@@ -1,0 +1,19 @@
+{
+  "schema": 1,
+  "id": "optimist",
+  "name": "Optimist",
+  "author": "Henri David",
+  "license": "GPL-3.0-only",
+  "tagline": "a modular firmware for the M-VAVE FM-1",
+  "description": "Optimist turns the FM-1 into a groovebox: three synth tracks, a drum track, patterns and scenes, effects, Ableton Link, JANK and SD card support. Build your own in the web builder.",
+  "tags": ["groovebox", "synth", "drum-machine", "sequencer", "sampler"],
+  "install": "https://w0ts.github.io/optimist/webapp/editor/#install",
+  "source": "https://github.com/w0ts/optimist",
+  "screenshot": "assets/screens/device-mixer.png",
+  "hardware": {
+    "models": ["FM-1"],
+    "flash": ["856014", "B36014"],
+    "features": ["usb-audio-in", "usb-audio-out", "sd-card", "second-core", "screen-reader", "companion"]
+  },
+  "credits": "Optimist (GPL-3.0-only), from SLOOP and Felucca, on fm1-base (MPL-2.0)"
+}

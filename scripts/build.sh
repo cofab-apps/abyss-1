@@ -24,4 +24,13 @@ else
     set -- --config "$project/four-part.config"
 fi
 python3 tools/optimist.py build "$@" --summary "$project/out/$kind.json"
+if [ "$kind" = four-part ]; then
+    header=fm1base/optimist/build/optgen/felucca_config.h
+    for feature in BLE BLE_BOND BLE_CENTRAL BT_AUDIO WIFI WIFI_AP LINK; do
+        grep -qx "#define FELUCCA_$feature 0" "$header" || {
+            echo "Four-part build requires FELUCCA_$feature=0" >&2
+            exit 1
+        }
+    done
+fi
 cp build/felucca.fwsc "$project/out/$kind.fwsc"

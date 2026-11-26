@@ -8,12 +8,14 @@ ABYSS-1 is a four-track musical instrument in development for the M-VAVE FM-1. A
 
 ## Try the current build
 
-**[Play the current ABYSS-1 firmware in the simulator](https://abyss-one-fm1-simulator.aware-field-4307.chatgpt.site/?fw=abyss-1&embed=1)** — tap **Start**, then play the keys. This private preview opens the four-part build directly. On a phone, turn the screen sideways.
+**[Play the current ABYSS-1 firmware in the simulator](https://abyss-one-fm1-simulator.aware-field-4307.chatgpt.site/?fw=abyss-1&embed=1)** — tap **Start**, then play the keys. This simulator opens the four-part build directly. On a phone, turn the screen sideways.
 
 | What to try | What works today |
 |---|---|
-| [Creature prototype](docs/MANUAL.md#play-the-creature-prototype) | 16 portraits, four assignable tracks, a 16-step sequencer, live step recording, mute and browser save/load. |
+| [Play the creature prototype](https://abyss-one-fm1-simulator.aware-field-4307.chatgpt.site/creatures/index.html) | 16 portraits, four assignable tracks, a 16-step sequencer, live step recording, mute and browser save/load. |
 | [Compiled FM-1 firmware](docs/MANUAL.md#play-the-firmware-in-the-web-emulator) | The four-part Optimist configuration boots in desktop Chromium and produces audio on MIDI channels 1–4. It uses the upstream panel and sounds. |
+
+The current firmware uses wired MIDI and audio. Bluetooth and Wi-Fi are disabled. [FM-1 hardware used by ABYSS-1](docs/HARDWARE.md)
 
 The next firmware milestone brings four creatures, their portraits and four authored voices into the same build. Physical FM-1 playtesting is pending. [Milestones and acceptance criteria](docs/backlog.md)
 
