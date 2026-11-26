@@ -6,7 +6,11 @@ Passed: recursive public checkout, verified compiler and SDK setup, upstream def
 
 Physical hardware, the Mac environment and character permissions remain open. The private GitHub repository contains the engineering kit and original prototype. The manual firmware build workflow is available in Actions. Its configuration alone does not establish a successful hosted firmware build. Preserve the reference unit. No physical test results exist.
 
-## Phase 1 implementation order
+## Native creature build
+
+The firmware now renders all 16 portraits, assigns all four families, and runs the record, replay, mute and save flow on the emulated FM-1. The initial voices and four macros per family are defined in [voices.json](../firmware/voices.json). The panel and tests are in [panel.h](../firmware/panel.h) and [test-creatures.mjs](../scripts/test-creatures.mjs). Open acceptance work includes physical touch expression, blind listening, hardware timing and child playtesting.
+
+## Phase 1 acceptance criteria
 
 | Priority | Work | Acceptance on the next build |
 |---|---|---|

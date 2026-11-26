@@ -16,6 +16,8 @@ The release pulls fm1base and its nested BSP. The warning about a private submod
 | Mocky | web/mocky.js converts native-size images to high-byte-first RGB565, with optional ordered dithering; RLE and display firmware are available. GPL-3.0-only. Hosted app retrieval failed in discovery; source was cloned and inspected. | Asset conversion reference. Device gallery testing requires an approved later hardware session. |
 | Community firmware directory | Official stock/update reference and firmware index. Its descriptions sometimes simplify vendor licensing and compatibility. | Use to locate releases. Verify package, licence and device compatibility against the authors’ own materials. |
 
+The first native creature build confirms that a custom panel and 16 character patches can run on this base. Optimist supplies sustained notes, independent recording and track storage. MONK-1 is the expression reference because its singers respond to velocity and held pressure on supported keys. Fune has a 16-step sequencer and an instrument plugin SDK; its authors currently mark the FM-1 port beta, and Felucca-family songs and patches do not carry over. [MONK-1](https://github.com/charlesvestal/fm1-monk) · [Fune](https://github.com/hugelton/Fune)
+
 The original measurements below describe the Phase 0 builds. See [current wired firmware](HARDWARE.md) for the replacement package and its measurements.
 
 ## Resource and integration findings

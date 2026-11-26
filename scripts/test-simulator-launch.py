@@ -36,7 +36,7 @@ with sync_playwright() as playwright:
         }
     }""")
     page.goto(origin + "/?fw=abyss-1&embed=1&mhz=60", wait_until="domcontentloaded")
-    with page.expect_response(lambda r: r.url.split("?")[0].endswith("/four-part-formant.fwsc")) as pending:
+    with page.expect_response(lambda r: r.url.split("?")[0].endswith("/abyss-1-creatures.fwsc")) as pending:
         page.locator("#start").tap()
     response = pending.value
     assert response.ok and hashlib.sha256(response.body()).digest() == hashlib.sha256(Path(package).read_bytes()).digest()

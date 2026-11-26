@@ -13,5 +13,8 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - run: sh scripts/build.sh four-part
-      - run: node scripts/four-channels.mjs simulator out/four-part.fwsc
+      - run: python3 -m pip install Pillow
+      - run: python3 scripts/test-art.py
+      - run: sh scripts/build.sh creatures
+      - run: node scripts/test-creatures.mjs simulator out/creatures.fwsc
+      - run: node scripts/four-channels.mjs simulator out/creatures.fwsc

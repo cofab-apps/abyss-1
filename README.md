@@ -2,26 +2,23 @@
 
 ABYSS-1 is a four-track musical instrument in development for the M-VAVE FM-1. A child picks a sea creature, plays its voice, and layers a loop. Portraits and sound provide the cues for players who cannot yet read.
 
-![Four-creature orchestra design at the FM-1 screen resolution](prototype/abyss1/orchestra-240.png)
-
 **Project creator and maintainer:** Gabor Varga · Zurich, Switzerland. Firmware base: Optimist on fm1-base. Browser emulator: Joakim Eriksson’s fm1-emu.
 
 ## Try the current build
 
-**[Play the current ABYSS-1 firmware in the simulator](https://abyss-one-fm1-simulator.aware-field-4307.chatgpt.site/?fw=abyss-1&embed=1&mhz=60)** — tap **Start**, then play the keys. This simulator opens the four-part build directly. On a phone, turn the screen sideways.
+**[Play ABYSS-1 in the FM-1 simulator](https://abyss-one-fm1-simulator.aware-field-4307.chatgpt.site/?fw=abyss-1&embed=1&mhz=60)**
 
-| What to try | What works today |
-|---|---|
-| [Play the creature prototype](https://abyss-one-fm1-simulator.aware-field-4307.chatgpt.site/creatures/index.html) | 16 portraits, four assignable tracks, a 16-step sequencer, live step recording, mute and browser save/load. |
-| [Compiled FM-1 firmware](docs/MANUAL.md#play-the-firmware-in-the-web-emulator) | The four-part Optimist configuration boots in desktop Chromium and produces audio on MIDI channels 1–4. It uses the upstream panel and sounds. |
+Tap **Start**. The FM-1 screen opens on Bloop, Kraken, Julia and Space Bloop. Play the keys, then turn **SELECT** to hear another creature. Tap **REC**, play a phrase, turn **SELECT** and add a second part. Tap **REC** again to end recording. **PLAY** stops and restarts the loop.
 
-The current firmware uses wired MIDI and audio. Bluetooth and Wi-Fi are disabled. [FM-1 hardware used by ABYSS-1](docs/HARDWARE.md)
+![The four creatures captured from the compiled firmware’s emulated LCD](evidence/creature-orchestra.png)
 
-The next firmware milestone brings four creatures, their portraits and four authored voices into the same build. Physical FM-1 playtesting is pending. [Milestones and acceptance criteria](docs/backlog.md)
+This build has 16 portraits, 16 initial patches, four freely assignable tracks and a 16-step loop. The bass family uses four-operator FM, percussion uses resonant noise, vocals use a formant synth and atmosphere uses a detuned string ensemble. Key pressure and physical FM-1 testing are outstanding. Bluetooth and Wi-Fi are disabled.
+
+[Player guide](docs/MANUAL.md) · [Hardware used](docs/HARDWARE.md) · [Acceptance tests](evidence/creature-tests.log) · [Original browser prototype](https://abyss-one-fm1-simulator.aware-field-4307.chatgpt.site/creatures/index.html)
 
 ## Build and contribute
 
-- [Building and testing](BUILDING.md) covers the two build configurations, Mac setup and regression commands.
+- [Building and testing](BUILDING.md) covers the firmware build configurations, Mac setup and regression commands.
 - [Architecture decision](docs/discovery.md) records the Optimist and fm1-base selection, flash and RAM budgets, display format and hardware recovery research.
 - [Contributing](CONTRIBUTING.md) describes where changes belong and how to report a playback issue.
 - [Credits and licensing](LICENSING.md) links the upstream notices and character provenance.

@@ -2,15 +2,30 @@
 
 ## Play the firmware in the web emulator
 
-[Launch ABYSS-1 in the simulator](https://abyss-one-fm1-simulator.aware-field-4307.chatgpt.site/?fw=abyss-1&embed=1&mhz=60). Tap **Start** for audio. The link selects a 60 MHz emulated clock. On the S22, the 100 MHz setting was observed running at 0.5× real time. Turn the phone sideways and tap the keys. The hosted package is the four-part build of Optimist.
+[Launch ABYSS-1 in the simulator](https://abyss-one-fm1-simulator.aware-field-4307.chatgpt.site/?fw=abyss-1&embed=1&mhz=60). Tap **Start** for audio. The link selects a 60 MHz emulated clock. On the S22, the 100 MHz setting was observed running at 0.5× real time. Turn the phone sideways and tap the keys. The firmware opens on four portraits. The white frame shows which creature the keys will play.
+
+| Control | What it does |
+|---|---|
+| SELECT encoder | Move between the four tracks. In step view, move between the 16 steps. |
+| PRESETS / ALGORITHM | Pick a variant within the family / move to another family. Listen for its short preview while stopped. |
+| HOME / SCL (SEL) | See the whole orchestra / one full-screen portrait. |
+| K1–K4 | Change size, mood, voice and room depth for the selected creature. Each family has its own mappings. |
+| REC | Arm a 16-step loop. The first note starts the clock. Turn SELECT and play to overdub a different creature. Tap REC again to finish recording while the loop continues. |
+| PLAY | Stop or restart the loop. |
+| SEQ | Show the step grid. Turn SELECT to choose a step and tap a note to enter it. Tap SEQ again to return. |
+| GLO | Open the four-track mixer. SELECT picks a track, SCL mutes it, K1 sets its level and K2 changes tempo. HOME returns to the orchestra. |
+| SAVE | Store the current song when stopped and quiet. A white indicator confirms the write. The same package restores it on restart. |
+| MASTER / OCT− / OCT+ | Set output volume / keyboard octave. |
+
+On the phone, drag an encoder up or down to turn it.
 
 ### Load a different package manually
 
-1. Download [four-part-formant.fwsc](../builds/four-part-formant.fwsc). On the GitHub file page, choose **Download raw file**. Keep the `.fwsc` extension.
+1. Download [abyss-1-creatures.fwsc](../builds/abyss-1-creatures.fwsc). On the GitHub file page, choose **Download raw file**. Keep the `.fwsc` extension.
 2. Open the [FM-1 web emulator](https://joakimeriksson.github.io/fm1-emu/). Under **Now running**, choose **Open .fwsc…** and select the downloaded file.
-3. Press **Start** and play the onscreen keys. On a phone, landscape mode gives the keyboard more room. Expect the Optimist panel. The creature screen is available in the separate prototype below.
+3. Press **Start** and play the onscreen keys. On a phone, landscape mode gives the keyboard more room. The four portraits appear on the device LCD.
 
-The four-part package has passed desktop emulator tests. Samsung S22 playback and physical FM-1 operation still need testing. The emulator runs the package without a connected instrument.
+The creature package is tested in the chip emulator. This revision still needs a physical FM-1 and Samsung S22 playtest. The emulator runs the package without a connected instrument.
 
 ### Run the bundled emulator locally
 

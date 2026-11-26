@@ -1,10 +1,11 @@
 #!/bin/sh
-# Pinned local cross-build. Usage: sh scripts/build.sh [baseline|four-part]
+# Pinned local cross-build. Usage: sh scripts/build.sh [baseline|four-part|creatures]
 set -eu
 project=$(CDPATH='' cd -- "$(dirname -- "$0")/.." && pwd)
-kind=${1:-four-part}
-case "$kind" in baseline|four-part) ;; *) echo "Choose baseline or four-part"; exit 2;; esac
+kind=${1:-creatures}
+case "$kind" in baseline|four-part|creatures) ;; *) echo "Choose baseline, four-part or creatures"; exit 2;; esac
 src="$project/work/optimist"
+[ "$kind" != creatures ] || src="$project/work/creatures"
 pin=d1fbcf9389f41d0721c7e0df74cf3f530cc2ca42
 mkdir -p "$project/work" "$project/out"
 if [ ! -d "$src/.git" ]; then
@@ -23,8 +24,12 @@ if [ "$kind" = baseline ]; then
 else
     set -- --config "$project/four-part.config"
 fi
-python3 tools/optimist.py build "$@" --summary "$project/out/$kind.json"
-if [ "$kind" = four-part ]; then
+if [ "$kind" = creatures ]; then
+    python3 "$project/scripts/build-creatures.py" "$src"
+else
+    python3 tools/optimist.py build "$@" --summary "$project/out/$kind.json"
+fi
+if [ "$kind" != baseline ]; then
     header=fm1base/optimist/build/optgen/felucca_config.h
     for feature in BLE BLE_BOND BLE_CENTRAL BT_AUDIO WIFI WIFI_AP LINK; do
         grep -qx "#define FELUCCA_$feature 0" "$header" || {
