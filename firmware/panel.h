@@ -651,4 +651,5 @@ static void abyss_lights(void)
     fm1_led_key(panel.btn[B_LFO], TSEL->p[P_L2DA] == LT_PIT);
     fm1_led_key(panel.btn[B_REC], rec_wait || song.rec);
     fm1_led_key(panel.btn[B_ARP], reply.enabled);
+    reply_light_keys();
 }

@@ -4,7 +4,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
 
-export function checkReply({boot, btn, enc, run, chip, shots, screen, pattern, out, movieStart, movieEnd}) {
+export function checkReply({boot, btn, enc, run, chip, shots, screen, panelFrame, pattern, out, movieStart, movieEnd}) {
     const key = (id, on) => chip.fm1_key(id, on ? 1 : 0);
     function strike(id, held, gap) {
         key(id,true); run(held); key(id,false); run(gap);
@@ -63,7 +63,7 @@ export function checkReply({boot, btn, enc, run, chip, shots, screen, pattern, o
 
     prepare(true);
     const chord=[21,24,28];
-    for (const k of chord) key(k,true);
+    for (const k of chord) {key(k,true);run(3);}
     run(180);
     for (const k of chord) key(k,false);
     waitForAnswer();
@@ -72,7 +72,7 @@ export function checkReply({boot, btn, enc, run, chip, shots, screen, pattern, o
     const neighbours=expected.map(f=>hzOf(harmony,f*2**(1/12)));
     assert.ok(bins.every((v,i)=>v>3*neighbours[i]),'three chord pitches above neighbouring bins: '+JSON.stringify({bins,neighbours}));
     run(400);
-    console.log('PASS one simultaneous three-key chord returns at all three pitches.');
+    console.log('PASS a three-finger chord spread over 17 ms returns at all three pitches.');
 
     prepare(true);
     for (let i=0;i<8;i++) strike(21+i%3,22,16);
@@ -108,6 +108,42 @@ export function checkReply({boot, btn, enc, run, chip, shots, screen, pattern, o
     console.log('Four default caller/partner pairs, three-key chords',JSON.stringify(statistics));
     assert.ok(statistics.every(x=>x.missed===0),'audio deadline under chord practice');
     assert.equal(chip.fm1_cpu1_fault(),0);
+
+    // The musical partner may be an octave away. The child sees the same
+    // physical positions they played, including a chord and the intervening rest.
+    const lamps = () => {
+        chip.fm1_leds();
+        run(6);
+        return Array.from(new Float32Array(chip.memory.buffer,chip.fm1_leds(),41));
+    };
+    prepare(true);
+    run(150);
+    const idle=lamps();
+    for(const k of [21,24]) key(k,true);
+    run(115);
+    const hand=lamps();
+    for(const k of [21,24]) key(k,false);
+    run(42);strike(28,150,0);
+    waitForAnswer();run(20);
+    const echo1=lamps();
+    fs.writeFileSync(path.join(out,'reply-chord.rgba'),panelFrame(echo1));
+    run(104);
+    const gap=lamps();
+    run(40);
+    const echo2=lamps();
+    fs.writeFileSync(path.join(out,'reply-note.rgba'),panelFrame(echo2));
+    const lit=levels=>[21,24,28].filter(k=>levels[k]>.04);
+    assert.deepEqual([idle,hand,echo1,gap,echo2].map(lit),[[],[21,24],[21,24],[],[28]]);
+    console.log('PASS scanned key lights on call, echoed chord, rest and echoed single note.',
+                JSON.stringify([idle,hand,echo1,gap,echo2].map(m=>[m[21],m[24],m[28]])));
+
+    prepare(true);
+    strike(21,7,6);strike(24,205,0);
+    waitForAnswer();
+    const separate=run(165,true).subarray(95*128);
+    assert.ok(hzOf(separate,155.56)>5*hzOf(separate,130.81),'quick released notes stay separate');
+    console.log('PASS two released attacks about 38 ms apart remain separate notes.');
+
 
     prepare(false); movieStart('reply');
     // Both animals are audible here. Two phrases separated by an answer.

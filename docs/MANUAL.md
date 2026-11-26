@@ -2,7 +2,7 @@
 
 ## Play the firmware in the web emulator
 
-[Launch ABYSS-1 in the simulator](https://joakimeriksson.github.io/fm1-emu/?package=https%3A%2F%2Fraw.githubusercontent.com%2Fcofab-apps%2Fabyss-1%2Fmain%2Fbuilds%2Fabyss-1-beta-1.4.fwsc&name=ABYSS-1&embed=1&mhz=60). Tap **Start** for audio. The link selects a 60 MHz emulated clock. On the S22, the 100 MHz setting was observed running at 0.5× real time. Turn the phone sideways and tap the keys. The firmware opens on four portraits. At rest the white frame shows which creature the keys will play. A sounding creature moves on its own tile. Four pearls mark the beats while the loop plays.
+[Launch ABYSS-1 in the simulator](https://joakimeriksson.github.io/fm1-emu/?package=https%3A%2F%2Fraw.githubusercontent.com%2Fcofab-apps%2Fabyss-1%2Fmain%2Fbuilds%2Fabyss-1-beta-1.4.1.fwsc&name=ABYSS-1&embed=1&mhz=60). Tap **Start** for audio. The link selects a 60 MHz emulated clock. On the S22, the 100 MHz setting was observed running at 0.5× real time. Turn the phone sideways and tap the keys. The firmware opens on four portraits. At rest the white frame shows which creature the keys will play. A sounding creature moves on its own tile. Four pearls mark the beats while the loop plays.
 
 | Control | What it does |
 |---|---|
@@ -25,13 +25,13 @@ On the phone, drag an encoder up or down to turn it. To start a blank take after
 
 ### Take turns with another creature
 
-Start on the four portraits with the transport stopped. Press **ARP**. The bright little fish shows whose turn it is. Play a short call and lift your fingers. The other portrait gets a gold frame when it answers. A held key keeps the turn yours. Try the same pattern on a different pair using SELECT. PRESETS changes the selected creature’s voice.
+Start on the four portraits with the transport stopped. Press **ARP**. The bright little fish shows whose turn it is. Play a short call and lift your fingers. The other portrait gets a gold frame when it answers. The same physical keys light up under your fingers and again during the answer. Rests leave them dark. A held key keeps the turn yours. Try the same pattern on a different pair using SELECT. PRESETS changes the selected creature’s voice.
 
-Each call holds up to eight attacks in an eight-second phrase. Keys struck together make one attack with a shared duration. The partner uses its own pitch range and sound. REC leaves the game and arms a new take. Practice leaves your song untouched.
+Each call holds up to eight attacks in an eight-second phrase. Overlapping fingers that land within 45 ms make one chord with a shared duration. Released taps remain separate. The partner uses its own pitch range and sound. REC leaves the game and arms a new take. Practice leaves your song untouched.
 
 ### Load a different package manually
 
-1. Download [abyss-1-beta-1.4.fwsc](../builds/abyss-1-beta-1.4.fwsc). On the GitHub file page, choose **Download raw file**. Keep the `.fwsc` extension.
+1. Download [abyss-1-beta-1.4.1.fwsc](../builds/abyss-1-beta-1.4.1.fwsc). On the GitHub file page, choose **Download raw file**. Keep the `.fwsc` extension.
 2. Open the [FM-1 web emulator](https://joakimeriksson.github.io/fm1-emu/). Under **Now running**, choose **Open .fwsc…** and select the downloaded file.
 3. Press **Start** and play the onscreen keys. On a phone, landscape mode gives the keyboard more room. The four portraits appear on the device LCD.
 

@@ -4,7 +4,7 @@ Run these commands from the root of a clone of this repository. For playback of 
 
 | Build target | Input | Local output | Checked-in package |
 |---|---|---|---|
-| ABYSS creature firmware | [Voice definitions](firmware/voices.json), panel, portraits and four-part config | `out/creatures.fwsc` | [abyss-1-beta-1.4.fwsc](builds/abyss-1-beta-1.4.fwsc) |
+| ABYSS creature firmware | [Voice definitions](firmware/voices.json), panel, portraits and four-part config | `out/creatures.fwsc` | [abyss-1-beta-1.4.1.fwsc](builds/abyss-1-beta-1.4.1.fwsc) |
 | Baseline | Upstream `mots-config` release profile | `out/baseline.fwsc` | [upstream-baseline.fwsc](builds/upstream-baseline.fwsc) |
 | Four-part | [four-part.config](four-part.config) | `out/four-part.fwsc` | [four-part-formant.fwsc](builds/four-part-formant.fwsc) |
 
@@ -73,3 +73,7 @@ ABYSS_REPLY_BROWSER=1 ABYSS_DEMO_BROWSER=home python3 scripts/test-simulator-lau
 ```
 
 The reply test writes 240 × 240 RGB565LE frames at 10 fps and matching 44.1 kHz stereo signed 16-bit PCM to `out/reply/reply.rgb` and `out/reply/reply.s16`. It checks returned pitches using isolated DAC output. Repeat the browser probe without the two environment variables to exercise recording, persistence and replay.
+
+## Beta 1.4.1 keyboard regression
+
+Run the Beta 1.4 release checks above using `builds/abyss-1-beta-1.4.1.fwsc` for the package comparison and `builds/abyss-1-beta-1.4.fwsc` for `ABYSS_PRIOR`. The reply probe now exercises staggered chord strikes and measures the scanned keyboard LEDs during the call, answer and rest.

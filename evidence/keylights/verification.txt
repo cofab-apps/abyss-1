@@ -1,0 +1,103 @@
+ABYSS-1 Beta 1.4.1 | 26 November 2026
+
+Firmware SHA-256 14531b1aa88074654cfa5c03c6dc999e5889ce2eac6e4601fcd08bb781e4dcf7
+
+Two matching Linux package builds, including different absolute firmware source paths, fresh target build directories and the pinned SDK/compiler cache. Firmware ID E8ED944C. Flash 610208/823228; static SRAM 209232/486144.
+
+Prior package Beta 1.4 recalled only the top pitch for overlapping three-finger strikes spread across 17 ms: AssertionError [ERR_ASSERTION]: three chord pitches above neighbouring bins: {"bins":[4.746215048148982,6.239266594488252,224.28503771376364],"neighbours":[4.818266987219652,10.682510811928003,28.338610143828962]}
+
+60 MHz | phrase, chord and scanned keyboard matrix
+Firmware SHA-256 14531b1aa88074654cfa5c03c6dc999e5889ce2eac6e4601fcd08bb781e4dcf7
+PASS held key waits; three returned pitches in the caller’s rhythm; response delay after release (ms) 418
+PASS interrupt, cancel and two empty sequencer tracks after practice.
+PASS a three-finger chord spread over 17 ms returns at all three pitches.
+PASS eight-group limit, release of the overflow key, partner change, transport and a fresh recording.
+Four default caller/partner pairs, three-key chords [{"call":0.07933880576794371,"response":0.018408127078145604,"missed":0},{"call":0.005243449434684246,"response":0.02038640757285958,"missed":0},{"call":0.01720629326449147,"response":0.0316223202570397,"missed":0},{"call":0.0531251482449316,"response":0.009285009357833142,"missed":0}]
+PASS scanned key lights on call, echoed chord, rest and echoed single note. [[0,0,0],[0.08834285289049149,0.08763846009969711,0],[0.08976918458938599,0.08529195934534073,0],[0,0,0],[0,0,0.09089528769254684]]
+PASS two released attacks about 38 ms apart remain separate notes.
+Captured real stereo call and response and the native display.
+
+60 MHz | quartet, motion, undo and older song (Beta 1.4)
+Firmware SHA-256 14531b1aa88074654cfa5c03c6dc999e5889ce2eac6e4601fcd08bb781e4dcf7
+PASS first PLAY, stop, one-gesture removal and restoration of the complete quartet.
+PASS undo and redo of step entry and an overdub preserve the earlier track.
+PASS one undo lifts a two-track take, including after a cancelled arm.
+PASS native movement on physical key, MIDI and full portrait; exact restoration and intact legend. { changedJuliaPixels: 1716 }
+PASS all sixteen creatures move and restore. Maximum observed first movement (ms) 24
+PASS older saved song plays from HOME with its original solo track.
+Factory quartet soak {"ms":600135,"blocks":206848,"peak":0.275482177734375,"rms":0.03499421204033657,"missedRefills":0,"cpu1Fault":0}
+
+60 MHz | sound comparisons, every track and playing controls
+PASS exact default orchestra on the emulated LCD at 60 MHz
+PASS all sixteen native portraits, family and creature controls and wraparound
+PASS four independently selected keyboard voices, RMS 0.0419, 0.0059, 0.0212, 0.0357
+{
+  both: 0.012319221441595469,
+  bass: 0.0121756856466699,
+  percussion: 0.001920214220639513,
+  muted: 0
+}
+PASS real-time two-track overdub, transport and independent mute
+PASS saved creature and recorded loop survive a full chip reboot
+PASS four recorded creatures, simultaneous playback and four individually audible solos [
+  0.012688707955524755,
+  0.020497519158020023,
+  0.0017317665528587853,
+  0.0101984706662274
+]
+PASS step entry by physical encoder and key, then playback
+PASS selected-step erase
+PASS held-note channel aftertouch and velocity {
+  untouched: 0,
+  pressed: 0.01565626855023605,
+  soft: 0.005718749813613341,
+  firm: 0.017639426159163807
+}
+PASS all 64 combinations of four tracks and sixteen creatures: portrait and audible key
+PASS all 120 pairs separated on gain-normalized time/frequency profiles.
+Closest pair: IDs 5 and 7, distance 0.3034. Largest same-voice repeat distance 0.5046.
+{
+  original: 0.041764218373895164,
+  minimum: 0,
+  other: 0.005411274610099204,
+  restored: 0.1081578698150685
+}
+PASS mixer K1 changes only the selected part level, including silence and restored output.
+PASS mixer K2 speeds up playback; median seconds per displayed step 0.13931972789115646 0.10448979591836735
+PASS bass keyboard C and C-sharp, SCL snaps C-sharp to C, SCL again restores C-sharp.
+
+Touch Chromium | recording and reply
+Firmware SHA-256 14531b1aa88074654cfa5c03c6dc999e5889ce2eac6e4601fcd08bb781e4dcf7
+PASS simulator launch, exact package, boot, touch note and release. Idle 0.00000, note peak 0.15140
+PASS ARP on the touch panel, listening fish, answering fish, audible answer and return to the player.
+PASS onscreen PLAY started the factory groove; PLAY stopped it.
+Firmware SHA-256 14531b1aa88074654cfa5c03c6dc999e5889ce2eac6e4601fcd08bb781e4dcf7
+PASS simulator launch, exact package, boot, touch note and release. Idle 0.00000, note peak 0.15790
+PASS public-panel touch gestures: four PRESETS changes, four SCL portraits, four HOME returns and a cross-family ALGORITHM change. All four tiles matched after every reassignment.
+PASS REC, overdub, stop, SAVE, reload, Start, PLAY. All four assignments restored and the saved loop produced audio without a new note.
+
+MIDI
+{"channel":1,"idleRms":0,"noteRms":0.054527478951962645}
+{"channel":2,"idleRms":0,"noteRms":0.004188465832614863}
+{"channel":3,"idleRms":0,"noteRms":0.018903114330685884}
+{"channel":4,"idleRms":0,"noteRms":0.029577129844305702}
+
+Host contact model
+key 7: repeated waveform delta 0.000000, pressure delta 0.005132, soft/firm RMS 0.001758/0.012096
+key 24: repeated waveform delta 0.000000, pressure delta 0.000000, soft/firm RMS 0.003064/0.012736
+PASS simulated contacts: analog-row note velocity and sustained vowel pressure, top-row velocity only
+
+100 MHz | phrase, chord and keyboard lamps
+Firmware SHA-256 14531b1aa88074654cfa5c03c6dc999e5889ce2eac6e4601fcd08bb781e4dcf7
+PASS held key waits; three returned pitches in the caller’s rhythm; response delay after release (ms) 418
+PASS interrupt, cancel and two empty sequencer tracks after practice.
+PASS a three-finger chord spread over 17 ms returns at all three pitches.
+PASS eight-group limit, release of the overflow key, partner change, transport and a fresh recording.
+Four default caller/partner pairs, three-key chords [{"call":0.07933880576794371,"response":0.01898746155968784,"missed":0},{"call":0.005239264583276234,"response":0.025450523233280814,"missed":0},{"call":0.03543571401005634,"response":0.032178832213585765,"missed":0},{"call":0.06729533295914206,"response":0.011513517520933164,"missed":0}]
+PASS scanned key lights on call, echoed chord, rest and echoed single note. [[0,0,0],[0.08720172196626663,0.08912641555070877,0],[0.09158618748188019,0.09156332165002823,0],[0,0,0],[0,0,0.0863681212067604]]
+PASS two released attacks about 38 ms apart remain separate notes.
+Captured real stereo call and response and the native display.
+
+Movie: 274688 original DAC stereo frames, 44100 Hz. Peak magnitude 0.14517212. Left/right RMS 0.02236857/0.02239927. Native LCD and LED matrix fed to emulator panel renderer at 10 fps, encoded to H.264/AAC.
+
+No physical hardware or child was involved in these tests.

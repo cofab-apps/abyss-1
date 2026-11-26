@@ -3,6 +3,7 @@
  * patch and release. Neither notes nor practice state enter the sequencer. */
 #define REPLY_MAX 8
 struct reply_event {
+    uint32_t keys;
     uint16_t start_ms, gate_ms;
     uint8_t notes[4], count, velocity;
 };
@@ -36,6 +37,28 @@ static void reply_close_group(uint32_t now)
     reply.last_up = now;
 }
 
+/* Adjacent fingers rarely arrive on one matrix scan. Overlapping keys in
+ * the first 45 ms form a chord. Releasing before the next key still makes a
+ * new attack, even inside that window. Keep its original start and register. */
+static void reply_add_keys(struct reply_event *e, unsigned partner, uint32_t pressed)
+{
+    for (unsigned k = 0; k < 27 && e->count < 4; ++k) {
+        if (!(pressed & (1u << k))) continue;
+        uint8_t notes[4];
+        unsigned n = kb_notes(&trk[partner], k, notes);
+        if (!n) continue;
+        e->keys |= 1u << k;
+        for (unsigned j = 0; j < n && e->count < 4; ++j) {
+            unsigned i = 0;
+            while (i < e->count && e->notes[i] != notes[j]) ++i;
+            if (i == e->count) e->notes[e->count++] = notes[j];
+        }
+        unsigned v = touch_is_on() ? touch_vel(k) : 100;
+        v = clamp((int)v*7/8, 1, 127);
+        if (v > e->velocity) e->velocity = v;
+    }
+}
+
 static void reply_tick(uint32_t pressed)
 {
     if (!reply.enabled) return;
@@ -43,30 +66,20 @@ static void reply_tick(uint32_t pressed)
     unsigned partner = song.sel ^ 2;
     if (pressed) {
         if (reply.answering) reply_reset();
-        reply_close_group(now);
-        if (reply.count < REPLY_MAX) {
-            struct reply_event *e = &reply.event[reply.count];
-            unsigned count = 0, velocity = 0;
-            for (unsigned k = 0; k < 27 && count < 4; ++k) if (pressed & (1u << k)) {
-                uint8_t pitched[4];
-                unsigned n = kb_notes(&trk[partner], k, pitched);
-                for (unsigned j = 0; j < n && count < 4; ++j) {
-                    unsigned i = 0;
-                    while (i < count && e->notes[i] != pitched[j]) ++i;
-                    if (i == count) e->notes[count++] = pitched[j];
-                }
-                unsigned v = touch_is_on() ? touch_vel(k) : 100;
-                if (v > velocity) velocity = v;
-            }
-            if (count) {
-                if (!reply.count) reply.origin = now;
-                uint32_t offset = now - reply.origin;
-                if (offset <= 8000) {
-                    e->count = count;
-                    e->velocity = clamp((int)velocity*7/8, 1, 127);
-                    e->start_ms = offset;
-                    e->gate_ms = 28;
-                    reply.open_keys = pressed;
+        if ((reply.open_keys & oin_keys) && now - reply.attack_at <= 45) {
+            struct reply_event *e = &reply.event[reply.count-1];
+            reply_add_keys(e, partner, pressed);
+            reply.open_keys = e->keys;
+        } else {
+            reply_close_group(now);
+            if (!reply.count) reply.origin = now;
+            uint32_t offset = now - reply.origin;
+            if (reply.count < REPLY_MAX && offset <= 8000) {
+                struct reply_event *e = &reply.event[reply.count];
+                *e = (struct reply_event){.start_ms = offset, .gate_ms = 28};
+                reply_add_keys(e, partner, pressed);
+                if (e->count) {
+                    reply.open_keys = e->keys;
                     reply.attack_at = now;
                     ++reply.count;
                 }
@@ -115,4 +128,19 @@ static void reply_badge(unsigned slot, int partner)
     }
     cv_rect(partner ? 7 : 15, 5, 2, 2, 0x0862);
     cv_blit((slot&1)*120+91, (slot>>1)*120+5);
+}
+
+/* The partner can sound an octave away. Show the original fingers on the
+ * panel, using the same timebase and note gate as the audible answer. */
+static void reply_light_keys(void)
+{
+    if (!reply.enabled) return;
+    uint32_t keys = oin_keys;
+    if (reply.answering && reply.next) {
+        const struct reply_event *e = &reply.event[reply.next-1];
+        if (fm1_ms - reply.origin - e->start_ms < e->gate_ms) keys |= e->keys;
+    }
+    for (unsigned k = 0; keys; ++k, keys >>= 1) {
+        if (keys & 1u) fm1_led_key(14u + k, 1);
+    }
 }

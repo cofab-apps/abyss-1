@@ -19,7 +19,16 @@ console.log('Firmware SHA-256',hash(file));
 const screen=()=>new Uint16Array(chip.memory.buffer,chip.fm1_lcd(),57600);
 const rawScreen=()=>Buffer.from(new Uint8Array(screen().buffer,screen().byteOffset,115200));
 const shots=name=>fs.writeFileSync(path.join(out,name+'.rgb'),rawScreen());
-let movie=false, count=0, videoFrames=0, video, audio;
+// Use the same panel renderer as the browser, with the real LCD and scanned LEDs.
+function panelFrame(levels) {
+    const lcd=Uint16Array.from(screen());
+    const ptr=chip.panel_lcd();
+    new Uint16Array(chip.memory.buffer,ptr,240*240).set(lcd);
+    new Float32Array(chip.memory.buffer,chip.panel_leds(),41).set(levels);
+    const pixels=chip.panel_draw();
+    return Buffer.from(chip.memory.buffer,pixels,chip.panel_width()*chip.panel_height()*4);
+}
+let movie=false, count=0, videoFrames=0, video, audio, panelVideo;
 function run(blocks, capture=false, booting=false) {
     const samples=capture?new Float32Array(blocks*128):null;
     let power=0;
@@ -37,7 +46,14 @@ function run(blocks, capture=false, booting=false) {
                 stereo[2*j+1]=Math.round(Math.max(-1,Math.min(1,right[j]))*32767);
             }
             fs.writeSync(audio,Buffer.from(stereo.buffer)); count+=128;
-            if(videoFrames*44100<count*10){fs.writeSync(video,rawScreen());videoFrames++;}
+            if(videoFrames*44100<count*10) {
+                fs.writeSync(video,rawScreen());
+                if(panelVideo!==undefined) {
+                    const levels=Float32Array.from(new Float32Array(chip.memory.buffer,chip.fm1_leds(),41));
+                    fs.writeSync(panelVideo,panelFrame(levels));
+                }
+                videoFrames++;
+            }
         }
     }
     assert.equal(chip.fm1_halted(),0);
@@ -75,10 +91,14 @@ if (['--reef','--probe-shell','--showcase','--reply'].includes(process.argv[5]))
     const movieStart = (name = "quartet") => {
         audio=fs.openSync(path.join(out,name+'.s16'),'w');
         video=fs.openSync(path.join(out,name+'.rgb'),'w');
+        if(process.env.ABYSS_PANEL_FILM) panelVideo=fs.openSync(path.join(out,name+'-panel.rgba'),'w');
         movie=true;
     };
-    const movieEnd = () => {movie=false;fs.closeSync(audio);fs.closeSync(video);};
-    const rig = {boot,btn,enc,run,chip,shots,screen,pattern,out,movieStart,movieEnd,saveAndReboot, time: () => count/44100};
+    const movieEnd = () => {
+        movie=false;fs.closeSync(audio);fs.closeSync(video);
+        if(panelVideo!==undefined) {fs.closeSync(panelVideo);panelVideo=undefined;}
+    };
+    const rig = {boot,btn,enc,run,chip,shots,screen,panelFrame,pattern,out,movieStart,movieEnd,saveAndReboot, time: () => count/44100};
     if (process.argv[5] === '--reply') {
         const {checkReply} = await import('./test-reply.mjs');
         checkReply(rig);
