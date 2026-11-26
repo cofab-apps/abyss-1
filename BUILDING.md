@@ -30,6 +30,8 @@ Browser regression tests use Python Playwright and a compatible Chromium. Set `C
 
 [Beta capture, soak and key-sensing tests](docs/BETA-1.md#reproduce-the-captures) exercise the packaged artifact and the host contact model.
 
+When publishing a tested build, copy its versioned package to `builds/abyss-1.fwsc` in the same commit. The README’s simulator link loads that stable path from GitHub. Release notes link to the versioned package.
+
 ## Verify the checked-in packages
 
 On Linux, run the following from the repository root. On macOS, use `shasum -a 256 -c evidence/checksums.txt` for the checksum step.

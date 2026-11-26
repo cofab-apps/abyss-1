@@ -1,10 +1,10 @@
 # ABYSS-1 Beta 1
 
-[Play the beta at 60 MHz](https://abyss-one-fm1-simulator.aware-field-4307.chatgpt.site/?fw=abyss-1&embed=1&mhz=60) · [Download the tested FM-1 package](../builds/abyss-1-beta-1.fwsc) · [Player guide](MANUAL.md)
+[Play the beta at 60 MHz](https://joakimeriksson.github.io/fm1-emu/?package=https%3A%2F%2Fraw.githubusercontent.com%2Fcofab-apps%2Fabyss-1%2Fmain%2Fbuilds%2Fabyss-1-beta-1.fwsc&name=ABYSS-1&embed=1&mhz=60) · [Download the tested FM-1 package](../builds/abyss-1-beta-1.fwsc) · [Player guide](MANUAL.md)
 
 Build `98A6BF9D` is the first ABYSS emulator beta. The product owner is Gabor Varga, Zurich. The instrument opens on four sea creatures. Play a bass phrase with Bloop, turn SELECT to Kraken for percussion, and layer Julia and Space Bloop over it.
 
-[Public evidence page and downloadable captures](https://abyss-one-fm1-simulator.aware-field-4307.chatgpt.site/beta-1/)
+[Firmware screenshots, video and test logs](../evidence/beta-1/)
 
 ## Graphics evidence
 

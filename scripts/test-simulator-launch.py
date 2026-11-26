@@ -10,12 +10,12 @@ from playwright.sync_api import sync_playwright
 
 target, package = sys.argv[1:]
 if target.startswith(("https://", "http://")):
-    origin = target.rstrip("/")
+    launch_url = target if "?" in target else target.rstrip("/") + "/?fw=abyss-1&embed=1&mhz=60"
 else:
     handler = functools.partial(http.server.SimpleHTTPRequestHandler, directory=target)
     server = http.server.ThreadingHTTPServer(("127.0.0.1", 0), handler)
     threading.Thread(target=server.serve_forever, daemon=True).start()
-    origin = f"http://127.0.0.1:{server.server_port}"
+    launch_url = f"http://127.0.0.1:{server.server_port}/?fw=abyss-1&embed=1&mhz=60"
 
 with sync_playwright() as playwright:
     browser = playwright.chromium.launch(executable_path=os.environ.get("CHROMIUM"))
@@ -35,8 +35,8 @@ with sync_playwright() as playwright:
             };
         }
     }""")
-    page.goto(origin + "/?fw=abyss-1&embed=1&mhz=60", wait_until="domcontentloaded")
-    with page.expect_response(lambda r: r.url.split("?")[0].endswith("/abyss-1-beta-1.fwsc")) as pending:
+    page.goto(launch_url, wait_until="domcontentloaded")
+    with page.expect_response(lambda r: r.url.split("?")[0].endswith(".fwsc")) as pending:
         page.locator("#start").tap()
     response = pending.value
     assert response.ok and hashlib.sha256(response.body()).digest() == hashlib.sha256(Path(package).read_bytes()).digest()

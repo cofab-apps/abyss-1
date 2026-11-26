@@ -6,7 +6,7 @@ ABYSS-1 is a four-track musical instrument in development for the M-VAVE FM-1. A
 
 ## Try the current build
 
-**[Play ABYSS-1 Beta 1 in the FM-1 simulator](https://abyss-one-fm1-simulator.aware-field-4307.chatgpt.site/?fw=abyss-1&embed=1&mhz=60)**
+**[Play the latest ABYSS-1 build in the FM-1 simulator](https://joakimeriksson.github.io/fm1-emu/?package=https%3A%2F%2Fraw.githubusercontent.com%2Fcofab-apps%2Fabyss-1%2Fmain%2Fbuilds%2Fabyss-1.fwsc&name=ABYSS-1&embed=1&mhz=60)**
 
 Tap **Start**. The FM-1 screen opens on Bloop, Kraken, Julia and Space Bloop. Play the keys, then turn **SELECT** to hear another creature. Tap **REC**, play a phrase, turn **SELECT** and add a second part. Tap **REC** again to end recording. **PLAY** stops and restarts the loop.
 
@@ -16,7 +16,7 @@ Tap **Start**. The FM-1 screen opens on Bloop, Kraken, Julia and Space Bloop. Pl
 
 This build has 16 portraits, 16 initial patches, four freely assignable tracks and a 16-step loop. The bass family uses four-operator FM, percussion uses resonant noise, vocals use a formant synth and atmosphere uses a detuned string ensemble. Wired velocity and aftertouch passed emulator tests. Optional key sensing passed a simulated contact test. Physical FM-1 testing is outstanding. Bluetooth and Wi-Fi are disabled.
 
-[Player guide](docs/MANUAL.md) · [Hardware used](docs/HARDWARE.md) · [Acceptance tests](evidence/beta-1/emulator-60mhz.log) · [Original browser prototype](https://abyss-one-fm1-simulator.aware-field-4307.chatgpt.site/creatures/index.html)
+[Player guide](docs/MANUAL.md) · [Hardware used](docs/HARDWARE.md) · [Acceptance tests](evidence/beta-1/emulator-60mhz.log) · [Original browser prototype](prototype/abyss1/)
 
 ## Build and contribute
 

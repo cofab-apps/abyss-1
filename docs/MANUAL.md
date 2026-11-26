@@ -2,7 +2,7 @@
 
 ## Play the firmware in the web emulator
 
-[Launch ABYSS-1 in the simulator](https://abyss-one-fm1-simulator.aware-field-4307.chatgpt.site/?fw=abyss-1&embed=1&mhz=60). Tap **Start** for audio. The link selects a 60 MHz emulated clock. On the S22, the 100 MHz setting was observed running at 0.5× real time. Turn the phone sideways and tap the keys. The firmware opens on four portraits. The white frame shows which creature the keys will play.
+[Launch ABYSS-1 in the simulator](https://joakimeriksson.github.io/fm1-emu/?package=https%3A%2F%2Fraw.githubusercontent.com%2Fcofab-apps%2Fabyss-1%2Fmain%2Fbuilds%2Fabyss-1.fwsc&name=ABYSS-1&embed=1&mhz=60). Tap **Start** for audio. The link selects a 60 MHz emulated clock. On the S22, the 100 MHz setting was observed running at 0.5× real time. Turn the phone sideways and tap the keys. The firmware opens on four portraits. The white frame shows which creature the keys will play.
 
 | Control | What it does |
 |---|---|
@@ -38,7 +38,7 @@ python3 -m http.server 8765 --bind 127.0.0.1 --directory simulator
 
 ## Play the creature prototype
 
-[Open the creature instrument](https://abyss-one-fm1-simulator.aware-field-4307.chatgpt.site/creatures/index.html) and tap **Demo groove** to hear all four tracks.
+The [original prototype](../prototype/abyss1/) is included in this repository.
 
 From the repository root, run the following command and open <http://127.0.0.1:8000/abyss1/>. GitHub’s HTML file viewer displays the source.
 
