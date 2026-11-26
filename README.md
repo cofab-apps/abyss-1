@@ -8,7 +8,7 @@ ABYSS-1 is a four-track musical instrument in development for the M-VAVE FM-1. A
 
 ## Try the current build
 
-**[Play the current ABYSS-1 firmware in the simulator](https://abyss-one-fm1-simulator.aware-field-4307.chatgpt.site/?fw=abyss-1&embed=1)** — tap **Start**, then play the keys. This simulator opens the four-part build directly. On a phone, turn the screen sideways.
+**[Play the current ABYSS-1 firmware in the simulator](https://abyss-one-fm1-simulator.aware-field-4307.chatgpt.site/?fw=abyss-1&embed=1&mhz=60)** — tap **Start**, then play the keys. This simulator opens the four-part build directly. On a phone, turn the screen sideways.
 
 | What to try | What works today |
 |---|---|
