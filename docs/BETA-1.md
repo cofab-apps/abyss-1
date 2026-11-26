@@ -8,6 +8,9 @@ Build `98A6BF9D` is the first ABYSS emulator beta. The product owner is Gabor Va
 
 ## Graphics evidence
 
+[Watch the 40-second recording with emulator audio](../evidence/beta-1/monster-sound-demo.mp4). The same key plays each of the 16 sounds. After each track changes, HOME shows the four current assignments. Captions beneath the LCD identify panel inputs.
+
+
 ![Previous FM-1 build and the two native ABYSS screens](../evidence/beta-1/firmware-comparison.png)
 
 Left is the running four-part Optimist package from the earlier simulator. Centre and right are the beta package on the same emulator. Both packages booted from fresh flash. The images come from the emulated FM-1 LCD framebuffer. The comparison adds labels outside the three native 240 × 240 frames.
