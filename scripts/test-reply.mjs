@@ -4,7 +4,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
 
-export function checkReply({boot, btn, enc, run, chip, shots, screen, panelFrame, pattern, out, movieStart, movieEnd}) {
+export function checkReply({boot, btn, enc, run, chip, shots, screen, panelFrame, pattern, out, movieStart, movieEnd, saveAndReboot}) {
     const key = (id, on) => chip.fm1_key(id, on ? 1 : 0);
     function strike(id, held, gap) {
         key(id,true); run(held); key(id,false); run(gap);
@@ -30,6 +30,61 @@ export function checkReply({boot, btn, enc, run, chip, shots, screen, panelFrame
         }
         return Math.hypot(re,im);
     };
+
+    // With no words and no prior song, HOME eventually points at the game.
+    // The invitation alternates between the two creatures and blinks ARP.
+    boot();
+    const sourceFish = () => screen()[11*240 + 101] === 0x5f1b;
+    const partnerFish = () => screen()[131*240 + 101] === 0xffae;
+    let latestLamps;
+    const arpLamp = () => {
+        chip.fm1_leds(); run(6);
+        latestLamps=Float32Array.from(new Float32Array(chip.memory.buffer,chip.fm1_leds(),41));
+        return latestLamps[10];
+    };
+    const sourceFrame = () => screen()[2*240 + 42] === 0x5f1b;
+    const partnerFrame = () => screen()[122*240 + 42] === 0xffae;
+    let sourceSeen=false, partnerSeen=false, sourceFrameSeen=false, partnerFrameSeen=false, lampSeen=false;
+    for(let i=0;i<900;i+=6) {
+        run(6);
+        sourceSeen ||= sourceFish();
+        partnerSeen ||= partnerFish();
+        sourceFrameSeen ||= sourceFrame();
+        partnerFrameSeen ||= partnerFrame();
+        lampSeen ||= arpLamp()>.08;
+        if(sourceSeen && partnerSeen && sourceFrameSeen && partnerFrameSeen && lampSeen) break;
+    }
+    assert.ok(sourceSeen && partnerSeen && sourceFrameSeen && partnerFrameSeen && lampSeen,
+              'idle invitation alternates fish, portrait frames and the ARP lamp');
+    shots('idle-invitation');
+    let invitationLevels;
+    for(let i=0;i<400;i+=6) {
+        const level=arpLamp();
+        if(sourceFrame() && level>.08) {
+            invitationLevels=latestLamps;
+            break;
+        }
+    }
+    assert.ok(invitationLevels,'invitation frame and ARP lamp overlap');
+    fs.writeFileSync(path.join(out,'idle-invitation.rgba'),panelFrame(invitationLevels));
+    let partnerLevels;
+    for(let i=0;i<400;i+=6) {
+        const level=arpLamp();
+        if(partnerFrame() && level>.08) {
+            partnerLevels=latestLamps;
+            break;
+        }
+    }
+    assert.ok(partnerLevels,'partner invitation frame and ARP lamp overlap');
+    fs.writeFileSync(path.join(out,'partner-invitation.rgba'),panelFrame(partnerLevels));
+    btn(10);btn(10); // Discover the game, then leave it.
+    run(2200);
+    assert.ok(!sourceFish() && !partnerFish() && arpLamp()<.04,'invitation stays dismissed after ARP is discovered');
+    boot();btn(11);enc(0,3);btn(24);btn(8);saveAndReboot();
+    run(2200);
+    assert.ok(!sourceFish() && !partnerFish() && arpLamp()<.04,'a restored song never receives the new-player invitation');
+    console.log('PASS wordless idle invitation, alternating turn icons, ARP lamp, session dismissal and saved-song exclusion.');
+
     prepare(true);
     key(21,true);
     assert.ok(run(250)<.0005,'a held muted caller generates no answer');

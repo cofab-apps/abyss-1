@@ -102,7 +102,7 @@ export function checkReef({boot, btn, enc, run, chip, shots, screen, pattern, ou
     key(21,false);run(600);
     assert.equal(changed(portrait,frame(),10,115,215,68),0);
     console.log('PASS native movement on physical key, MIDI and full portrait; exact restoration and intact legend.',{changedJuliaPixels:amount});
-    boot();
+    boot(); btn(10); btn(10); // Dismiss the idle invitation before exact artwork comparisons.
     const responseBlocks = [];
     for (let family=0; family<4; family++) {
         for (let variant=0; variant<4; variant++) {

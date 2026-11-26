@@ -137,6 +137,8 @@ with sync_playwright() as playwright:
         }""", arg=[x, y, colour], timeout=10000)
 
     if os.environ.get("ABYSS_REPLY_BROWSER"):
+        mark(42, 2, 0x5F1B)
+        mark(42, 122, 0xFFAE)
         gesture(1047, 340)  # ARP
         mark(101, 11, 0x5F1B)
         gesture(384, 735)
@@ -146,7 +148,7 @@ with sync_playwright() as playwright:
         gesture(1047, 340)
         page.wait_for_function("audioPeak() < 0.003", timeout=15000)
         assert not errors, errors
-        print("PASS ARP on the touch panel, listening fish, answering fish, audible answer and return to the player.")
+        print("PASS idle invitation in real time, ARP on the touch panel, listening fish, answering fish, audible answer and return to the player.")
 
     if os.environ.get("ABYSS_DEMO_BROWSER"):
         if os.environ["ABYSS_DEMO_BROWSER"] != "home":

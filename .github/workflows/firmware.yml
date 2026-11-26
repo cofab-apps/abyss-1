@@ -18,5 +18,5 @@ jobs:
       - run: sh scripts/build.sh creatures
       - run: node scripts/test-creatures.mjs simulator out/creatures.fwsc
       - run: node scripts/test-performance.mjs simulator out/creatures.fwsc out/reply --reply
-      - run: ABYSS_PRIOR=builds/abyss-1-beta-1.4.fwsc ABYSS_QUARTET_SECONDS=30 node scripts/test-performance.mjs simulator out/creatures.fwsc out/reef --reef
+      - run: ABYSS_PRIOR=builds/abyss-1-beta-1.4.1.fwsc ABYSS_QUARTET_SECONDS=30 node scripts/test-performance.mjs simulator out/creatures.fwsc out/reef --reef
       - run: node scripts/four-channels.mjs simulator out/creatures.fwsc

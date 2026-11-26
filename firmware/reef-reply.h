@@ -12,6 +12,17 @@ static struct {
     uint32_t origin, last_up, open_keys, attack_at;
     uint8_t enabled, count, next, answering, dirty, keys_were_down;
 } reply;
+static uint8_t reply_discovered, reply_hint_cache = 0xff;
+
+/* A fresh, empty HOME quietly invites exploration after the player pauses.
+ * The alternating fish connect the portraits to ARP's blinking lamp without
+ * requiring a word or permanently covering the creature art. */
+static int reply_hint_active(void)
+{
+    return !reply.enabled && !reply_discovered && page == ORCHESTRA &&
+           !song.playing && !song.rec && !rec_wait && abyss_can_demo() &&
+           fm1_ms > 5000 && fm1_ms - ui_input_ms >= 4200;
+}
 
 static void reply_reset(void)
 {
@@ -114,9 +125,9 @@ static void reply_tick(uint32_t pressed)
 }
 
 /* A pair of fish marks the two participants. The filled fish has the turn. */
-static void reply_badge(unsigned slot, int partner)
+static void reply_badge(unsigned slot, int partner, int turn)
 {
-    int lit = reply.answering == partner;
+    int lit = turn == partner;
     uint16_t ink = lit ? (partner ? 0xffae : 0x5f1b) : 0x8410;
     cv_begin(24, 14, 0x0862);
     for (int y=0; y<7; ++y) {

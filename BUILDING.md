@@ -4,7 +4,7 @@ Run these commands from the root of a clone of this repository. For playback of 
 
 | Build target | Input | Local output | Checked-in package |
 |---|---|---|---|
-| ABYSS creature firmware | [Voice definitions](firmware/voices.json), panel, portraits and four-part config | `out/creatures.fwsc` | [abyss-1-beta-1.4.1.fwsc](builds/abyss-1-beta-1.4.1.fwsc) |
+| ABYSS creature firmware | [Voice definitions](firmware/voices.json), panel, portraits and four-part config | `out/creatures.fwsc` | [abyss-1-beta-1.4.2.fwsc](builds/abyss-1-beta-1.4.2.fwsc) |
 | Baseline | Upstream `mots-config` release profile | `out/baseline.fwsc` | [upstream-baseline.fwsc](builds/upstream-baseline.fwsc) |
 | Four-part | [four-part.config](four-part.config) | `out/four-part.fwsc` | [four-part-formant.fwsc](builds/four-part-formant.fwsc) |
 
@@ -77,3 +77,13 @@ The reply test writes 240 × 240 RGB565LE frames at 10 fps and matching 44.1 kHz
 ## Beta 1.4.1 keyboard regression
 
 Run the Beta 1.4 release checks above using `builds/abyss-1-beta-1.4.1.fwsc` for the package comparison and `builds/abyss-1-beta-1.4.fwsc` for `ABYSS_PRIOR`. The reply probe now exercises staggered chord strikes and measures the scanned keyboard LEDs during the call, answer and rest.
+
+## Beta 1.4.2 invitation regression
+
+Run the reply probe against `builds/abyss-1-beta-1.4.2.fwsc`. It waits for both turns of the wordless invitation, measures the ARP lamp, dismisses the invitation by entering the game, and verifies that a restored song never receives it. The reef check dismisses the invitation before exact-pixel animation restoration checks.
+
+```sh
+node scripts/test-performance.mjs simulator builds/abyss-1-beta-1.4.2.fwsc out/invitation --reply
+ABYSS_PRIOR=builds/abyss-1-beta-1.4.1.fwsc ABYSS_QUARTET_SECONDS=600 node scripts/test-performance.mjs simulator builds/abyss-1-beta-1.4.2.fwsc out/reef --reef
+ABYSS_REPLY_BROWSER=1 ABYSS_DEMO_BROWSER=home CHROMIUM=/path/to/chromium python3 scripts/test-simulator-launch.py simulator builds/abyss-1.fwsc
+```

@@ -333,8 +333,13 @@ static void abyss_input(void)
     }
     enc_hold = 0;
     int select = panel_enc(EN_SELECT), family = panel_enc(EN_ALGO), variant = panel_enc(EN_PRESET);
-    if (buttons || keys || select || family || variant) ui_input_ms = fm1_ms;
+    int had_reply_hint = reply_hint_active();
+    if (buttons || keys || select || family || variant) {
+        ui_input_ms = fm1_ms;
+        if (had_reply_hint) paint_mask = 15;
+    }
     if (buttons & BIT(B_ARP) && page == ORCHESTRA && !song.playing && !rec_wait && !song.rec) {
+        reply_discovered = 1;
         reply_reset();
         reply.enabled ^= 1;
         paint_mask = 15;
@@ -538,6 +543,12 @@ static void abyss_draw(void)
     int show_macro = !editor && page != STEPS && macro_owner == song.sel && (int32_t)(macro_until - fm1_ms) > 0;
     if (macro_visible && !show_macro) paint_mask = 15;
     macro_visible = show_macro;
+    int reply_hint = reply_hint_active();
+    int reply_hint_turn = (fm1_ms / 550) & 1;
+    if (!reply_hint && reply_hint_cache != 0xff) {
+        paint_mask = 15;
+        reply_hint_cache = 0xff;
+    }
     if (editor && editor_dirty) {
         abyss_editor();
         editor_dirty = 0;
@@ -569,6 +580,10 @@ static void abyss_draw(void)
         if (reply.enabled && reply.answering && page == ORCHESTRA) {
             if (i == (song.sel ^ 2)) colour = 0xffae;
             else if (i == song.sel) colour = 0x0862;
+        }
+        if (reply_hint && page == ORCHESTRA) {
+            if (i == song.sel) colour = reply_hint_turn ? 0x0862 : 0x5f1b;
+            else if (i == (song.sel ^ 2)) colour = reply_hint_turn ? 0xffae : 0x0862;
         }
         if (repaint || colour != border_cache[i]) {
             abyss_frame(x,y,w,page == PORTRAIT ? 184 : w,(uint16_t)colour);
@@ -614,9 +629,13 @@ static void abyss_draw(void)
         drawn_status = status;
     }
     if (reply.enabled && page == ORCHESTRA && (reply.dirty || paint_mask)) {
-        reply_badge(song.sel, 0);
-        reply_badge(song.sel ^ 2, 1);
+        reply_badge(song.sel, 0, reply.answering ? 1 : 0);
+        reply_badge(song.sel ^ 2, 1, reply.answering ? 1 : 0);
         reply.dirty = 0;
+    } else if (reply_hint && (reply_hint_cache != reply_hint_turn || paint_mask)) {
+        reply_badge(song.sel, 0, reply_hint_turn);
+        reply_badge(song.sel ^ 2, 1, reply_hint_turn);
+        reply_hint_cache = reply_hint_turn;
     }
     if (page == PORTRAIT && paint_mask) abyss_legend();
     if (show_macro && (macro_dirty || paint_mask)) {
@@ -650,6 +669,7 @@ static void abyss_lights(void)
     fm1_led_key(panel.btn[B_FX], page == FX_EDIT && !TSEL->p[P_FXOFF]);
     fm1_led_key(panel.btn[B_LFO], TSEL->p[P_L2DA] == LT_PIT);
     fm1_led_key(panel.btn[B_REC], rec_wait || song.rec);
-    fm1_led_key(panel.btn[B_ARP], reply.enabled);
+    fm1_led_key(panel.btn[B_ARP], reply.enabled ||
+                (reply_hint_active() && ((fm1_ms / 280) & 1)));
     reply_light_keys();
 }
