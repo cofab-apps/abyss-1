@@ -1,5 +1,7 @@
 # Credits and licensing
 
+ABYSS-1 project creator and maintainer: **Gabor Varga**, Zurich, Switzerland. The firmware base, emulator and artwork have separate credits below.
+
 | Component | Source and notices |
 |---|---|
 | Optimist firmware | [Pinned upstream source](https://github.com/w0ts/optimist/tree/d1fbcf9389f41d0721c7e0df74cf3f530cc2ca42), [licensing inventory](docs/licenses/optimist/LICENSING.md) and [component texts](docs/licenses/optimist/LICENSES/) |

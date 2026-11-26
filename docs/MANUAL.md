@@ -2,6 +2,10 @@
 
 ## Play the firmware in the web emulator
 
+[Launch ABYSS-1 in the simulator](https://abyss-one-fm1-simulator.aware-field-4307.chatgpt.site/?fw=abyss-1&embed=1). Tap **Start** for audio. On the S22, turn the phone sideways and tap the keys. The hosted package is the four-part build of Optimist.
+
+### Load a different package manually
+
 1. Download [four-part-formant.fwsc](../builds/four-part-formant.fwsc). On the GitHub file page, choose **Download raw file**. Keep the `.fwsc` extension.
 2. Open the [FM-1 web emulator](https://joakimeriksson.github.io/fm1-emu/). Under **Now running**, choose **Open .fwsc…** and select the downloaded file.
 3. Press **Start** and play the onscreen keys. On a phone, landscape mode gives the keyboard more room. Expect the Optimist panel. The creature screen is available in the separate prototype below.

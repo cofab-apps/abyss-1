@@ -4,7 +4,11 @@ ABYSS-1 is a four-track musical instrument in development for the M-VAVE FM-1. A
 
 ![Four-creature orchestra design at the FM-1 screen resolution](prototype/abyss1/orchestra-240.png)
 
+**Project creator and maintainer:** Gabor Varga · Zurich, Switzerland. Firmware base: Optimist on fm1-base. Browser emulator: Joakim Eriksson’s fm1-emu.
+
 ## Try the current build
+
+**[Play the current ABYSS-1 firmware in the simulator](https://abyss-one-fm1-simulator.aware-field-4307.chatgpt.site/?fw=abyss-1&embed=1)** — tap **Start**, then play the keys. This private preview opens the four-part build directly. On a phone, turn the screen sideways.
 
 | What to try | What works today |
 |---|---|
