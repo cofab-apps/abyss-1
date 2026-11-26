@@ -35,12 +35,13 @@ with sync_playwright() as playwright:
             };
         }
     }""")
-    page.goto(origin + "/?fw=abyss-1&embed=1", wait_until="domcontentloaded")
+    page.goto(origin + "/?fw=abyss-1&embed=1&mhz=60", wait_until="domcontentloaded")
     with page.expect_response(lambda r: r.url.split("?")[0].endswith("/four-part-formant.fwsc")) as pending:
         page.locator("#start").tap()
     response = pending.value
     assert response.ok and hashlib.sha256(response.body()).digest() == hashlib.sha256(Path(package).read_bytes()).digest()
     page.wait_for_function("Number(document.querySelector('#status').textContent.match(/([0-9.]+) s$/)?.[1]) >= 2", timeout=60000)
+    assert "60 MHz" in page.locator("#status").inner_text()
     page.locator("#panel").scroll_into_view_if_needed()
     panel = page.locator("#panel").bounding_box()
     touch = page.context.new_cdp_session(page)
