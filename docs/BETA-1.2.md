@@ -1,6 +1,6 @@
 # ABYSS-1 Beta 1.2 · Play the demo
 
-Open the FM-1 simulator. Choose **Open .fwsc…**, select **abyss-1-beta-1.2.fwsc**, set the clock to **60 MHz** and press **Start**. If the browser already has a song for this firmware, use a fresh browser profile to hear the factory demo and keep the saved song in its original profile.
+Open the FM-1 simulator. Choose **Open .fwsc…**, select [the archived Beta 1.2 firmware](../builds/abyss-1-beta-1.2.fwsc), set the clock to **60 MHz** and press **Start**. If the browser already has a song for this firmware, use a fresh browser profile to hear the factory demo and keep the saved song in its original profile.
 
 ## Start playing
 
@@ -22,13 +22,13 @@ Press **HOME** to watch all four creatures. Turn **SELECT** two clicks from the 
 
 The performance test boots the compiled firmware at 60 MHz. It checks four individually audible parts, tone changes from all four knobs on both effect pages, replay after saving, and protection for an existing song with a note on track three. The browser test checks the exact package hash, onscreen transport and audio output. The movie captures the emulator display and stereo output together.
 
-From the source tree with Node and Python installed, run the following. The browser tests also need Pillow, Playwright and Chromium.
+From the verified-beta-1.2 branch with Node and Python installed, run the following. The browser tests also need Pillow, Playwright and Chromium.
 
 ```sh
-node scripts/test-performance.mjs simulator abyss-1-beta-1.2.fwsc out/performance
-ABYSS_PLAY_CONTROLS=1 node scripts/test-creatures.mjs simulator abyss-1-beta-1.2.fwsc
-ABYSS_DEMO_BROWSER=1 python3 scripts/test-simulator-launch.py simulator abyss-1-beta-1.2.fwsc --file
-python3 scripts/test-simulator-launch.py simulator abyss-1-beta-1.2.fwsc --file
+node scripts/test-performance.mjs simulator builds/abyss-1-beta-1.2.fwsc out/performance
+ABYSS_PLAY_CONTROLS=1 node scripts/test-creatures.mjs simulator builds/abyss-1-beta-1.2.fwsc
+ABYSS_DEMO_BROWSER=1 python3 scripts/test-simulator-launch.py simulator builds/abyss-1-beta-1.2.fwsc --file
+python3 scripts/test-simulator-launch.py simulator builds/abyss-1-beta-1.2.fwsc --file
 ```
 
 Select an installed Chromium executable with the CHROMIUM environment variable. Instructions for building the firmware from its pinned upstream sources are in BUILDING.md. Emulator evidence covers this firmware file. Physical FM-1 verification and Gabor’s listening review are open.

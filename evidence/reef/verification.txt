@@ -1,0 +1,92 @@
+accepted
+Firmware SHA-256 1ea9ec4988ec251109d7b624b641dcb95537c5ffe0b792cf104a72e7cd73d0c3
+PASS first PLAY, stop, one-gesture removal and restoration of the complete quartet.
+PASS undo and redo of step entry and an overdub preserve the earlier track.
+PASS one undo lifts a two-track take, including after a cancelled arm.
+PASS native movement on physical key, MIDI and full portrait; exact restoration and intact legend. { changedJuliaPixels: 1657 }
+PASS all sixteen creatures move and restore. Maximum observed first movement (ms) 105
+PASS older saved song plays from HOME with its original solo track.
+Factory quartet soak {"ms":600135,"blocks":206848,"peak":0.276153564453125,"rms":0.03499559992433462,"missedRefills":0,"cpu1Fault":0}
+
+100
+Firmware SHA-256 1ea9ec4988ec251109d7b624b641dcb95537c5ffe0b792cf104a72e7cd73d0c3
+PASS first PLAY, stop, one-gesture removal and restoration of the complete quartet.
+PASS undo and redo of step entry and an overdub preserve the earlier track.
+PASS native movement on physical key, MIDI and full portrait; exact restoration and intact legend. { changedJuliaPixels: 1657 }
+PASS all sixteen creatures move and restore. Maximum observed first movement (ms) 24
+PASS older saved song plays from HOME with its original solo track.
+
+regression-final
+PASS exact default orchestra on the emulated LCD at 60 MHz
+PASS all sixteen native portraits, family and creature controls and wraparound
+PASS four independently selected keyboard voices, RMS 0.0419, 0.0059, 0.0212, 0.0357
+{
+  both: 0.012319221441595469,
+  bass: 0.0121756856466699,
+  percussion: 0.001920214220639513,
+  muted: 0
+}
+PASS real-time two-track overdub, transport and independent mute
+PASS saved creature and recorded loop survive a full chip reboot
+PASS four recorded creatures, simultaneous playback and four individually audible solos [
+  0.012688707955524755,
+  0.020497519158020023,
+  0.0017317665528587853,
+  0.0101984706662274
+]
+PASS step entry by physical encoder and key, then playback
+PASS selected-step erase
+PASS held-note channel aftertouch and velocity {
+  untouched: 0,
+  pressed: 0.01565626855023605,
+  soft: 0.005718749813613341,
+  firm: 0.017639426159163807
+}
+PASS all 64 combinations of four tracks and sixteen creatures: portrait and audible key
+PASS all 120 pairs separated on gain-normalized time/frequency profiles.
+Closest pair: IDs 5 and 7, distance 0.3034. Largest same-voice repeat distance 0.5489.
+{
+  original: 0.041764218373895164,
+  minimum: 0,
+  other: 0.005411274610099204,
+  restored: 0.1081578698150685
+}
+PASS mixer K1 changes only the selected part level, including silence and restored output.
+PASS mixer K2 speeds up playback; median seconds per displayed step 0.13931972789115646 0.09287981859410431
+PASS bass keyboard C and C-sharp, SCL snaps C-sharp to C, SCL again restores C-sharp.
+
+performance-final
+Firmware SHA-256 1ea9ec4988ec251109d7b624b641dcb95537c5ffe0b792cf104a72e7cd73d0c3
+PASS SEQ/PLAY loads the authored four-track pattern; muted and isolated RMS 0.0000020583600481071657 [
+  0.02823169986875986,
+  0.007049216658964679,
+  0.013799556887861924,
+  0.015660218142270314
+]
+PASS SAVE retains the four-part demo across a full emulator reboot.
+PASS a restored user phrase on track 3 takes priority over the demo, keeping the other three tracks empty.
+PASS LFO changes held Julia and its release. Difference from dry = 0.01836869801545406, repeat = 0, K1–K4 = 0.017954405984519733,0.016600213869562026,0.02313524623800522,0.01292325869340516
+PASS FX changes held Julia and its release. Difference from dry = 0.007490247712215299, repeat = 0, K1–K4 = 0.00780312166700254,0.011400406472944847,0.007752592836330042,0.01459452225881959
+Captured stereo DAC and LCD: 866560 audio frames, 197 LCD frames
+
+host-test
+key 7: repeated waveform delta 0.000000, pressure delta 0.005132, soft/firm RMS 0.001758/0.012096
+key 24: repeated waveform delta 0.000000, pressure delta 0.000000, soft/firm RMS 0.003064/0.012736
+PASS simulated contacts: analog-row note velocity and sustained vowel pressure, top-row velocity only
+
+midi-final
+{"channel":1,"idleRms":0,"noteRms":0.054527478951962645}
+{"channel":2,"idleRms":0,"noteRms":0.004188465832614863}
+{"channel":3,"idleRms":0,"noteRms":0.018903114330685884}
+{"channel":4,"idleRms":0,"noteRms":0.029577129844305702}
+
+bundled-play
+Firmware SHA-256 1ea9ec4988ec251109d7b624b641dcb95537c5ffe0b792cf104a72e7cd73d0c3
+PASS simulator launch, exact package, boot, touch note and release. Idle 0.00000, note peak 0.10837
+PASS onscreen PLAY started the factory groove; PLAY stopped it.
+
+browser-save-final
+Firmware SHA-256 1ea9ec4988ec251109d7b624b641dcb95537c5ffe0b792cf104a72e7cd73d0c3
+PASS simulator launch, exact package, boot, touch note and release. Idle 0.00000, note peak 0.13727
+PASS public-panel touch gestures: four PRESETS changes, four SCL portraits, four HOME returns and a cross-family ALGORITHM change. All four tiles matched after every reassignment.
+PASS REC, overdub, stop, SAVE, reload, Start, PLAY. All four assignments restored and the saved loop produced audio without a new note.

@@ -1,5 +1,9 @@
 # Requirements, acceptance and project backlog
 
+## Current verified release
+
+[Beta 1.3](BETA-1.3.md) adds one-press ensemble playback, a playable pitched-to-noisy percussion range, native animation and reversible phrase editing. Its release notes contain the current build, simulator measurements and next experiment. The phase notes below describe the earlier work.
+
 ## Phase 0 evidence
 
 Passed: recursive public checkout, verified compiler and SDK setup, upstream default target release build, four-part target build, second build from saved configuration, package boot and display in desktop Chromium, emulator audio from four MIDI channels, both original prototype entry points, prototype record/playback/track mute and save/load smoke tests. See evidence/. The original archive SHA-256 is b49889a22e33d7e35ce960afcf6b9df5064bd8adbb46d950377b659811931c14.
@@ -50,5 +54,5 @@ Use tactile/colour stickers for first child sessions if needed. Verify that a ch
 - Prototype laptop keyboard shortcuts ignore focused buttons. After clicking REC, typing a note can appear to do nothing; the onscreen keys work. Regression test clicks the canvas before typing. Save/load currently accepts lightly validated JSON with a single localStorage slot.
 - The prototype stores one pitch per track/step, with fixed-duration sound and no stored pressure, gate or velocity. Timing uses browser timers; the master volume is global. These limitations are inappropriate for expressive firmware.
 - Four-part profile uses the upstream memory layout with reduced space for stored music. Measure useful song capacity on stock hardware before fixing the production flash layout. No SD modification is assumed.
-- Package rebuilds from identical configuration had identical target sizes and different SHA-256 values. Save the tested package and its own checksum. Byte-for-byte determinism remains open.
+- Earlier packages differed across rebuilds. Beta 1.3 sets the source timestamp and reproduced byte-for-byte in three builds on the pinned Linux toolchain. Independent machines and other toolchains remain to be compared.
 - Sound quality, final art legibility, palette fidelity, device headroom, pressure sensing and child engagement cannot be accepted from a bootstrap test. Research character-specific visual and sonic references before final artwork.

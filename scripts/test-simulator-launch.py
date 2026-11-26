@@ -15,11 +15,14 @@ use_file_picker = sys.argv[3:] == ["--file"]
 if target.startswith(("https://", "http://")):
     launch_url = target if "?" in target else target.rstrip("/") + "/?fw=abyss-1&embed=1&mhz=60"
 else:
-    handler = functools.partial(http.server.SimpleHTTPRequestHandler, directory=target)
+    site = Path(target).resolve()
+    bundled = site.name == "simulator" and (site.parent/"builds").is_dir()
+    handler = functools.partial(http.server.SimpleHTTPRequestHandler, directory=site.parent if bundled else site)
     server = http.server.ThreadingHTTPServer(("127.0.0.1", 0), handler)
     threading.Thread(target=server.serve_forever, daemon=True).start()
     query = "fw=local&mhz=60" if use_file_picker else "fw=abyss-1&embed=1&mhz=60"
-    launch_url = f"http://127.0.0.1:{server.server_port}/?{query}"
+    prefix = "/simulator" if bundled else ""
+    launch_url = f"http://127.0.0.1:{server.server_port}{prefix}/?{query}"
 
 def expected_pixels(ids):
     """Sample each tile's interior directly from the supplied 240px portrait."""
@@ -128,13 +131,16 @@ with sync_playwright() as playwright:
         touch.send("Input.dispatchTouchEvent", {"type": "touchEnd", "touchPoints": []})
 
     if os.environ.get("ABYSS_DEMO_BROWSER"):
-        gesture(1105, 340)  # SEQ
+        if os.environ["ABYSS_DEMO_BROWSER"] != "home":
+            gesture(1105, 340)  # SEQ
         gesture(1163, 340)  # PLAY, without entering any notes
         page.wait_for_function("audioPeak() > 0.008", timeout=8000)
+        # Let the panel scan the released button before the next finger tap.
+        page.wait_for_timeout(350)
         gesture(1163, 340)
         page.wait_for_function("audioPeak() < 0.002", timeout=12000)
         assert not errors, errors
-        print("PASS onscreen SEQ then PLAY started the factory groove; PLAY stopped it.")
+        print("PASS onscreen PLAY started the factory groove; PLAY stopped it.")
         browser.close()
         sys.exit(0)
     ids = [0, 4, 8, 12]

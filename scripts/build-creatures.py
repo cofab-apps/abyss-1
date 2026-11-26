@@ -1,4 +1,5 @@
 """Cross-build the ABYSS control surface, portraits and patches on the pinned base."""
+from creature_motion import REGIONS, displacement_mesh
 import json
 import os
 import re
@@ -45,6 +46,13 @@ def generate():
         array("uint16_t", f"pal{i}", [(c>>8) | (c&255)<<8 for c in pal])
         array("uint16_t", f"row{i}", offsets)
         array("uint8_t", f"run{i}", runs)
+        array("int8_t", f"motion{i}", displacement_mesh(REGIONS[i]))
+    out.append("struct abyss_region { uint8_t x,y,w,h; const int8_t *mesh; };")
+    out.append("static const struct abyss_region abyss_motion[] = {")
+    for i, region in enumerate(REGIONS):
+        out.append("{%d,%d,%d,%d," % region[:4] + f"motion{i}" + "},")
+    out.append("};")
+    out.append(f"#define ABYSS_MOTION_AREA {max(w*h for x,y,w,h,m in REGIONS)}")
     out.append("static const struct { const uint16_t *pal, *row; const uint8_t *run; } abyss_art[] = {")
     out.extend(f"{{pal{i},row{i},run{i}}}," for i in range(16))
     out.append("};")
@@ -100,6 +108,18 @@ def build(checkout, host=False):
         change(src/"core/voice.c", "        if (v->vel > 110)",
                "        m.cutoff += (abyss_channel_pressure[t - trk] + abyss_pressure[t - trk][v->note & 127]) * 88;\n"
                "        if (v->vel > 110)")
+        # A damped membrane supplements Kraken's resonant noise on the lower keys.
+        # Dedicated per-voice state keeps overlapping strikes independent.
+        change(src/"core/core.h", "    uint32_t ph[3];",
+               "    uint32_t ph[3];\n    uint32_t shell_phase, shell_level;")
+        noise = src/"engines/noise/eng_noise.c"
+        change(noise, "    v->ph[2] = 0;", "    v->ph[2] = 0;\n"
+               "    v->shell_phase = 0;\n    v->shell_level = 1u << 23;")
+        change(noise, "static void noise_render(", (ROOT/"firmware/kraken-body.h").read_text()
+               + "\nstatic void noise_render(")
+        change(noise, "    const int16_t *p = t->p;", "    if (t->preset == 0) {\n"
+               "        abyss_kraken_render(t, v, out, n, m);\n        return;\n    }\n"
+               "    const int16_t *p = t->p;")
         for f in FAMILIES:
             path = checkout/"firmware/src/engines"/f["source"]
             pattern = r"(static const preset_t "+f["table"]+r"\[\] = \{\n).*?(\n\};)"
@@ -107,6 +127,7 @@ def build(checkout, host=False):
             assert n == 1, path
             replace(path, data)
         replace(ui/"abyss_art.h", generate())
+        replace(ui/"phrase-history.h", (ROOT/"firmware/phrase-history.h").read_text())
         replace(ui/"abyss_panel.h", (ROOT/"firmware/panel.h").read_text())
         p = ui/"opt_ui.c"
         data = p.read_text()

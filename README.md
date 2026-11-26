@@ -4,19 +4,19 @@ ABYSS-1 is a four-track musical instrument in development for the M-VAVE FM-1. A
 
 **Project creator and maintainer:** Gabor Varga · Zurich, Switzerland. Firmware base: Optimist on fm1-base. Browser emulator: Joakim Eriksson’s fm1-emu.
 
-## Try the current build
+## Play Beta 1.3
 
-**[Play the latest ABYSS-1 build in the FM-1 simulator](https://joakimeriksson.github.io/fm1-emu/?package=https%3A%2F%2Fraw.githubusercontent.com%2Fcofab-apps%2Fabyss-1%2Fmain%2Fbuilds%2Fabyss-1.fwsc&name=ABYSS-1&embed=1&mhz=60)**
+**[Open ABYSS-1 in the FM-1 simulator](https://joakimeriksson.github.io/fm1-emu/?package=https%3A%2F%2Fraw.githubusercontent.com%2Fcofab-apps%2Fabyss-1%2Fmain%2Fbuilds%2Fabyss-1-beta-1.3.fwsc&name=ABYSS-1&embed=1&mhz=60)** · [Download the firmware](builds/abyss-1-beta-1.3.fwsc) · [Watch and hear a 22-second performance](evidence/reef/abyss-1-beta-1.3.mp4)
 
-Tap **Start**. The FM-1 screen opens on Bloop, Kraken, Julia and Space Bloop. Play the keys, then turn **SELECT** to hear another creature. Tap **REC**, play a phrase, turn **SELECT** and add a second part. Tap **REC** again to end recording. **PLAY** stops and restarts the loop.
+Tap **Start**, then **PLAY**. On a fresh song Bloop, Kraken, Julia and Space Bloop play a bar together. The moving jaws and tentacles show who is sounding. Four pearls across the top count the beats.
 
-![Previous Optimist display, native ABYSS orchestra and full Bloop portrait](evidence/beta-1/firmware-comparison.png)
+To make your own music, start with **REC** and play a key. Select another creature to overdub it. On HOME, **EDIT** lifts the last take. Press **EDIT** again to bring it back. If you started with the quartet, you can lift all four factory parts in one press.
 
-[Beta 1 release notes and graphics evidence](docs/BETA-1.md)
+![Three native LCD frames of the orchestra at rest, Julia singing and the quartet in motion](evidence/reef/native-lcd.png)
 
-This build has 16 portraits, 16 initial patches, four freely assignable tracks and a 16-step loop. The bass family uses four-operator FM, percussion uses resonant noise, vocals use a formant synth and atmosphere uses a detuned string ensemble. Wired velocity and aftertouch passed emulator tests. Optional key sensing passed a simulated contact test. Physical FM-1 testing is outstanding. Bluetooth and Wi-Fi are disabled.
+Try the low and high keys on Kraken. Low strikes have a falling, tuned body. High keys produce a short shell rattle. All 16 creatures respond to notes from the keyboard, MIDI and the sequencer. The four family engines are FM bass, percussion, formant voice and detuned strings.
 
-[Player guide](docs/MANUAL.md) · [Hardware used](docs/HARDWARE.md) · [Acceptance tests](evidence/beta-1/emulator-60mhz.log) · [Original browser prototype](prototype/abyss1/)
+[Player guide](docs/MANUAL.md) · [Beta 1.3 release and verification](docs/BETA-1.3.md) · [Hardware](docs/HARDWARE.md) · [Original browser prototype](prototype/abyss1/)
 
 ## Build and contribute
 

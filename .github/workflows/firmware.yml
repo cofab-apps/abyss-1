@@ -13,8 +13,9 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - run: python3 -m pip install Pillow
+      - run: python3 -m pip install Pillow==13.0.0
       - run: python3 scripts/test-art.py
       - run: sh scripts/build.sh creatures
       - run: node scripts/test-creatures.mjs simulator out/creatures.fwsc
+      - run: ABYSS_PRIOR=builds/abyss-1-beta-1.2.fwsc ABYSS_QUARTET_SECONDS=30 node scripts/test-performance.mjs simulator out/creatures.fwsc out/reef --reef
       - run: node scripts/four-channels.mjs simulator out/creatures.fwsc

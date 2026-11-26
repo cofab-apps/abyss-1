@@ -1,8 +1,11 @@
 {
   "note": "Community firmwares for the M-VAVE FM-1: the FM-1 Firmware Hub's list (thefirmwarehub.com, tools/hub_catalog.mjs; its packages fetched from the Hub), then our own list (web/firmwares-own.json: this repository's FM-1 SID, M-VAVE's own, a few from fm1-editor.com/firmware). Generated: edit web/firmwares-own.json (the default too), not this file. The web page fetches each package when started and unpacks it with web/fwsc.js; tools/fetch_firmwares.mjs does the same into reference/firmwares for fm1-live. \"hub\": the firmware's id on the Hub (its card: thefirmwarehub.com/#fw-<hub>). \"minMhz\": the lowest clock it plays at without running out of time, measured on the package whose SHA-256 begins with \"minMhzPackage\" (tools/clock_floors.py). \"skipped\": Hub firmwares not run here, by the Hub's id, with why; the page lists the Hub's other firmwares not in this file after these, marked as not yet run here (web/fwsc.js hubNewcomers).",
-  "default": "felucca",
+  "default": "abyss-1",
   "skipped": {"vibe-link":"crashes in the emulator a second or two after boot (a CPU exception at 0x0200338E: its own crash screen); held back until that is understood","lsdjburrito":"boots to its instructions, but makes no audio until an LSDJ song is sent to it over USB from its web page, which the emulator's page cannot do"},
   "firmwares": [
+    { "id": "abyss-1", "name": "ABYSS-1", "version": "Beta 1.3", "author": "Gabor Varga",
+      "about": "Pick a sea creature and play the keys, or press PLAY to hear the quartet.",
+      "repo": "https://github.com/cofab-apps/abyss-1", "package": "../builds/abyss-1.fwsc" },
     { "id": "mvave-v15", "name": "M-VAVE stock firmware", "version": "V15", "author": "M-VAVE", "license": "Apache-2.0 (M-VAVE's FM1 Open recovery image)",
       "about": "The firmware the FM-1 ships with, version 15: a DX7-style FM synth, both cores running. M-VAVE publishes this version under the Apache License 2.0, as the recovery image of its FM1 Open SDK; it plays here from the FM-1 Firmware Hub's unchanged copy. Its patches live in flash an update does not carry, so it starts with a small bank of the emulator's own; \"DX7 bank…\" loads a 32-voice .syx.",
       "repo": "https://github.com/m-vave/fm1_open",

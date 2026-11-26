@@ -18,6 +18,10 @@ cd "$src"
 test "$(git rev-parse HEAD)" = "$pin" || { echo "Existing checkout has a different revision"; exit 1; }
 git -c url.https://github.com/.insteadOf=git@github.com: submodule update --init --recursive
 test -z "$(git status --porcelain --untracked-files=no)" || { echo "Upstream has tracked changes"; exit 1; }
+# The upstream info page embeds compiler date/time. Give repeated builds
+# of this source a common timestamp, including in standalone checkouts.
+SOURCE_DATE_EPOCH=${SOURCE_DATE_EPOCH:-$(git show -s --format=%ct "$pin")}
+export SOURCE_DATE_EPOCH
 python3 tools/optimist.py setup --yes --no-emu
 if [ "$kind" = baseline ]; then
     set -- --profile mots-config

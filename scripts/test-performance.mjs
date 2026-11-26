@@ -5,6 +5,7 @@ import path from 'node:path';
 import {pathToFileURL} from 'node:url';
 import {createHash} from 'node:crypto';
 const [site,fw,out] = process.argv.slice(2);
+const clock = Number(process.env.ABYSS_MHZ || 60);
 fs.mkdirSync(out, {recursive:true});
 const {jitImports} = await import(pathToFileURL(path.resolve(site,'jit.js')));
 const {changedSectors, packSectors} = await import(pathToFileURL(path.resolve(site, 'persistence.js')));
@@ -47,10 +48,10 @@ function chipInput(bytes) {
     new Uint8Array(chip.memory.buffer, at, bytes.length).set(bytes);
     return at;
 }
-function boot(saved) {
-    const at = chipInput(file);
+function boot(saved, bytes = file) {
+    const at = chipInput(bytes);
     const flash = saved ? chipInput(saved) : 0;
-    assert.equal(chip.fm1_boot_fwsc(at, file.length, 0, 0, 60), 0);
+    assert.equal(chip.fm1_boot_fwsc(at, bytes.length, 0, 0, clock), 0);
     if (saved) assert.equal(chip.fm1_flash_restore(flash, saved.length), 0);
     run(1300, false, true);
 }
@@ -69,12 +70,26 @@ function cell(i){return screen()[(200+Math.floor(i/8)*21)*240+6+30*(i%8)];}
 function pattern(){
     return Array.from({length:16},(_,i)=>cell(i)===0x5f1b?i:-1).filter(i=>i>=0);
 }
+if (process.argv[5] === '--reef' || process.argv[5] === '--probe-shell' || process.argv[5] === '--showcase') {
+    const {checkReef, probeShell, showcase} = await import('./reef-check.mjs');
+    const movieStart = (name = "quartet") => {
+        audio=fs.openSync(path.join(out,name+'.s16'),'w');
+        video=fs.openSync(path.join(out,name+'.rgb'),'w');
+        movie=true;
+    };
+    const movieEnd = () => {movie=false;fs.closeSync(audio);fs.closeSync(video);};
+    const rig = {boot,btn,enc,run,chip,shots,screen,pattern,out,movieStart,movieEnd,saveAndReboot, time: () => count/44100};
+    if (process.argv[5] === "--showcase") {showcase(rig);process.exit(0);}
+    if (process.argv[5] === '--reef') checkReef(rig);
+    probeShell(rig);
+    process.exit(0);
+}
 boot();btn(11);
 assert.deepEqual(pattern(),[]);
 shots('sequencer-empty');
 btn(12);assert.ok(run(1600)>.001,'demo plays');
 btn(12);
-const expected=[[0,3,6,10,12],[0,2,4,7,8,10,12,15],[2,5,9,14],[0,8]];
+const expected=[[0,3,6,10,12],[0,2,4,7,8,10,12,15],[2,5,9,14],[1,9]];
 for(let i=0;i<4;i++){
     // Tied steps may appear occupied. All authored attacks must exist.
     const notes=pattern();

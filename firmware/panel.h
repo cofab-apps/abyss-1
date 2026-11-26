@@ -4,12 +4,17 @@
 enum abyss_view { ORCHESTRA, PORTRAIT, MIX, STEPS, LFO_EDIT, FX_EDIT };
 static enum abyss_view page;
 static uint8_t creature[4], cursor, paint_mask = 15, pending_save;
-static uint32_t flash_until, save_until;
+static uint32_t flash_until, save_until, edit_until;
+static uint8_t redo_available;
+#include "phrase-history.h"
+static uint32_t attack_age[4], attack_ms[4];
+static uint8_t drawn_cel[4];
+static int drawn_beat = -1;
 static int drawn_status = -1;
 static int border_cache[4] = {-1, -1, -1, -1};
 static unsigned step_signature = ~0u;
 static uint32_t macro_until;
-static uint8_t macro_owner, macro_knob, macro_visible;
+static uint8_t macro_owner, macro_knob, macro_visible, macro_dirty;
 static uint8_t editor_dirty = 1, fx_seen[4];
 static const char *const family_knobs[4][4] = {
     {"FM DECAY", "FEEDBACK", "FM INDEX", "ROOM"},
@@ -68,35 +73,147 @@ static void abyss_restore(void)
 
 /* RLE rows are independently addressable. A tile samples the native artwork
  * at every second row and column. The strip buffer is shared with the LCD DMA. */
-static void abyss_picture(unsigned id, unsigned x, unsigned y, unsigned stride)
+static void abyss_blit_rows(const uint16_t *palette, const uint16_t *offsets,
+                            const uint8_t *runs, unsigned x, unsigned y,
+                            unsigned width, unsigned height, unsigned stride)
 {
-    unsigned width = 240 / stride;
-    for (unsigned band = 0; band < width; band += 8) {
+    unsigned lcd_width = width / stride;
+    for (unsigned band = 0; band < height / stride; band += 8) {
+        unsigned rows = height / stride - band;
+        if (rows > 8) rows = 8;
         lcd_sync();
         uint16_t *dst = cv_px;
-        for (unsigned row = band; row < band + 8; ++row) {
-            const uint8_t *src = abyss_art[id].run + abyss_art[id].row[row * stride];
-            unsigned col = 0;
-            while (col < 240) {
-                unsigned code = *src++;
-                unsigned end = col + 1 + (code >> 4);
-                uint16_t colour = abyss_art[id].pal[code & 15];
-                for (unsigned sample = (col + stride - 1) / stride; sample < (end + stride - 1) / stride; ++sample)
-                    *dst++ = colour;
+        for (unsigned row = band; row < band + rows; ++row) {
+            const uint8_t *src = runs + offsets[row * stride];
+            for (unsigned col = 0; col < width;) {
+                unsigned code = *src++, end = col + 1 + (code >> 4);
+                for (unsigned sample = (col + stride - 1) / stride;
+                     sample < (end + stride - 1) / stride; ++sample)
+                    *dst++ = palette[code & 15];
                 col = end;
             }
         }
-        lcd_blit(x, y + band, width, 8, cv_px);
+        lcd_blit(x, y + band, lcd_width, rows, cv_px);
     }
     lcd_sync();
 }
 
-static void abyss_frame(unsigned x, unsigned y, unsigned w, uint16_t c)
+static void abyss_picture(unsigned id, unsigned x, unsigned y, unsigned stride)
+{
+    abyss_blit_rows(abyss_art[id].pal, abyss_art[id].row, abyss_art[id].run,
+                    x, y, 240, 240, stride);
+}
+
+/* Read the same voice allocation used by the synth. MIDI, finger playing
+ * and sequenced attacks all animate the creature on their original track. */
+static unsigned abyss_pose(unsigned part)
+{
+    const track_t *t = &trk[part];
+    uint32_t newest = attack_age[part];
+    unsigned gate = 0, velocity = 0;
+    for (unsigned i = 0; i < NVOICE; ++i) {
+        const voice_t *v = &t->v[i];
+        if (!v->active) continue;
+        if ((int32_t)(v->age - newest) > 0) newest = v->age;
+        if (v->gate && v->stage <= 2 && v->env_out > 64) {
+            gate = 1;
+            if (v->vel > velocity) velocity = v->vel;
+        }
+    }
+    if (newest != attack_age[part]) {
+        attack_age[part] = newest;
+        attack_ms[part] = fm1_ms;
+    }
+    if (!newest || t->p[P_MUTE] || !t->p[P_LEVEL]) return 0;
+    uint32_t elapsed = fm1_ms - attack_ms[part];
+    if (elapsed < 95) return velocity && velocity < 70 ? 1 : 2;
+    if (elapsed < 190) return 1;
+    if (!gate) return 0;
+    return 1 + (velocity >= 70 && (elapsed / 230) % 3 == 2);
+}
+
+/* At most four reduced faces OR one full face is visible. Cache their
+ * palette indices so a sounding jaw or tentacle can move without storing
+ * another full portrait or decompressing its backdrop for every frame. */
+static union {
+    uint8_t tile[4][ABYSS_MOTION_AREA/4];
+    uint8_t full[ABYSS_MOTION_AREA];
+} motion_cache;
+static int cached_id[4] = {-1,-1,-1,-1};
+static unsigned cached_stride;
+
+static void abyss_animate(unsigned part, unsigned id, unsigned x, unsigned y,
+                          unsigned stride, unsigned bottom, int repaint)
+{
+    unsigned pose = abyss_pose(part);
+    if (repaint) drawn_cel[part] = 0;
+    if (pose == drawn_cel[part]) return;
+    drawn_cel[part] = pose;
+    unsigned slot = stride == 1 ? 0 : part;
+    uint8_t *base = stride == 1 ? motion_cache.full : motion_cache.tile[slot];
+    const struct abyss_region *r = &abyss_motion[id];
+    unsigned width = r->w/stride, height = r->h/stride;
+    if (cached_stride != stride) {
+        for (unsigned i = 0; i < 4; ++i) cached_id[i] = -1;
+        cached_stride = stride;
+    }
+    if (cached_id[slot] != (int)id) {
+        for (unsigned j = 0; j < height; ++j) {
+            const uint8_t *src = abyss_art[id].run + abyss_art[id].row[r->y + j*stride];
+            unsigned k = 0;
+            for (unsigned col = 0; col < r->x + r->w;) {
+                unsigned code = *src++, end = col + 1 + (code >> 4);
+                while (k < width && r->x + k*stride < end)
+                    base[j*width+k++] = code & 15;
+                col = end;
+            }
+        }
+        cached_id[slot] = id;
+    }
+    unsigned shown = height;
+    unsigned top = y + r->y/stride;
+    if (top >= bottom) return;
+    if (top + shown > bottom) shown = bottom - top;
+    unsigned pitch = ((r->w + 6) / 8 + 1) * 2;
+    unsigned shift = 6 + (stride == 2) + (pose == 1);
+    for (unsigned band = 0; band < shown; band += 8) {
+        unsigned rows = shown - band;
+        if (rows > 8) rows = 8;
+        lcd_sync();
+        uint16_t *dst = cv_px;
+        for (unsigned j = band; j < band+rows; ++j) {
+            unsigned fy = (j*stride) & 7;
+            const int8_t *mesh = r->mesh + (j*stride / 8) * pitch;
+            for (unsigned col = 0; col < width; mesh += 2) {
+                unsigned end = col + 8/stride;
+                if (end > width) end = width;
+                if (!pose) {
+                    for (; col < end; ++col) *dst++ = abyss_art[id].pal[base[j*width+col]];
+                    continue;
+                }
+                int lx = mesh[0]*(8-(int)fy) + mesh[pitch]*(int)fy;
+                int ly = mesh[1]*(8-(int)fy) + mesh[pitch+1]*(int)fy;
+                int dx = (mesh[2]*(8-(int)fy) + mesh[pitch+2]*(int)fy - lx) * (int)stride;
+                int dy = (mesh[3]*(8-(int)fy) + mesh[pitch+3]*(int)fy - ly) * (int)stride;
+                int ax = lx*8 + (1 << (shift-1)), ay = ly*8 + (1 << (shift-1));
+                for (; col < end; ++col, ax += dx, ay += dy) {
+                    int sx = clamp((int)col - (ax >> shift), 0, (int)width-1);
+                    int sy = clamp((int)j - (ay >> shift), 0, (int)height-1);
+                    *dst++ = abyss_art[id].pal[base[sy*width+sx]];
+                }
+            }
+        }
+        lcd_blit(x + r->x/stride, y + r->y/stride + band, width, rows, cv_px);
+    }
+    lcd_sync();
+}
+
+static void abyss_frame(unsigned x, unsigned y, unsigned w, unsigned h, uint16_t c)
 {
     lcd_fill(x, y, w, 3, c);
-    lcd_fill(x, y + w - 3, w, 3, c);
-    lcd_fill(x, y + 3, 3, w - 6, c);
-    lcd_fill(x + w - 3, y + 3, 3, w - 6, c);
+    if (w == h) lcd_fill(x, y + h - 3, w, 3, c);
+    lcd_fill(x, y + 3, 3, h - 3, c);
+    lcd_fill(x + w - 3, y + 3, 3, h - 3, c);
 }
 
 static void abyss_scene(enum abyss_view next)
@@ -107,6 +224,7 @@ static void abyss_scene(enum abyss_view next)
     paint_mask = 15;
     step_signature = ~0u;
     drawn_status = -1;
+    drawn_beat = -1;
 }
 
 /* The four knob values live in the existing per-track song parameters. Clearing
@@ -149,7 +267,7 @@ static const struct abyss_hit {
     {1,0,36,1,125}, {1,2,66,1,55}, {1,4,50,1,112}, {1,7,69,1,64},
     {1,8,36,1,116}, {1,10,66,1,65}, {1,12,50,1,115}, {1,15,70,1,82},
     {2,2,67,2,93}, {2,5,70,2,106}, {2,9,67,2,82}, {2,14,63,2,94},
-    {3,0,60,7,76}, {3,8,55,7,78}
+    {3,1,63,3,80}, {3,9,58,3,84}
 };
 static uint8_t demo_considered;
 
@@ -169,6 +287,7 @@ static void abyss_demo(void)
 {
     const unsigned previous_velocity = key_vel;
     demo_considered = 1;
+    abyss_begin_edit(15);
     for (unsigned i = 0; i < sizeof abyss_demo_hits / sizeof abyss_demo_hits[0]; ++i) {
         const struct abyss_hit *hit = &abyss_demo_hits[i];
         fm1_irq_off();
@@ -177,12 +296,14 @@ static void abyss_demo(void)
         key_vel = previous_velocity;
         fm1_irq_on();
     }
+    abyss_end_edit();
     step_signature = ~0u;
 }
 
 static void abyss_input(void)
 {
     uint32_t buttons = fm1_input_edges(0), keys = fm1_input_note_edges();
+    if (recording_edit && !song.rec && !rec_wait) abyss_end_edit();
     hp_poll();
     abyss_sense();
     /* ENV is the optional physical-key sensing mode. Plain matrix keys remain
@@ -193,11 +314,20 @@ static void abyss_input(void)
     }
     if (buttons & BIT(B_LFO)) abyss_effect_button(LFO_EDIT);
     if (buttons & BIT(B_FX)) abyss_effect_button(FX_EDIT);
+    if ((buttons & BIT(B_EDIT)) && page == ORCHESTRA && !song.rec && !rec_wait) {
+        if (abyss_swap_edit()) {
+            sync_reload = 1;
+            edit_until = fm1_ms + 850;
+            demo_considered = 1;
+        }
+    }
     if ((buttons & BIT(B_EDIT)) && page == STEPS) {
+        if (!recording_edit) abyss_begin_edit(1u << song.sel);
         demo_considered = 1;
         fm1_irq_off();
         step_wipe(TSEL, cursor, 0);
         fm1_irq_on();
+        if (!recording_edit) abyss_end_edit();
     }
     enc_hold = 0;
     int select = panel_enc(EN_SELECT), family = panel_enc(EN_ALGO), variant = panel_enc(EN_PRESET);
@@ -263,21 +393,31 @@ static void abyss_input(void)
                 &ENGINES[TSEL->eng_req]->edit[m-P_E0] : &TP[m];
             TSEL->p[m] = clamp(TSEL->p[m] + d * 3, desc->min, desc->max);
         }
+        macro_dirty = 1;
         macro_owner = part;
         macro_knob = k;
         macro_until = fm1_ms + 1600;
     }
     if (buttons & BIT(B_PLAY)) {
-        if (page == STEPS && !song.playing && abyss_can_demo()) abyss_demo();
+        if ((page == ORCHESTRA || page == STEPS) && !song.playing && abyss_can_demo()) abyss_demo();
         op_play();
     }
-    if (buttons & BIT(B_REC)) { demo_considered = 1; (void)op_rec(); }
+    if (buttons & BIT(B_REC)) {
+        demo_considered = 1;
+        if (!song.rec && !rec_wait) {
+            abyss_begin_edit(15);
+            recording_edit = 1;
+        }
+        (void)op_rec();
+        if (recording_edit && !song.rec && !rec_wait) abyss_end_edit();
+    }
     if (buttons & BIT(B_OCTDN)) oct_tap(B_OCTDN);
     if (buttons & BIT(B_OCTUP)) oct_tap(B_OCTUP);
     if (buttons & BIT(B_SAVE)) pending_save = 1;
     if (keys) {
         flash_until = fm1_ms + 140;
         if (page == STEPS && !song.rec && !rec_wait) {
+            abyss_begin_edit(1u << song.sel);
             demo_considered = 1;
             for (unsigned key = 0; key < 27; ++key) if (keys & (1u << key)) {
                 uint8_t notes[4];
@@ -287,6 +427,7 @@ static void abyss_input(void)
                     (void)se_add(TSEL, cursor, notes[j], 1);
                 fm1_irq_on();
             }
+            abyss_end_edit();
         }
     }
 }
@@ -375,7 +516,8 @@ static void abyss_draw(void)
     int editor = page == LFO_EDIT || page == FX_EDIT;
     int grid = page == ORCHESTRA || page == MIX;
     int status = (song.playing ? 1 : 0) | ((song.rec || rec_wait) ? 2 : 0) |
-                 ((int32_t)(save_until - fm1_ms) > 0 ? 4 : 0);
+                 ((int32_t)(save_until - fm1_ms) > 0 ? 4 : 0) |
+                 (page == ORCHESTRA && (int32_t)(edit_until - fm1_ms) > 0 ? (redo_available ? 8 : 16) : 0);
     if (status != drawn_status && drawn_status > 0) paint_mask |= 1u << (grid ? 0 : song.sel);
     int show_macro = !editor && page != STEPS && macro_owner == song.sel && (int32_t)(macro_until - fm1_ms) > 0;
     if (macro_visible && !show_macro) paint_mask = 15;
@@ -399,10 +541,13 @@ static void abyss_draw(void)
                 if (trk[i].p[P_MUTE]) lcd_fill(x+52,y+99,5,17,0xFFFF);
             }
         }
-        int active = trk[i].seq_n || trk[i].nheld || (i == song.sel && (int32_t)(flash_until - fm1_ms) > 0);
+        if (page == ORCHESTRA || page == PORTRAIT)
+            abyss_animate(i, creature[i], x, y, stride,
+                          page == PORTRAIT ? 184 : show_macro ? 215 : 240, repaint);
+        int active = !trk[i].p[P_MUTE] && (trk[i].seq_n || trk[i].nheld || (i == song.sel && (int32_t)(flash_until - fm1_ms) > 0));
         int colour = active ? 0xFFE0 : i == song.sel ? 0xFFFF : 0x0862;
         if (repaint || colour != border_cache[i]) {
-            abyss_frame(x,y,w,(uint16_t)colour);
+            abyss_frame(x,y,w,page == PORTRAIT ? 184 : w,(uint16_t)colour);
             border_cache[i] = colour;
             if (page == STEPS) step_signature = ~0u;
         }
@@ -412,15 +557,41 @@ static void abyss_draw(void)
         if (!autosave_put(autosave_hash_of(&autosave_buf))) save_until = fm1_ms + 900;
         pending_save = 0;
     }
+    /* Four pearls give a child the beat and show when a recorded bar wraps. */
+    int beat = grid && song.playing ? (trk[0].seq_idx % 16) / 4 : -1;
+    if (beat >= 0 && (beat != drawn_beat || paint_mask || status != drawn_status)) {
+        cv_begin(36, 12, 0x0862);
+        for (int i = 0; i < 4; ++i) {
+            int r = i == beat ? 4 : 2;
+            for (int dy = -r; dy <= r; ++dy) {
+                int span = r - (dy < 0 ? -dy : dy);
+                cv_rect(5 + i*8 - span, 5 + dy, 2*span+1, 1,
+                        i == beat ? ((status & 2) ? 0xfacb : 0xffae) : 0x74b4);
+            }
+        }
+        cv_blit(40, 6);
+    }
+    drawn_beat = beat;
     if (status != drawn_status || paint_mask) {
         if (status || editor) lcd_fill(6,6,32,12,0x0862);
         if (status & 1) for (unsigned i = 0; i < 7; ++i) lcd_fill(9+i,8+i/2,1,8-i,0x57EC);
         if (status & 2) lcd_fill(20,8,7,7,0xF800);
         if (status & 4) lcd_fill(30,8,5,7,0xFFFF);
+        if (status & 24) {
+            cv_begin(16, 12, 0x0862);
+            for (int y = 1; y <= 7; ++y) {
+                int d = y < 4 ? 4-y : y-4;
+                cv_rect(status & 8 ? 2+d : 11-d, y, 2, 1, 0xffff);
+            }
+            cv_rect(5, 4, 7, 2, 0xffff);
+            cv_rect(status & 8 ? 11 : 4, 5, 2, 5, 0xffff);
+            cv_blit(79, 6);
+        }
         drawn_status = status;
     }
     if (page == PORTRAIT && paint_mask) abyss_legend();
-    if (show_macro) {
+    if (show_macro && (macro_dirty || paint_mask)) {
+        macro_dirty = 0;
         unsigned k = macro_knob;
         char value[16], label[26] = "K1  ";
         label[1] += k;
