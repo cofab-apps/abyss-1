@@ -1,0 +1,123 @@
+firmware: the release (Optimist on fm1-base, fm1base/)
+compiler pi32v2-llvm (/workspace/scratch/fbe8af710c0b/refs/optimist/build/toolchains/pi32v2-llvm-dropin-4f631b31b-e575321)
+optimist/core/opt_core.c:395:17: warning: variable 'opt_rx_bad' set but not used [-Wunused-but-set-global]
+  395 | static uint32_t opt_rx_bad;
+      |                 ^
+1 warning generated.
+font T: packed 1468 B -> 1320 B
+font T: BarlowSemiCondensed-SemiBold.ttf 10px h 12, digit adv 5, 1320 B
+font XS: packed 2554 B -> 2266 B
+font XS: BarlowSemiCondensed-SemiBold.ttf 12px h 15, digit adv 6, 2266 B
+font S: packed 3603 B -> 2790 B
+font S: BarlowSemiCondensed-Medium.ttf 15px h 16, digit adv 7, 2790 B
+font B: packed 3747 B -> 2870 B
+font B: BarlowSemiCondensed-Bold.ttf 15px h 16, digit adv 8, 2870 B
+font M: packed 4992 B -> 3215 B
+font M: BarlowSemiCondensed-SemiBold.ttf 23px h 24, digit adv 12, 3215 B
+font L: packed 12756 B -> 6799 B
+font L: BarlowSemiCondensed-Bold.ttf 31px h 32, digit adv 16, 6799 B
+font set barlow: 19662 B (approx)
+words: 79 own + 51 common -> /workspace/scratch/fbe8af710c0b/refs/optimist/fm1base/optimist/web/words/f342436800.json (2457 B)
+loader: image 15596 B at 0x1c0a800, bss end 0x1c15e60
+loader: ota.bin 13405 B
+  warn  felucca_config.h: WIDE: all-pass at full resolution: EXPERIMENTAL (host-measured only (a sine through the firmware's own code, 2026-10-26); not yet heard on an FM-1)
+  warn  felucca_config.h: track FILTER: full resolution (quiet high-pass): EXPERIMENTAL (host-measured only (a sine through the firmware's own code, 2026-10-26); not yet heard on an FM-1)
+  warn  felucca_config.h: drum lane FX: hold a black key (ROLL, CHANCE, FILL, NUDGE, VRAND, FLAM, RAMP, EVERY): EXPERIMENTAL (host-tested only, not on a device)
+  warn  felucca_config.h: note generators: the examples WALK and UPDN (they choose the notes): EXPERIMENTAL (host-tested only (tests/examples_test.c), not on a device)
+  warn  felucca_config.h: web editor: live editing (else backup / restore and the librarian) off: no live editing from the web editor: backup and restore, and with LIBRARIAN the projects, presets, patterns and kits
+  warn  felucca_config.h: SD card on the LCD bus (a hardware mod) off: no SD card
+  warn  felucca_config.h: flash layout: the MEMORY step (set by SD CARD MODE, SAMPLE SLOTS and PROJECTS): EXPERIMENTAL (host-tested only; on an FM-1 whose flash runs the release image's 820 KB (docs/SD-MODE-DESIGN.md))
+  warn  felucca_config.h: memory per project (the free RAM: one arena for the engines and the effects' lines): EXPERIMENTAL (host-tested (tests/fx_arena_test.c, arena_bufs_test.c, arena_test.c, arena_frag_test.c, placeholder_test.c); on the user's FM-1 since 2026-10-29 (the fm1-next test packages))
+  warn  felucca_config.h: the screen's drawing canvas: smaller for RAM: EXPERIMENTAL (host tests: every frame of the UI's host run the same pixels at 124, 62 and 31 rows; on the FM-1 (2026-11-01, the user): 62 and 31 rows look the same as 124, so 31 is the default)
+  warn  felucca_config.h: Wi-Fi + Link: join a network, Ableton Link as a clock: EXPERIMENTAL (on an FM-1 as far as receive and decrypt (docs/WIFI-LINK-HANDOVER.md); DHCP and a Link session not through yet)
+  warn  felucca_config.h: Wi-Fi AP: the FM-1 as an access point (MODE AP): EXPERIMENTAL (host-tested (the authenticator against our own station, the daemon over a stand-in radio, the page, the web command); the radio side is not tested on an FM-1 yet)
+  warn  felucca_config.h: USB MIDI host: a USB-MIDI keyboard, controller or synth plugged into the FM-1: EXPERIMENTAL (host-tested only; USB host IN ran on Melodee, OUT not validated on a device)
+  warn  felucca_config.h: USB audio: EXPERIMENTAL, its audio quality on the FM-1 not checked yet (+12 KB pool)
+  warn  felucca_config_profile.h: WIDE: all-pass at full resolution: EXPERIMENTAL (host-measured only (a sine through the firmware's own code, 2026-10-26); not yet heard on an FM-1)
+  warn  felucca_config_profile.h: track FILTER: full resolution (quiet high-pass): EXPERIMENTAL (host-measured only (a sine through the firmware's own code, 2026-10-26); not yet heard on an FM-1)
+  warn  felucca_config_profile.h: drum lane FX: hold a black key (ROLL, CHANCE, FILL, NUDGE, VRAND, FLAM, RAMP, EVERY): EXPERIMENTAL (host-tested only, not on a device)
+  warn  felucca_config_profile.h: note generators: the examples WALK and UPDN (they choose the notes): EXPERIMENTAL (host-tested only (tests/examples_test.c), not on a device)
+  warn  felucca_config_profile.h: web editor: live editing (else backup / restore and the librarian) off: no live editing from the web editor: backup and restore, and with LIBRARIAN the projects, presets, patterns and kits
+  warn  felucca_config_profile.h: SD card on the LCD bus (a hardware mod) off: no SD card
+  warn  felucca_config_profile.h: flash layout: the MEMORY step (set by SD CARD MODE, SAMPLE SLOTS and PROJECTS): EXPERIMENTAL (host-tested only; on an FM-1 whose flash runs the release image's 820 KB (docs/SD-MODE-DESIGN.md))
+  warn  felucca_config_profile.h: memory per project (the free RAM: one arena for the engines and the effects' lines): EXPERIMENTAL (host-tested (tests/fx_arena_test.c, arena_bufs_test.c, arena_test.c, arena_frag_test.c, placeholder_test.c); on the user's FM-1 since 2026-10-29 (the fm1-next test packages))
+  warn  felucca_config_profile.h: the screen's drawing canvas: smaller for RAM: EXPERIMENTAL (host tests: every frame of the UI's host run the same pixels at 124, 62 and 31 rows; on the FM-1 (2026-11-01, the user): 62 and 31 rows look the same as 124, so 31 is the default)
+  warn  felucca_config_profile.h: Wi-Fi + Link: join a network, Ableton Link as a clock: EXPERIMENTAL (on an FM-1 as far as receive and decrypt (docs/WIFI-LINK-HANDOVER.md); DHCP and a Link session not through yet)
+  warn  felucca_config_profile.h: Wi-Fi AP: the FM-1 as an access point (MODE AP): EXPERIMENTAL (host-tested (the authenticator against our own station, the daemon over a stand-in radio, the page, the web command); the radio side is not tested on an FM-1 yet)
+  warn  felucca_config_profile.h: USB MIDI host: a USB-MIDI keyboard, controller or synth plugged into the FM-1: EXPERIMENTAL (host-tested only; USB host IN ran on Melodee, OUT not validated on a device)
+  warn  felucca_config_profile.h: USB audio: EXPERIMENTAL, its audio quality on the FM-1 not checked yet (+12 KB pool)
+optimist /workspace/scratch/fbe8af710c0b/refs/optimist (headers: /workspace/scratch/fbe8af710c0b/refs/optimist/fm1base/optimist/build/optgen; profile builder.config)
+size: 392 main-loop functions built for size (135 kept at -Os: the sound side reaches them; 71 not in this build; 56 noinline: -Os code calls them; 0 the sound side's files' main-loop functions)
+size: kept at -Os: att_error att_find_by_type att_find_info att_group_end att_len att_midi_in att_midi_out att_need_enc att_range att_read att_read_by att_send att_type_is att_uuid16 att_write ba_media_send ba_sbc_out ble_app_bond ble_app_midi_in ble_app_peer_id ble_app_state ble_att_event ble_att_midi_packet ble_att_reset ble_att_rx ble_connected ble_gap_name ble_host_audio ble_host_connected ble_host_disconnected ble_host_encrypted ble_host_event ble_host_ltk ble_host_rx ble_host_set_key ble_hw_adv_start ble_hw_adv_stop ble_hw_chmap_update ble_hw_conn_start ble_hw_conn_stop ble_hw_conn_update ble_hw_rand ble_hw_set_lengths ble_hw_time_us ble_hw_tx_kick ble_midi_dec ble_midi_dec_reset ble_midi_enc_add ble_midi_enc_begin ble_midi_enc_len ble_midi_enc_reset ble_midi_last_ts ble_midi_ready ble_sig_want_fast ble_wl82_event_irq ble_wl82_rx_irq blt_afh_alarm blt_fill blt_load_sig blt_put bm_data bm_data_len bm_emit bm_kind bm_status bm_sx_put bp_addr_set bp_alarm bp_clkoff bp_conn_enter bp_conn_rx bp_event bp_good_note bp_media_queue bp_page_rx bp_program bp_queue_w bp_rng bp_rx bp_ssp_send bp_xchg bt_audio_feed bta_mem_of bti_agc_follow bti_alarm bti_alarm_arm bti_bt_irq bti_clkn bti_is_data bti_pll bti_push bti_run_stop bti_rx_frame bti_slot_irq btl_opcode btp_begin btp_bond cb_channels cb_rfprio cb_widen cb_window con_dec con_puts hw_adv_buffer hw_adv_find hw_adv_parse hw_adv_program hw_any hw_cpy hw_event_service hw_freq hw_instants hw_isr_end hw_link_open hw_rx_adv hw_rx_adv_isr hw_rx_adv_late hw_rx_service hw_rx_wipe hw_stop hw_tx_empty hw_tx_held hw_tx_read hw_tx_service hw_widening l2cap_frame own_bta_feed own_q_peek own_q_pop own_stream_ms own_stream_on sig_conn_params sig_rx sig_send uECC_set_rng
+size: 2684 main-loop functions built for size (23 kept at -Os: the sound side reaches them; 1778 not in this build; 83 noinline: -Os code calls them; 159 the sound side's files' main-loop functions)
+size: kept at -Os: arrangement_ready ble_midi_out ble_rt_drop_after ble_rt_on ble_rt_push bta_lat_t ifx_owner lin_amt popc2 project_used rec_size rs_any rt_amt sec_pend_has sec_ready slg_has stg_bytes ub undo_drop_oldest undo_forget undo_yield uwrap xd_samples
+ir_pass: 1522 functions of the unit's sound side and main loop at optsize (-Os, as Optimist's felucca.c)
+ir_pass: 0 functions at optsize (-Os, as Optimist's FatFs units)
+  ok    .ram_text: 1311 insns, no calls
+  ok    main stack: 5,064 B at most (static) of 6,656 (slg_mark_dead > st_prog#2 > plat_data_write > fl_write)
+  ok    interrupt stack: 3,636 B at most (static) of 6,400 (SBC_FastIDCT8 > plat_unlock > blt_fill > cv_text)
+  ok    app RAM code (.app_ram): 49828 B, 84 functions, 84 with the RAM code they call (.ram_text 54176 B in all); calls out of RAM or through a pointer allowed in dins_of, dist_run, dly_run, drums_mix, drums_pre, dual_job, dual_run, fx_ret_block, ifx_bus, ifx_drive, ifx_gater, ifx_lim_run, ifx_part, ifx_quiet_part, ifx_st, ifx_ts_run, mix_block, rev_bus, rev_post, ut_mix (ram_code_allow)
+  ok    ram_code_allow: not in this build: rev_run
+  ok    ram_code_allow: in XIP in this build (not RAM code): a2_naive, digital_render
+  ok    64-bit multiplies inlined beside loads (felucca-bsp docs/CPU.md: may corrupt a register; move them out of line): SBC_FastIDCT8, plat_bta_latency_us, muladd, a2_lp, a2_lp_i, a2_lp2_i, fm6_post, fm6_control ...
+  ok    own Bluetooth stack: nothing of JieLi's linked, the radio's ramp in RAM
+  ok    no soft-double routines (single-precision FPU only)
+  ok    cache RAM: 4 data-cache ways (16384 B), 0 B of objects in .cache_ram, 16384 B for the app (plat_cache_ram, after its test at the start)
+  ok    own WiFi stack: nothing of JieLi's linked, the frame DMA's buffers at 0x1c13290 / 0x1c13e80 (below 0x01C20000), Ableton Link (GPL-3.0-only)
+  ok    image 817300 B; SRAM 231764 B of 494336: RAM code 54176 B, .data+.bss 115032 B, pool 62556 B; free 262572 B (8192 kept spare)
+  ok    boot_pack: .ram_text + .data 58860 B stored as 38264 B (LZMA, unpacked at boot)
+  ok    register access: felucca-bsp only (device/, include/ and the app clean)
+parts    Bluetooth MIDI, Bluetooth audio, USB audio in, USB audio out, USB MIDI host, the SD card, WiFi, the second core, the screen reader, companion services, WiFi (own stack), Ableton Link (GPL-3.0-only), WiFi access point (MODE AP), WiFi MODE JANK (open, no keys)  (not built in: Bluetooth MIDI devices, USB disk mode, velocity, pressure, screen mirroring, backup and restore, a resource region)
+app      /workspace/scratch/fbe8af710c0b/refs/optimist/fm1base/optimist/build/optimist.bin  817300 B
+loader   /workspace/scratch/fbe8af710c0b/refs/optimist/fm1base/optimist/build/loader/ota.bin  13405 B
+package  /workspace/scratch/fbe8af710c0b/refs/optimist/fm1base/optimist/build/optimist.fwsc  858225 B, identity FM-1_70900
+build    C450E559  (FM1B_BUILD: the build a crash record names, fm1_remote.py crashes)
+about    /workspace/scratch/fbe8af710c0b/refs/optimist/fm1base/optimist/build/firmware.json  (for firmware hubs)
+compiler pi32v2-llvm (/workspace/scratch/fbe8af710c0b/refs/optimist/build/toolchains/pi32v2-llvm-dropin-4f631b31b-e575321)
+optimist/core/opt_core.c:395:17: warning: variable 'opt_rx_bad' set but not used [-Wunused-but-set-global]
+  395 | static uint32_t opt_rx_bad;
+      |                 ^
+1 warning generated.
+font T: packed 1468 B -> 1320 B
+font T: BarlowSemiCondensed-SemiBold.ttf 10px h 12, digit adv 5, 1320 B
+font XS: packed 2554 B -> 2266 B
+font XS: BarlowSemiCondensed-SemiBold.ttf 12px h 15, digit adv 6, 2266 B
+font S: packed 3603 B -> 2790 B
+font S: BarlowSemiCondensed-Medium.ttf 15px h 16, digit adv 7, 2790 B
+font B: packed 3747 B -> 2870 B
+font B: BarlowSemiCondensed-Bold.ttf 15px h 16, digit adv 8, 2870 B
+font M: packed 4992 B -> 3215 B
+font M: BarlowSemiCondensed-SemiBold.ttf 23px h 24, digit adv 12, 3215 B
+font L: packed 12756 B -> 6799 B
+font L: BarlowSemiCondensed-Bold.ttf 31px h 32, digit adv 16, 6799 B
+font set barlow: 19662 B (approx)
+words: 79 own + 51 common -> /workspace/scratch/fbe8af710c0b/refs/optimist/fm1base/optimist/web/words/f342436800.json (2457 B)
+loader: image 15596 B at 0x1c0a800, bss end 0x1c15e60
+loader: ota.bin 13405 B
+size: 392 main-loop functions built for size (135 kept at -Os: the sound side reaches them; 71 not in this build; 56 noinline: -Os code calls them; 0 the sound side's files' main-loop functions)
+size: kept at -Os: att_error att_find_by_type att_find_info att_group_end att_len att_midi_in att_midi_out att_need_enc att_range att_read att_read_by att_send att_type_is att_uuid16 att_write ba_media_send ba_sbc_out ble_app_bond ble_app_midi_in ble_app_peer_id ble_app_state ble_att_event ble_att_midi_packet ble_att_reset ble_att_rx ble_connected ble_gap_name ble_host_audio ble_host_connected ble_host_disconnected ble_host_encrypted ble_host_event ble_host_ltk ble_host_rx ble_host_set_key ble_hw_adv_start ble_hw_adv_stop ble_hw_chmap_update ble_hw_conn_start ble_hw_conn_stop ble_hw_conn_update ble_hw_rand ble_hw_set_lengths ble_hw_time_us ble_hw_tx_kick ble_midi_dec ble_midi_dec_reset ble_midi_enc_add ble_midi_enc_begin ble_midi_enc_len ble_midi_enc_reset ble_midi_last_ts ble_midi_ready ble_sig_want_fast ble_wl82_event_irq ble_wl82_rx_irq blt_afh_alarm blt_fill blt_load_sig blt_put bm_data bm_data_len bm_emit bm_kind bm_status bm_sx_put bp_addr_set bp_alarm bp_clkoff bp_conn_enter bp_conn_rx bp_event bp_good_note bp_media_queue bp_page_rx bp_program bp_queue_w bp_rng bp_rx bp_ssp_send bp_xchg bt_audio_feed bta_mem_of bti_agc_follow bti_alarm bti_alarm_arm bti_bt_irq bti_clkn bti_is_data bti_pll bti_push bti_run_stop bti_rx_frame bti_slot_irq btl_opcode btp_begin btp_bond cb_channels cb_rfprio cb_widen cb_window con_dec con_puts hw_adv_buffer hw_adv_find hw_adv_parse hw_adv_program hw_any hw_cpy hw_event_service hw_freq hw_instants hw_isr_end hw_link_open hw_rx_adv hw_rx_adv_isr hw_rx_adv_late hw_rx_service hw_rx_wipe hw_stop hw_tx_empty hw_tx_held hw_tx_read hw_tx_service hw_widening l2cap_frame own_bta_feed own_q_peek own_q_pop own_stream_ms own_stream_on sig_conn_params sig_rx sig_send uECC_set_rng
+size: 2684 main-loop functions built for size (23 kept at -Os: the sound side reaches them; 1778 not in this build; 83 noinline: -Os code calls them; 159 the sound side's files' main-loop functions)
+size: kept at -Os: arrangement_ready ble_midi_out ble_rt_drop_after ble_rt_on ble_rt_push bta_lat_t ifx_owner lin_amt popc2 project_used rec_size rs_any rt_amt sec_pend_has sec_ready slg_has stg_bytes ub undo_drop_oldest undo_forget undo_yield uwrap xd_samples
+ir_pass: 1522 functions of the unit's sound side and main loop at optsize (-Os, as Optimist's felucca.c)
+ir_pass: 0 functions at optsize (-Os, as Optimist's FatFs units)
+  ok    .ram_text: 1311 insns, no calls
+  ok    main stack: 5,064 B at most (static) of 6,656 (slg_mark_dead > st_prog#2 > plat_data_write > fl_write)
+  ok    interrupt stack: 3,636 B at most (static) of 6,400 (SBC_FastIDCT8 > midi_in_enqueue > blt_fill > cv_text)
+  ok    app RAM code (.app_ram): 49828 B, 84 functions, 84 with the RAM code they call (.ram_text 54176 B in all); calls out of RAM or through a pointer allowed in dins_of, dist_run, dly_run, drums_mix, drums_pre, dual_job, dual_run, fx_ret_block, ifx_bus, ifx_drive, ifx_gater, ifx_lim_run, ifx_part, ifx_quiet_part, ifx_st, ifx_ts_run, mix_block, rev_bus, rev_post, ut_mix (ram_code_allow)
+  ok    ram_code_allow: not in this build: rev_run
+  ok    ram_code_allow: in XIP in this build (not RAM code): a2_naive, digital_render
+  ok    64-bit multiplies inlined beside loads (felucca-bsp docs/CPU.md: may corrupt a register; move them out of line): SBC_FastIDCT8, plat_bta_latency_us, muladd, a2_lp, a2_lp_i, a2_lp2_i, fm6_post, fm6_control ...
+  ok    own Bluetooth stack: nothing of JieLi's linked, the radio's ramp in RAM
+  ok    no soft-double routines (single-precision FPU only)
+  ok    cache RAM: 4 data-cache ways (16384 B), 0 B of objects in .cache_ram, 16384 B for the app (plat_cache_ram, after its test at the start)
+  ok    own WiFi stack: nothing of JieLi's linked, the frame DMA's buffers at 0x1c13290 / 0x1c13e80 (below 0x01C20000), Ableton Link (GPL-3.0-only)
+  ok    image 817368 B; SRAM 231764 B of 494336: RAM code 54176 B, .data+.bss 115032 B, pool 62556 B; free 262572 B (8192 kept spare)
+  ok    boot_pack: .ram_text + .data 58860 B stored as 38268 B (LZMA, unpacked at boot)
+  ok    register access: felucca-bsp only (device/, include/ and the app clean)
+parts    Bluetooth MIDI, Bluetooth audio, USB audio in, USB audio out, USB MIDI host, the SD card, WiFi, the second core, the screen reader, companion services, WiFi (own stack), Ableton Link (GPL-3.0-only), WiFi access point (MODE AP), WiFi MODE JANK (open, no keys)  (not built in: Bluetooth MIDI devices, USB disk mode, velocity, pressure, screen mirroring, backup and restore, a resource region)
+app      /workspace/scratch/fbe8af710c0b/refs/optimist/fm1base/optimist/build/optimist.bin  817368 B
+loader   /workspace/scratch/fbe8af710c0b/refs/optimist/fm1base/optimist/build/loader/ota.bin  13405 B
+package  /workspace/scratch/fbe8af710c0b/refs/optimist/fm1base/optimist/build/optimist.fwsc  858225 B, identity FM-1_70900
+build    C450E559  (FM1B_BUILD: the build a crash record names, fm1_remote.py crashes)
+about    /workspace/scratch/fbe8af710c0b/refs/optimist/fm1base/optimist/build/firmware.json  (for firmware hubs)
+exact:   flash 817,368 of 823,228, sram 231,764 of 486,144 (ram 115,032, pool 62,556, ramtext 54,176)
