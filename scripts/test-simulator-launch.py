@@ -36,6 +36,7 @@ with sync_playwright() as playwright:
         }
     }""")
     page.goto(launch_url, wait_until="domcontentloaded")
+    page.wait_for_function("document.querySelector('#title')?.textContent.includes('ABYSS-1')", timeout=60000)
     with page.expect_response(lambda r: r.url.split("?")[0].endswith(".fwsc")) as pending:
         page.locator("#start").tap()
     response = pending.value
