@@ -1,5 +1,6 @@
 """Cross-build the ABYSS control surface, portraits and patches on the pinned base."""
 import json
+import os
 import re
 import subprocess
 import sys
@@ -62,7 +63,7 @@ def patches(f):
     return "\n".join(lines)
 
 
-def build(checkout):
+def build(checkout, host=False):
     ui = checkout / "fm1base/optimist/ui"
     with ExitStack() as undo:
         def replace(path, data):
@@ -71,6 +72,34 @@ def build(checkout):
             else:
                 undo.callback(path.unlink, missing_ok=True)
             path.write_text(data)
+        def change(path, old, new):
+            text = path.read_text()
+            if text.count(old) != 1:
+                raise ValueError(f"Unexpected layout in {path}: {old}")
+            replace(path, text.replace(old, new))
+
+        # Keep the platform's touch implementation in its own compilation unit.
+        app = ui.parent
+        change(app/"app.h", '#define APP_NAME "OPTIMIST"', '#define APP_NAME "ABYSS-1"\n#define APP_TOUCH')
+        change(app/"app.c", "keys_seen = plat_keys();", "keys_seen = touch_is_on() ? touch_keys() : plat_keys();")
+        change(app/"app.c", "void app_input_only(void) { opt_ui_input(); }",
+               "void app_input_only(void) { if (touch_is_on()) touch_poll(); opt_ui_input(); }")
+        change(app/"app.c", "void app_frame(void) { opt_ui_frame(); }",
+               "void app_frame(void) { if (touch_is_on()) touch_poll(); opt_ui_frame(); }")
+        change(ui/"opt_panel.h", "k = plat_keys() | fm1_rem_note",
+               "k = (touch_is_on() ? touch_keys() : plat_keys()) | fm1_rem_note")
+        core = app/"core/opt_core.c"
+        change(core, '#include "core/core.h"', '#include "core/core.h"\n#include "touch.h"\n'
+               'static uint8_t abyss_pressure[NPART][128], abyss_channel_pressure[NPART];')
+        src = checkout/"firmware/src"
+        change(src/"seq/seq.c", "    kb_kind[k] = KS_NONE;\n    kb_trk[k] = (uint8_t)sel;",
+               "    key_vel = touch_is_on() ? touch_vel(k) : 100;\n"
+               "    kb_kind[k] = KS_NONE;\n    kb_trk[k] = (uint8_t)sel;")
+        change(src/"io/midi/midi_control.c", "    MIDI_EXPR_HOOK(t, c);",
+               "    abyss_channel_pressure[t - trk] = c->press;\n    MIDI_EXPR_HOOK(t, c);")
+        change(src/"core/voice.c", "        if (v->vel > 110)",
+               "        m.cutoff += (abyss_channel_pressure[t - trk] + abyss_pressure[t - trk][v->note & 127]) * 88;\n"
+               "        if (v->vel > 110)")
         for f in FAMILIES:
             path = checkout/"firmware/src/engines"/f["source"]
             pattern = r"(static const preset_t "+f["table"]+r"\[\] = \{\n).*?(\n\};)"
@@ -88,15 +117,24 @@ def build(checkout):
             ('            trk_def_sound(t, i);','            /* ABYSS patch already applied. */',1),
             ('            t->p[P_REV] = 0;','            /* Keep the creature room send. */',1),
             ('    ui_input();','    abyss_input();',2),
+            ('    ui_leds();','    abyss_lights();',1),
             ('        ui_draw();','        abyss_draw();',1),
             ('    layers_init();','    layers_init();\n    memset(ly_bit, 0, sizeof ly_bit);\n    abyss_restore();',1),
         ]:
             assert data.count(old)==n, old
             data=data.replace(old,new)
         replace(p,data)
-        subprocess.run([sys.executable,"tools/optimist.py","build","--config",str(ROOT/"four-part.config"),
+        config = ROOT / "out/creatures.config"
+        config.write_text((ROOT/"four-part.config").read_text().replace("MIDI_EXPR=0", "MIDI_EXPR=1"))
+        if host:
+            env = dict(os.environ, OPTIMIST=str(checkout), OPT_CONFIG=str(config),
+                       OPT_TREE_COPY="1", FM1B_APP_END="0xCE000", X0X_FONTSET="terminus")
+            subprocess.run([sys.executable,"tools/build.py","optimist","--host"],
+                           cwd=checkout/"fm1base", env=env, check=True)
+            return
+        subprocess.run([sys.executable,"tools/optimist.py","build","--config",str(config),
                         "--summary",str(ROOT/"out/creatures.json")], cwd=checkout,check=True)
 
 
 if __name__ == "__main__":
-    build(Path(sys.argv[1]).resolve())
+    build(Path(sys.argv[1]).resolve(), "--host" in sys.argv[2:])

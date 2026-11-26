@@ -4,7 +4,7 @@ Run these commands from the root of a clone of this repository. For playback of 
 
 | Build target | Input | Local output | Checked-in package |
 |---|---|---|---|
-| ABYSS creature firmware | [Voice definitions](firmware/voices.json), panel, portraits and four-part config | `out/creatures.fwsc` | [abyss-1-creatures.fwsc](builds/abyss-1-creatures.fwsc) |
+| ABYSS creature firmware | [Voice definitions](firmware/voices.json), panel, portraits and four-part config | `out/creatures.fwsc` | [abyss-1-beta-1.fwsc](builds/abyss-1-beta-1.fwsc) |
 | Baseline | Upstream `mots-config` release profile | `out/baseline.fwsc` | [upstream-baseline.fwsc](builds/upstream-baseline.fwsc) |
 | Four-part | [four-part.config](four-part.config) | `out/four-part.fwsc` | [four-part-formant.fwsc](builds/four-part-formant.fwsc) |
 
@@ -27,6 +27,8 @@ The wrapper checks out the lock revision and recursive submodules, uses upstream
 
 Browser regression tests use Python Playwright and a compatible Chromium. Set `CHROMIUM` to the executable if using system Chromium. Run `python3 scripts/emulator-smoke.py simulator builds/four-part-formant.fwsc`. Run `python3 scripts/prototype-smoke.py prototype` to test both original browser versions. The portrait estimate uses Pillow and accepts `prototype/abyss1`. The simulator WASM is the downloaded upstream Pages binary. Its hash is in evidence/checksums.txt. Building the emulator itself from Rust is independent of building firmware.
 
+
+[Beta capture, soak and key-sensing tests](docs/BETA-1.md#reproduce-the-captures) exercise the packaged artifact and the host contact model.
 
 ## Verify the checked-in packages
 

@@ -1,0 +1,119 @@
+{
+  "capture": "fm1_web.wasm fm1_lcd(), 240x240, little-endian RGB565, 60 MHz",
+  "firmware_sha256": "8759b249d003f658bd139bee13520c4032c82e44508d730666503c3f2243b88d",
+  "previous_sha256": "f109f85496181c6916af6e613f71719b606f43afb197d68ce1bb1e310cf70a66",
+  "emulator_sha256": "77218ba7187bccecdd94731a10dc54128194336678a026ebdf71d62e86f27880",
+  "picture_interior_pixel_comparisons": {
+    "portrait-00": {
+      "matching": 54756,
+      "compared": 54756
+    },
+    "portrait-01": {
+      "matching": 54756,
+      "compared": 54756
+    },
+    "portrait-02": {
+      "matching": 54756,
+      "compared": 54756
+    },
+    "portrait-03": {
+      "matching": 54756,
+      "compared": 54756
+    },
+    "portrait-04": {
+      "matching": 54756,
+      "compared": 54756
+    },
+    "portrait-05": {
+      "matching": 54756,
+      "compared": 54756
+    },
+    "portrait-06": {
+      "matching": 54756,
+      "compared": 54756
+    },
+    "portrait-07": {
+      "matching": 54756,
+      "compared": 54756
+    },
+    "portrait-08": {
+      "matching": 54756,
+      "compared": 54756
+    },
+    "portrait-09": {
+      "matching": 54756,
+      "compared": 54756
+    },
+    "portrait-10": {
+      "matching": 54756,
+      "compared": 54756
+    },
+    "portrait-11": {
+      "matching": 54756,
+      "compared": 54756
+    },
+    "portrait-12": {
+      "matching": 54756,
+      "compared": 54756
+    },
+    "portrait-13": {
+      "matching": 54756,
+      "compared": 54756
+    },
+    "portrait-14": {
+      "matching": 54756,
+      "compared": 54756
+    },
+    "portrait-15": {
+      "matching": 54756,
+      "compared": 54756
+    },
+    "orchestra-tile-1": {
+      "matching": 12996,
+      "compared": 12996
+    },
+    "orchestra-tile-2": {
+      "matching": 12996,
+      "compared": 12996
+    },
+    "orchestra-tile-3": {
+      "matching": 12996,
+      "compared": 12996
+    },
+    "orchestra-tile-4": {
+      "matching": 12996,
+      "compared": 12996
+    }
+  },
+  "raw_lcd_sha256": {
+    "mix-playing": "b41914238d240cba4282498bfccc2676118d72de4ea5923200bf4460bf2cadac",
+    "optimist-previous": "69129452d90d2f37a0cf59a9f0ee9f257335161c157c84cbfc2426f8cce080e3",
+    "orchestra": "aebf30ae3a5aab0e1c6681da125d2ac08a0990ff7342d11ad688db23f6278760",
+    "portrait-00": "9b319e1649c8bcc17f86292f5e119ea80abf1b74226f77a64b372fa93b0f843f",
+    "portrait-01": "c54a925402b8b8d78f475fddf1e2f8c9257af3a6a4a5ec826892375d7d22bdc3",
+    "portrait-02": "c137e5c987d2c53537d5b2408430591555cbded6af6669be381cb11898b643f8",
+    "portrait-03": "e3c7ae8f1437110096d966192a737f1a405352531622612de8e569f6c0bd85f2",
+    "portrait-04": "9f1d1e71123a16ab30f2022f6fd1d4fd3f2aade0a8f80297b52dbdca00a71da3",
+    "portrait-05": "46921f6e5cab88743f8eaf53e7b4df3051096a5626e31a79a4d49610a580dfe6",
+    "portrait-06": "a650f80eeea56c1ba9f65cc661b0ca90787eff4e53b11d554bf6b4ea632e0fc3",
+    "portrait-07": "1eb7d0e0c1e79c2ef28bba78d126ee4260a783b32ca77d42168b6a37c969b8a8",
+    "portrait-08": "98eba13bcb5e21a1f3715479a65094a3916d128cad5e6aec0440a79b53525970",
+    "portrait-09": "77319b9e718643926e78613dc75212aae302b5534278876cbad1c3c545d0d159",
+    "portrait-10": "e25b2b1fec1652c0ef4c1ec3672e79f6ba02c448a239f3f80e1b38449f87110b",
+    "portrait-11": "9c91a6b920d28bb421d9057f20cf7688ca0ac75b343413f6a02c5380157d213c",
+    "portrait-12": "f305e5a4cb6cd63741f780be1a3319019ae7c00bb9929c62f6703a361b4fdfd0",
+    "portrait-13": "cd7614b53077092f90635d076fe0d34f7e36ae133b2428023df6d459a2784894",
+    "portrait-14": "0a63b392a530bc8afbc5b48ddd0eb9075917b9493244bd4341c6193044051b60",
+    "portrait-15": "8bc43a0d66c3559e78a86e1e0ff644260ce4cd72559cd089112bcacd19c350d7",
+    "steps": "5df5562ed7c24dca4291d97356d3eb3345e587edfa928270c599368e85ec90fc"
+  },
+  "png_sha256": {
+    "firmware-comparison.png": "47f633961fcbbff902b403f1731ebef958054a01d90f0c7f5a0d979ddf325f31",
+    "mix-playing.png": "6a457abb300826c007908ec46cf51ad901ef6acaff2ff7e5ae9634a81ac9f036",
+    "native-portraits.png": "33d72433781482bed72da76e1a09be73b218ecb16cd714a1465052a70439ea9c",
+    "optimist-previous.png": "cefbf1a806a9437037ab30810828c8d311ac340c20c23f029bc92549a50fbbe2",
+    "orchestra.png": "3a53edcc1cc93f4b4846b8dfb19c1c5f22f44d84a9dac31121d3746f1f8b8540",
+    "portrait-00.png": "4d040fba671f3210f8498a029e4f7b2901c39b4e5b4c47c438c2b50846299cd4",
+    "steps.png": "2994422ea6204191b6f21b6e8130511809461914e708a1d6f8485b8e9fee07ce"
+  }
+}

@@ -8,6 +8,27 @@ static uint32_t flash_until, save_until;
 static int drawn_status = -1;
 static int border_cache[4] = {-1, -1, -1, -1};
 static unsigned step_signature = ~0u;
+static uint32_t macro_until;
+static uint8_t macro_owner, macro_knob, macro_value, macro_visible;
+
+/* Apply physical pressure only to notes still held by that same key on its
+ * original part. A track change during a held note leaves its expression there. */
+static void abyss_sense(void)
+{
+    static uint32_t last;
+    if (!touch_is_on() || fm1_ms - last < 5) return;
+    last = fm1_ms;
+    memset(abyss_pressure, 0, sizeof abyss_pressure);
+    for (unsigned k = 0; k < 27; ++k) {
+        if (!touch_down(k) || kb_kind[k] != KS_NOTE) continue;
+        unsigned part = kb_trk[k] % NPART, pressure = touch_pressure(k);
+        for (unsigned n = 0; n < kb_n[k] && n < 4; ++n) {
+            uint8_t *level = &abyss_pressure[part][kb_nt[k][n] & 127];
+            if (pressure > *level) *level = pressure;
+        }
+    }
+}
+
 
 static void abyss_assign(unsigned part, unsigned id)
 {
@@ -78,6 +99,25 @@ static void abyss_input(void)
 {
     uint32_t buttons = fm1_input_edges(0), keys = fm1_input_note_edges();
     hp_poll();
+    abyss_sense();
+    /* ENV is the optional physical-key sensing mode. Plain matrix keys remain
+     * available to browsers that emulate only on/off contacts. */
+    if ((buttons & BIT(B_ENV)) && !oin_keys) {
+        touch_on(!touch_is_on());
+        memset(abyss_pressure, 0, sizeof abyss_pressure);
+    }
+    if (buttons & BIT(B_FX)) {
+        int next = TSEL->p[P_QUANT] == Q_SNAP ? Q_OFF : Q_SNAP;
+        for (unsigned i = 0; i < 4; ++i) {
+            trk[i].p[P_SCALE] = 6; /* minor pentatonic */
+            trk[i].p[P_QUANT] = next;
+        }
+    }
+    if ((buttons & BIT(B_EDIT)) && page == STEPS) {
+        fm1_irq_off();
+        step_wipe(TSEL, cursor, 0);
+        fm1_irq_on();
+    }
     enc_hold = 0;
     int select = panel_enc(EN_SELECT), family = panel_enc(EN_ALGO), variant = panel_enc(EN_PRESET);
     if (buttons || keys || select || family || variant) ui_input_ms = fm1_ms;
@@ -118,6 +158,10 @@ static void abyss_input(void)
             const param_desc_t *desc = m >= P_E0 && m <= P_E7 ?
                 &ENGINES[TSEL->eng_req]->edit[m-P_E0] : &TP[m];
             TSEL->p[m] = clamp(TSEL->p[m] + d * 3, desc->min, desc->max);
+            macro_owner = part;
+            macro_knob = k;
+            macro_value = (TSEL->p[m] - desc->min) * 100 / (desc->max - desc->min);
+            macro_until = fm1_ms + 650;
         }
     }
     if (buttons & BIT(B_PLAY)) op_play();
@@ -161,6 +205,12 @@ static void abyss_steps(void)
 static void abyss_draw(void)
 {
     int grid = page == ORCHESTRA || page == MIX;
+    int status = (song.playing ? 1 : 0) | ((song.rec || rec_wait) ? 2 : 0) |
+                 ((int32_t)(save_until - fm1_ms) > 0 ? 4 : 0);
+    if (status != drawn_status && drawn_status > 0) paint_mask |= 1u << (grid ? 0 : song.sel);
+    int show_macro = page != STEPS && page != MIX && macro_owner == song.sel && (int32_t)(macro_until - fm1_ms) > 0;
+    if (macro_visible && !show_macro) paint_mask = 15;
+    macro_visible = show_macro;
     for (unsigned i = 0; i < 4; ++i) {
         if (!grid && i != song.sel) continue;
         unsigned stride = grid ? 2 : 1, w = 240 / stride;
@@ -188,15 +238,32 @@ static void abyss_draw(void)
         if (!autosave_put(autosave_hash_of(&autosave_buf))) save_until = fm1_ms + 900;
         pending_save = 0;
     }
-    int status = (song.playing ? 1 : 0) | ((song.rec || rec_wait) ? 2 : 0) |
-                 ((int32_t)(save_until - fm1_ms) > 0 ? 4 : 0);
     if (status != drawn_status || paint_mask) {
-        lcd_fill(6,6,32,12,0x0862);
+        if (status) lcd_fill(6,6,32,12,0x0862);
         if (status & 1) for (unsigned i = 0; i < 7; ++i) lcd_fill(9+i,8+i/2,1,8-i,0x57EC);
         if (status & 2) lcd_fill(20,8,7,7,0xF800);
         if (status & 4) lcd_fill(30,8,5,7,0xFFFF);
         drawn_status = status;
     }
+    if (show_macro) {
+        unsigned x = grid ? (song.sel & 1) * 120 + 10 : 70;
+        unsigned y = grid ? (song.sel >> 1) * 120 + 99 : 217;
+        static const uint16_t colours[] = {0x5F1B, 0xFB45, 0xD4FF, 0x57BF};
+        lcd_fill(x,y,100,8,0x0862);
+        if (macro_value) lcd_fill(x,y,macro_value,8,colours[macro_knob]);
+    }
     paint_mask = 0;
     if (page == STEPS) abyss_steps();
+}
+
+static void abyss_lights(void)
+{
+    ui_leds();
+    fm1_led_key(panel.btn[B_HOME], page == ORCHESTRA);
+    fm1_led_key(panel.btn[B_SCL], page == PORTRAIT);
+    fm1_led_key(panel.btn[B_SEQ], page == STEPS);
+    fm1_led_key(panel.btn[B_GLO], page == MIX);
+    fm1_led_key(panel.btn[B_ENV], touch_is_on());
+    fm1_led_key(panel.btn[B_FX], TSEL->p[P_QUANT] == Q_SNAP);
+    fm1_led_key(panel.btn[B_REC], rec_wait || song.rec);
 }

@@ -9,7 +9,7 @@ from pathlib import Path
 from playwright.sync_api import sync_playwright
 
 target, package = sys.argv[1:]
-if target.startswith("https://"):
+if target.startswith(("https://", "http://")):
     origin = target.rstrip("/")
 else:
     handler = functools.partial(http.server.SimpleHTTPRequestHandler, directory=target)
@@ -36,7 +36,7 @@ with sync_playwright() as playwright:
         }
     }""")
     page.goto(origin + "/?fw=abyss-1&embed=1&mhz=60", wait_until="domcontentloaded")
-    with page.expect_response(lambda r: r.url.split("?")[0].endswith("/abyss-1-creatures.fwsc")) as pending:
+    with page.expect_response(lambda r: r.url.split("?")[0].endswith("/abyss-1-beta-1.fwsc")) as pending:
         page.locator("#start").tap()
     response = pending.value
     assert response.ok and hashlib.sha256(response.body()).digest() == hashlib.sha256(Path(package).read_bytes()).digest()

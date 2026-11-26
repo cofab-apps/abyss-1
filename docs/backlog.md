@@ -8,7 +8,7 @@ Physical hardware, the Mac environment and character permissions remain open. Th
 
 ## Native creature build
 
-The firmware now renders all 16 portraits, assigns all four families, and runs the record, replay, mute and save flow on the emulated FM-1. The initial voices and four macros per family are defined in [voices.json](../firmware/voices.json). The panel and tests are in [panel.h](../firmware/panel.h) and [test-creatures.mjs](../scripts/test-creatures.mjs). Open acceptance work includes physical touch expression, blind listening, hardware timing and child playtesting.
+The firmware now renders all 16 portraits, assigns all four families, and runs the record, replay, mute and save flow on the emulated FM-1. The initial voices and four macros per family are defined in [voices.json](../firmware/voices.json). The panel and tests are in [panel.h](../firmware/panel.h) and [test-creatures.mjs](../scripts/test-creatures.mjs). Beta 1 adds live pressure expression, per-key strike sensing, step erase and scale lock. The host contact model and wired MIDI are covered by tests. Open acceptance work includes physical key feel, blind listening, hardware timing and child playtesting. [Beta 1 and graphics evidence](BETA-1.md)
 
 ## Phase 1 acceptance criteria
 

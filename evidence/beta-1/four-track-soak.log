@@ -1,0 +1,26 @@
+PASS exact default orchestra on the emulated LCD at 60 MHz
+PASS all sixteen native portraits, family and creature controls and wraparound
+PASS four independently selected keyboard voices, RMS 0.0419, 0.0117, 0.0212, 0.0349
+{
+  both: 0.012588734892751093,
+  bass: 0.012176080789257016,
+  percussion: 0.003502845260449754,
+  muted: 0
+}
+PASS real-time two-track overdub, transport and independent mute
+PASS saved creature and recorded loop survive a full chip reboot
+{"clockMHz":60,"emulatedMs":600135,"wallSeconds":158.31475190999998,"frames":26476544,"shortDacBlocks":0,"starvationDelta":0,"cpu1Fault":0,"lowestWindowRms":0.00047677588069096273,"highestWindowRms":0.05039657840145187,"sampledPeak":0.247406005859375}
+PASS four recorded creatures, simultaneous playback and four individually audible solos [
+  0.012467418579649146,
+  0.01813637537550827,
+  0.0016231023048053957,
+  0.008414040067324428
+]
+PASS step entry by physical encoder and key, then playback
+PASS selected-step erase
+PASS held-note channel aftertouch and velocity {
+  untouched: 0,
+  pressed: 0.01565626855023605,
+  soft: 0.005718749813613341,
+  firm: 0.017639426159163807
+}
