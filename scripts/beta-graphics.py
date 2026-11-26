@@ -45,8 +45,7 @@ for i,creature in enumerate(names):
     contact.paste(frame.resize((120,120),Image.Resampling.NEAREST),(x,y))
     caption(draw,(x,y+121),creature["name"],13)
 contact.save(output/"native-portraits.png")
-# Compare the complete picture interior. The three-pixel edge is a live
-# selection/note indicator and is intentionally omitted on all sides.
+# Compare the artwork above the portrait control legend and inside the live frame.
 art_root = Path(__file__).resolve().parents[1]/"prototype/abyss1"
 def oracle(i):
     image = Image.open(art_root/names[i]["file"]).convert("RGB").quantize(colors=16, dither=Image.Dither.NONE).convert("RGB")
@@ -55,7 +54,7 @@ def oracle(i):
     return Image.frombytes("RGB",(240,240),rgb565,"raw","BGR;16")
 
 def matches(frame, reference, size):
-    box = (3,3,size-3,size-3)
+    box = (3,3,size-3,184 if size == 240 else size-3)
     actual, expected = frame.crop(box).tobytes(), reference.crop(box).tobytes()
     same = sum(actual[i:i+3] == expected[i:i+3] for i in range(0,len(actual),3))
     return {"matching":same,"compared":len(expected)//3}
@@ -78,6 +77,7 @@ manifest={
     "firmware_sha256":digest(beta.read_bytes()),"previous_sha256":digest(base.read_bytes()),
     "emulator_sha256":digest((Path(__file__).resolve().parents[1]/"simulator/fm1_web.wasm").read_bytes()),
     "picture_interior_pixel_comparisons":comparisons,
+    "portrait_legend_starts_at_y":184,
     "raw_lcd_sha256":{p.stem:digest(p.read_bytes()) for p in sorted(raw.glob("*.rgb"))},
     "png_sha256":{p.name:digest(p.read_bytes()) for p in sorted(output.glob("*.png"))},
 }

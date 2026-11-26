@@ -55,7 +55,7 @@ function captureLcd(name) {
 function match(id,x,y,stride){
     const pixels=lcd();
     let equal=0,n=0;
-    for(let j=20;j<240/stride-6;j+=2) for(let i=6;i<240/stride-6;i+=2){
+    for(let j=20;j<(stride === 1 ? 182 : 240/stride-6);j+=2) for(let i=6;i<240/stride-6;i+=2){
         n++; if(pixels[(y+j)*240+x+i]===ref[id*57600+j*stride*240+i*stride])equal++;
     }
     assert.ok(equal/n>0.99,`portrait ${id} at ${x},${y} matched ${(100*equal/n).toFixed(1)}%`);
@@ -214,4 +214,141 @@ if(process.env.ABYSS_ALL_ASSIGNMENTS) {
         knob(0);
     }
     console.log('PASS all 64 combinations of four tracks and sixteen creatures: portrait and audible key');
+}
+
+if (process.env.ABYSS_VOICE_AUDIT) {
+    const takes = [];
+    const blocks = 256;
+    for (let id = 0; id < 16; id++) {
+        for (let repeat = 0; repeat < 2; repeat++) {
+            boot();
+            // One track and one physical key for all sixteen sounds. The second
+            // take starts later, so a free-running oscillator can change phase.
+            knob(1, Math.floor(id / 4));
+            knob(6, id % 4);
+            render(1100 + 37 * repeat);
+            assert.ok(render(40) < 0.0005, 'assignment preview must decay before sampling');
+            const pcm = new Float32Array(blocks * 128);
+            chip.fm1_key(21, 1);
+            for (let block = 0; block < blocks; block++) {
+                if (block === 160) chip.fm1_key(21, 0);
+                render(1);
+                pcm.set(new Float32Array(chip.memory.buffer, chip.fm1_out_l(), 128), block * 128);
+            }
+            takes.push(Buffer.from(pcm.buffer));
+        }
+    }
+    const compare = new URL('compare-voices.py', import.meta.url);
+    console.log(execFileSync('python3', [compare.pathname], {input: Buffer.concat(takes)}).toString().trim());
+}
+
+if (process.env.ABYSS_PLAY_CONTROLS) {
+    boot();
+    panel(7); // Mixer: reduce only the first part, then try another part.
+    const original = panel(21, 120);
+    knob(2, -64);
+    render(900);
+    const minimum = panel(21, 120);
+    knob(0);
+    const other = panel(21, 120);
+    knob(0, -1);
+    knob(2, 64);
+    const restored = panel(21, 120);
+    console.log({original, minimum, other, restored});
+    assert.ok(original > 0.002 && minimum < 0.0005 && other > 0.002 && restored > 0.002);
+    console.log('PASS mixer K1 changes only the selected part level, including silence and restored output.');
+
+    panel(8); panel(11); panel(21); panel(12);
+    function stepPeriod() {
+        let previous = -1;
+        const edges = [];
+        for (let block = 0; block < 1200; block += 4) {
+            render(4);
+            const pixels = lcd();
+            const head = Array.from({length: 16}, (_, i) => i).find(i => {
+                const x = 13 + (i % 8) * 30, y = 200 + Math.floor(i / 8) * 21;
+                return pixels[y * 240 + x] === 0xffe0;
+            });
+            if (head !== undefined && head !== previous) {
+                edges.push(block);
+                previous = head;
+            }
+        }
+        assert.ok(edges.length >= 10, 'the visible playhead advances');
+        const periods = edges.slice(1).map((value, i) => (value - edges[i]) * 128 / 44100);
+        return periods.sort((a, b) => a - b)[Math.floor(periods.length / 2)];
+    }
+    const defaultPeriod = stepPeriod();
+    panel(7); knob(3, 55); panel(11);
+    const fasterPeriod = stepPeriod();
+    assert.ok(fasterPeriod < defaultPeriod * 0.85, 'K2 should speed up the running loop');
+    console.log('PASS mixer K2 speeds up playback; median seconds per displayed step', defaultPeriod, fasterPeriod);
+
+    function keyTone(key, toggles) {
+        boot();
+        panel(3); // Enter the portrait; SCL here toggles scale lock.
+        for (let i = 0; i < 2; i++) {
+            if (i < toggles) panel(3);
+            else render(135);
+        }
+        chip.fm1_key(key, 1);
+        render(65);
+        const samples = new Float32Array(64 * 128);
+        for (let i = 0; i < 64; i++) {
+            render(1);
+            samples.set(new Float32Array(chip.memory.buffer, chip.fm1_out_l(), 128), i * 128);
+        }
+        chip.fm1_key(key, 0);
+        return samples;
+    }
+    const c = keyTone(21, 0), cSharp = keyTone(22, 0);
+    const locked = keyTone(22, 1), unlocked = keyTone(22, 2);
+    const fundamental = samples => {
+        // The C/C-sharp range in each possible bass register. Pick the
+        // strongest matching sinusoid after the FM attack has settled.
+        const magnitude = frequency => {
+            let re = 0, im = 0;
+            for (let i = 0; i < samples.length; i++) {
+                const phase = 2 * Math.PI * frequency * i / 44100;
+                re += samples[i] * Math.cos(phase);
+                im += samples[i] * Math.sin(phase);
+            }
+            return Math.hypot(re, im);
+        };
+        return [65.406, 130.813, 261.626].map(f => magnitude(f)).reduce((a,b) => Math.max(a,b)) >
+               [69.296, 138.591, 277.183].map(f => magnitude(f)).reduce((a,b) => Math.max(a,b)) ? 'C' : 'C#';
+    };
+    const notes = [c, cSharp, locked, unlocked].map(fundamental);
+    assert.deepEqual(notes, ['C','C#','C','C#']);
+    console.log('PASS bass keyboard C and C-sharp, SCL snaps C-sharp to C, SCL again restores C-sharp.');
+}
+
+if (process.env.ABYSS_MACROS) {
+    function macroTake(family, index, detents) {
+        boot();
+        knob(0, family);
+        knob(2 + index, detents);
+        render(500);
+        chip.fm1_key(21, 1);
+        const take = new Float32Array(400 * 128);
+        for (let block = 0; block < 400; block++) {
+            if (block === 175) chip.fm1_key(21, 0);
+            render(1);
+            take.set(new Float32Array(chip.memory.buffer, chip.fm1_out_l(), 128), block * 128);
+        }
+        return take;
+    }
+    for (let family = 0; family < 4; family++) {
+        const differences = [];
+        for (let macro = 0; macro < 4; macro++) {
+            const low = macroTake(family, macro, -42);
+            const repeat = macroTake(family, macro, -42);
+            const high = macroTake(family, macro, 42);
+            const drift = difference(low, repeat);
+            const effect = difference(low, high);
+            assert.ok(effect > drift + 0.0001, 'macro output: family=' + family + ' K' + (macro + 1) + ' effect=' + effect + ' repeat=' + drift);
+            differences.push(effect.toFixed(5));
+        }
+        console.log('PASS K1–K4 on family ' + family + ' change the DAC output (RMS differences): ' + differences.join(', '));
+    }
 }
