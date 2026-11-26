@@ -4,7 +4,7 @@ Run these commands from the root of a clone of this repository. For playback of 
 
 | Build target | Input | Local output | Checked-in package |
 |---|---|---|---|
-| ABYSS creature firmware | [Voice definitions](firmware/voices.json), panel, portraits and four-part config | `out/creatures.fwsc` | [abyss-1-beta-1.4.2.fwsc](builds/abyss-1-beta-1.4.2.fwsc) |
+| ABYSS creature firmware | [Voice definitions](firmware/voices.json), panel, portraits and four-part config | `out/creatures.fwsc` | [abyss-1-beta-1.5.fwsc](builds/abyss-1-beta-1.5.fwsc) |
 | Baseline | Upstream `mots-config` release profile | `out/baseline.fwsc` | [upstream-baseline.fwsc](builds/upstream-baseline.fwsc) |
 | Four-part | [four-part.config](four-part.config) | `out/four-part.fwsc` | [four-part-formant.fwsc](builds/four-part-formant.fwsc) |
 
@@ -86,4 +86,16 @@ Run the reply probe against `builds/abyss-1-beta-1.4.2.fwsc`. It waits for both 
 node scripts/test-performance.mjs simulator builds/abyss-1-beta-1.4.2.fwsc out/invitation --reply
 ABYSS_PRIOR=builds/abyss-1-beta-1.4.1.fwsc ABYSS_QUARTET_SECONDS=600 node scripts/test-performance.mjs simulator builds/abyss-1-beta-1.4.2.fwsc out/reef --reef
 ABYSS_REPLY_BROWSER=1 ABYSS_DEMO_BROWSER=home CHROMIUM=/path/to/chromium python3 scripts/test-simulator-launch.py simulator builds/abyss-1.fwsc
+```
+
+## Beta 1.5 duet regression
+
+The reply probe now completes a phrase, checks the pulsing PLAY lamp, converts the exchange into a two-track loop and measures its DAC output. It verifies first-half caller steps, second-half answer steps, two untouched tracks, atomic undo/redo, save/reboot and protection of a pre-existing song. Repeat at both clock rates; then migrate a Beta 1.4.2 save and soak the quartet at 60 MHz.
+
+```sh
+sh scripts/build.sh creatures
+cmp out/creatures.fwsc builds/abyss-1-beta-1.5.fwsc
+ABYSS_PANEL_FILM=1 node scripts/test-performance.mjs simulator out/creatures.fwsc out/duet --reply
+ABYSS_MHZ=100 node scripts/test-performance.mjs simulator out/creatures.fwsc out/duet-100 --reply
+ABYSS_PRIOR=builds/abyss-1-beta-1.4.2.fwsc ABYSS_QUARTET_SECONDS=600 node scripts/test-performance.mjs simulator out/creatures.fwsc out/reef --reef
 ```

@@ -10,7 +10,7 @@ struct reply_event {
 static struct {
     struct reply_event event[REPLY_MAX];
     uint32_t origin, last_up, open_keys, attack_at;
-    uint8_t enabled, count, next, answering, dirty, keys_were_down;
+    uint8_t enabled, count, next, answering, complete, dirty, keys_were_down;
 } reply;
 static uint8_t reply_discovered, reply_hint_cache = 0xff;
 
@@ -34,7 +34,7 @@ static void reply_reset(void)
         an_req = 1;
         fm1_irq_on();
     }
-    reply.count = reply.next = reply.answering = 0;
+    reply.count = reply.next = reply.answering = reply.complete = 0;
     reply.open_keys = reply.keys_were_down = 0;
     reply.dirty = 1;
 }
@@ -70,13 +70,59 @@ static void reply_add_keys(struct reply_event *e, unsigned partner, uint32_t pre
     }
 }
 
+/* Turn a finished exchange into a one-bar duet. The child's phrase occupies
+ * the first eight steps and the answer the last eight, preserving its relative
+ * rhythm while fitting the fixed child-friendly loop. Only an empty song may
+ * reach this function, so practice can never replace an existing creation. */
+static int reply_commit(void)
+{
+    if (!reply.complete || !reply.count || !abyss_song_empty()) return 0;
+    unsigned source = song.sel, partner = source ^ 2;
+    const struct reply_event *last = &reply.event[reply.count-1];
+    unsigned duration = last->start_ms + last->gate_ms;
+    if (!duration) duration = 1;
+    const unsigned previous_velocity = key_vel;
+    abyss_begin_edit((1u << source) | (1u << partner));
+    for (unsigned i = 0; i < reply.count; ++i) {
+        const struct reply_event *e = &reply.event[i];
+        unsigned step = ((uint32_t)e->start_ms * 8 + duration/2) / duration;
+        if (step > 7) step = 7;
+        unsigned length = ((uint32_t)e->gate_ms * 8 + duration/2) / duration;
+        length = clamp(length, 1, 8-step);
+        uint8_t source_notes[4];
+        unsigned source_count = 0;
+        for (unsigned k = 0; k < 27 && source_count < 4; ++k) {
+            if (!(e->keys & (1u << k))) continue;
+            uint8_t notes[4];
+            unsigned n = kb_notes(&trk[source], k, notes);
+            for (unsigned j = 0; j < n && source_count < 4; ++j) {
+                unsigned q = 0;
+                while (q < source_count && source_notes[q] != notes[j]) ++q;
+                if (q == source_count) source_notes[source_count++] = notes[j];
+            }
+        }
+        fm1_irq_off();
+        key_vel = e->velocity;
+        for (unsigned j = 0; j < source_count; ++j)
+            (void)se_add(&trk[source], step, source_notes[j], length);
+        for (unsigned j = 0; j < e->count; ++j)
+            (void)se_add(&trk[partner], step+8, e->notes[j], length);
+        key_vel = previous_velocity;
+        fm1_irq_on();
+    }
+    abyss_end_edit();
+    demo_considered = 1;
+    step_signature = ~0u;
+    return 1;
+}
+
 static void reply_tick(uint32_t pressed)
 {
     if (!reply.enabled) return;
     uint32_t now = fm1_ms;
     unsigned partner = song.sel ^ 2;
     if (pressed) {
-        if (reply.answering) reply_reset();
+        if (reply.answering || reply.complete) reply_reset();
         if ((reply.open_keys & oin_keys) && now - reply.attack_at <= 45) {
             struct reply_event *e = &reply.event[reply.count-1];
             reply_add_keys(e, partner, pressed);
@@ -102,7 +148,7 @@ static void reply_tick(uint32_t pressed)
     if (reply.open_keys && !(oin_keys & reply.open_keys)) reply_close_group(now);
     if (reply.keys_were_down && !oin_keys) reply.last_up = now;
     reply.keys_were_down = oin_keys != 0;
-    if (!reply.answering && reply.count && !oin_keys && !reply.open_keys) {
+    if (!reply.answering && !reply.complete && reply.count && !oin_keys && !reply.open_keys) {
         unsigned pause = clamp(45000 / clamp(song.g[G_BPM],40,240), 300, 620);
         if (now - reply.last_up >= pause) {
             reply.answering = reply.dirty = 1;
@@ -120,7 +166,8 @@ static void reply_tick(uint32_t pressed)
     if (reply.next == reply.count && elapsed >= (unsigned)last->start_ms + last->gate_ms) {
         /* The audio audition releases the last note on its own block timer. */
         reply.answering = 0;
-        reply_reset();
+        reply.next = 0;
+        reply.complete = reply.dirty = 1;
     }
 }
 

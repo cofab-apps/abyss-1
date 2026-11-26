@@ -271,9 +271,8 @@ static const struct abyss_hit {
 };
 static uint8_t demo_considered;
 
-static int abyss_can_demo(void)
+static int abyss_song_empty(void)
 {
-    if (demo_considered || song.rec || rec_wait) return 0;
     for (unsigned part = 0; part < 4; ++part) {
         if (trk[part].seq_active) return 0;
         for (unsigned i = 0; i < NSTEP; ++i)
@@ -281,6 +280,11 @@ static int abyss_can_demo(void)
                 return 0;
     }
     return 1;
+}
+
+static int abyss_can_demo(void)
+{
+    return !demo_considered && !song.rec && !rec_wait && abyss_song_empty();
 }
 
 static void abyss_demo(void)
@@ -344,6 +348,8 @@ static void abyss_input(void)
         reply.enabled ^= 1;
         paint_mask = 15;
     } else if (reply.enabled && (buttons || song.playing || rec_wait || page != ORCHESTRA)) {
+        if ((buttons & BIT(B_PLAY)) && reply.complete && abyss_song_empty())
+            (void)reply_commit();
         reply_reset();
         reply.enabled = 0;
         paint_mask = 15;
@@ -671,5 +677,7 @@ static void abyss_lights(void)
     fm1_led_key(panel.btn[B_REC], rec_wait || song.rec);
     fm1_led_key(panel.btn[B_ARP], reply.enabled ||
                 (reply_hint_active() && ((fm1_ms / 280) & 1)));
+    if (reply.enabled && reply.complete)
+        fm1_led_key(panel.btn[B_PLAY], (fm1_ms / 280) & 1);
     reply_light_keys();
 }

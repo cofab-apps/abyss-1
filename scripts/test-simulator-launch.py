@@ -145,10 +145,14 @@ with sync_playwright() as playwright:
         mark(101, 131, 0xFFAE)
         page.wait_for_function("audioPeak() > 0.003", timeout=5000)
         mark(101, 11, 0x5F1B)
-        gesture(1047, 340)
+        gesture(1163, 340)  # PLAY keeps the completed exchange
+        mark(9, 10, 0x57EC)
+        page.wait_for_timeout(450)
+        page.wait_for_function("audioPeak() > 0.003", timeout=5000)
+        gesture(1163, 340)
         page.wait_for_function("audioPeak() < 0.003", timeout=15000)
         assert not errors, errors
-        print("PASS idle invitation in real time, ARP on the touch panel, listening fish, answering fish, audible answer and return to the player.")
+        print("PASS idle invitation, touch ARP, listening and answering fish, audible response, PLAY conversion and the kept duet.")
 
     if os.environ.get("ABYSS_DEMO_BROWSER"):
         if os.environ["ABYSS_DEMO_BROWSER"] != "home":

@@ -129,6 +129,55 @@ export function checkReply({boot, btn, enc, run, chip, shots, screen, panelFrame
     run(400);
     console.log('PASS a three-finger chord spread over 17 ms returns at all three pitches.');
 
+    // Once the partner has finished, PLAY turns the exchange into a real
+    // two-creature song: call in the first half, response in the second.
+    prepare(false);movieStart('duet');
+    strike(21,90,30);strike(24,45,40);strike(28,120,0);
+    waitForAnswer();run(650);
+    shots('duet-ready');
+    let playLampSeen=false;
+    for(let i=0;i<220;i+=6) {
+        chip.fm1_leds();run(6);
+        const levels=new Float32Array(chip.memory.buffer,chip.fm1_leds(),41);
+        playLampSeen ||= levels[12]>.08;
+    }
+    assert.ok(playLampSeen,'PLAY lamp invites the child to keep the exchange');
+    btn(12);
+    assert.ok(run(900)>.001,'the kept duet plays from the DAC');
+    shots('duet-loop');
+    btn(12);
+    movieEnd();
+    btn(11);const sourcePattern=pattern();
+    assert.ok(sourcePattern.length && sourcePattern.every(s=>s<8),JSON.stringify({sourcePattern}));
+    btn(8);enc(0,2);btn(11);const partnerPattern=pattern();
+    assert.ok(partnerPattern.length && partnerPattern.every(s=>s>=8),JSON.stringify({partnerPattern}));
+    btn(8);enc(0,1);btn(11);assert.deepEqual(pattern(),[],'unused track 1 remains empty');
+    btn(8);enc(0,2);btn(11);assert.deepEqual(pattern(),[],'unused track 3 remains empty');
+    btn(8);btn(6); // one HOME / EDIT gesture owns both halves
+    for(let i=0;i<4;i++) {
+        btn(11);assert.deepEqual(pattern(),[],'duet undo clears track '+(i+1));
+        btn(8);enc(0,1);
+    }
+    btn(6); // redo the complete duet
+    enc(0,3);btn(11);
+    assert.deepEqual(pattern(),sourcePattern,'redo restores the source half');
+    btn(8);enc(0,2);btn(11);
+    assert.deepEqual(pattern(),partnerPattern,'redo restores the partner half');
+    btn(8);saveAndReboot();btn(11);
+    assert.deepEqual(pattern(),partnerPattern,'saved duet restores its partner half');
+    btn(8);enc(0,2);btn(11);
+    assert.deepEqual(pattern(),sourcePattern,'saved duet restores its source half');
+    console.log('PASS completed Reef Reply becomes an audible two-track loop; halves, unused tracks and atomic undo/redo are correct.',
+                JSON.stringify({sourcePattern,partnerPattern}));
+
+    // Practising over a project is safe: PLAY leaves the game and starts the
+    // existing song, never injecting the temporary answer into it.
+    boot();btn(11);enc(0,3);btn(24);btn(8);enc(0,2);
+    btn(10);strike(21,65,0);waitForAnswer();run(450);btn(12);run(300);btn(12);
+    btn(11);assert.deepEqual(pattern(),[],'temporary caller receives no sequenced notes');
+    btn(8);enc(0,2);btn(11);assert.deepEqual(pattern(),[3],'existing partner track is unchanged');
+    console.log('PASS PLAY after practice preserves a pre-existing song step-for-step.');
+
     prepare(true);
     for (let i=0;i<8;i++) strike(21+i%3,22,16);
     key(25,true);run(300);key(25,false);
