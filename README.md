@@ -4,11 +4,15 @@ ABYSS-1 is a four-track musical instrument in development for the M-VAVE FM-1. A
 
 **Project creator and maintainer:** Gabor Varga · Zurich, Switzerland. Firmware base: Optimist on fm1-base. Browser emulator: Joakim Eriksson’s fm1-emu.
 
-## Play Beta 1.3
+## Play Beta 1.4
 
-**[Open ABYSS-1 in the FM-1 simulator](https://joakimeriksson.github.io/fm1-emu/?package=https%3A%2F%2Fraw.githubusercontent.com%2Fcofab-apps%2Fabyss-1%2Fmain%2Fbuilds%2Fabyss-1-beta-1.3.fwsc&name=ABYSS-1&embed=1&mhz=60)** · [Download the firmware](builds/abyss-1-beta-1.3.fwsc) · [Watch and hear a 22-second performance](evidence/reef/abyss-1-beta-1.3.mp4)
+**[Open ABYSS-1 in the FM-1 simulator](https://joakimeriksson.github.io/fm1-emu/?package=https%3A%2F%2Fraw.githubusercontent.com%2Fcofab-apps%2Fabyss-1%2Fmain%2Fbuilds%2Fabyss-1-beta-1.4.fwsc&name=ABYSS-1&embed=1&mhz=60)** · [Download the firmware](builds/abyss-1-beta-1.4.fwsc) · [Hear Julia and Bloop take turns](evidence/reply/reef-reply.mp4)
 
-Tap **Start**, then **PLAY**. On a fresh song Bloop, Kraken, Julia and Space Bloop play a bar together. The moving jaws and tentacles show who is sounding. Four pearls across the top count the beats.
+Tap **Start → ARP** and play three keys. Lift your fingers. A second creature lights up and plays your phrase back in its own voice. Play over the answer to take the turn back. Try a long note, a rest, then two quick notes.
+
+![Julia has the turn, then Bloop answers. Both frames captured from the FM-1 LCD at native resolution.](evidence/reply/taking-turns.png)
+
+Press **PLAY** to hear the band. On a fresh song Bloop, Kraken, Julia and Space Bloop play a bar together. The moving jaws and tentacles show who is sounding. Four pearls across the top count the beats.
 
 To make your own music, start with **REC** and play a key. Select another creature to overdub it. On HOME, **EDIT** lifts the last take. Press **EDIT** again to bring it back. If you started with the quartet, you can lift all four factory parts in one press.
 
@@ -16,7 +20,7 @@ To make your own music, start with **REC** and play a key. Select another creatu
 
 Try the low and high keys on Kraken. Low strikes have a falling, tuned body. High keys produce a short shell rattle. All 16 creatures respond to notes from the keyboard, MIDI and the sequencer. The four family engines are FM bass, percussion, formant voice and detuned strings.
 
-[Player guide](docs/MANUAL.md) · [Beta 1.3 release and verification](docs/BETA-1.3.md) · [Hardware](docs/HARDWARE.md) · [Original browser prototype](prototype/abyss1/)
+[Player guide](docs/MANUAL.md) · [Beta 1.4 verification](docs/BETA-1.4.md) · [Hear the quartet](evidence/reef/abyss-1-beta-1.3.mp4) · [Hardware](docs/HARDWARE.md) · [Original browser prototype](prototype/abyss1/)
 
 ## Build and contribute
 

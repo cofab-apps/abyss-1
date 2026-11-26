@@ -4,7 +4,7 @@ Run these commands from the root of a clone of this repository. For playback of 
 
 | Build target | Input | Local output | Checked-in package |
 |---|---|---|---|
-| ABYSS creature firmware | [Voice definitions](firmware/voices.json), panel, portraits and four-part config | `out/creatures.fwsc` | [abyss-1-beta-1.3.fwsc](builds/abyss-1-beta-1.3.fwsc) |
+| ABYSS creature firmware | [Voice definitions](firmware/voices.json), panel, portraits and four-part config | `out/creatures.fwsc` | [abyss-1-beta-1.4.fwsc](builds/abyss-1-beta-1.4.fwsc) |
 | Baseline | Upstream `mots-config` release profile | `out/baseline.fwsc` | [upstream-baseline.fwsc](builds/upstream-baseline.fwsc) |
 | Four-part | [four-part.config](four-part.config) | `out/four-part.fwsc` | [four-part-formant.fwsc](builds/four-part-formant.fwsc) |
 
@@ -46,6 +46,8 @@ The audio probe tests each MIDI channel separately and reports idle and note RMS
 
 ## Beta 1.3 release checks
 
+Use the Beta 1.3 release commit to reproduce these historical checks.
+
 Use Python 3.12, Pillow 13.0.0 and the pinned Linux compiler. The wrapper sets the source timestamp from the pinned upstream commit. The manual workflow builds the current source and exercises that result.
 
 ```sh
@@ -57,3 +59,17 @@ ABYSS_VOICE_AUDIT=1 ABYSS_ALL_ASSIGNMENTS=1 ABYSS_PLAY_CONTROLS=1 node scripts/t
 ```
 
 The voice audit requires NumPy. To repeat the touch tests, install Playwright and its Chromium browser, or set `CHROMIUM` to a compatible executable. Run `ABYSS_DEMO_BROWSER=home python3 scripts/test-simulator-launch.py simulator builds/abyss-1.fwsc` and repeat without the environment variable for record, save and reload. For the performance movie, `node scripts/test-performance.mjs simulator out/creatures.fwsc out/film --showcase` produces RGB565LE LCD at 240 × 240, 10 fps, stereo signed 16-bit little-endian PCM at 44.1 kHz, and caption timestamps.
+
+## Beta 1.4 release checks
+
+Build the current firmware, compare it with the published package, and exercise the call-and-response game at the emulated 60 MHz clock.
+
+```sh
+sh scripts/build.sh creatures
+cmp out/creatures.fwsc builds/abyss-1-beta-1.4.fwsc
+node scripts/test-performance.mjs simulator out/creatures.fwsc out/reply --reply
+ABYSS_PRIOR=builds/abyss-1-beta-1.3.fwsc ABYSS_QUARTET_SECONDS=600 node scripts/test-performance.mjs simulator out/creatures.fwsc out/reef --reef
+ABYSS_REPLY_BROWSER=1 ABYSS_DEMO_BROWSER=home python3 scripts/test-simulator-launch.py simulator builds/abyss-1.fwsc
+```
+
+The reply test writes 240 × 240 RGB565LE frames at 10 fps and matching 44.1 kHz stereo signed 16-bit PCM to `out/reply/reply.rgb` and `out/reply/reply.s16`. It checks returned pitches using isolated DAC output. Repeat the browser probe without the two environment variables to exercise recording, persistence and replay.

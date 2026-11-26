@@ -70,7 +70,7 @@ function cell(i){return screen()[(200+Math.floor(i/8)*21)*240+6+30*(i%8)];}
 function pattern(){
     return Array.from({length:16},(_,i)=>cell(i)===0x5f1b?i:-1).filter(i=>i>=0);
 }
-if (process.argv[5] === '--reef' || process.argv[5] === '--probe-shell' || process.argv[5] === '--showcase') {
+if (['--reef','--probe-shell','--showcase','--reply'].includes(process.argv[5])) {
     const {checkReef, probeShell, showcase} = await import('./reef-check.mjs');
     const movieStart = (name = "quartet") => {
         audio=fs.openSync(path.join(out,name+'.s16'),'w');
@@ -79,6 +79,11 @@ if (process.argv[5] === '--reef' || process.argv[5] === '--probe-shell' || proce
     };
     const movieEnd = () => {movie=false;fs.closeSync(audio);fs.closeSync(video);};
     const rig = {boot,btn,enc,run,chip,shots,screen,pattern,out,movieStart,movieEnd,saveAndReboot, time: () => count/44100};
+    if (process.argv[5] === '--reply') {
+        const {checkReply} = await import('./test-reply.mjs');
+        checkReply(rig);
+        process.exit(0);
+    }
     if (process.argv[5] === "--showcase") {showcase(rig);process.exit(0);}
     if (process.argv[5] === '--reef') checkReef(rig);
     probeShell(rig);

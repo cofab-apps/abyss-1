@@ -3,8 +3,8 @@
   "default": "abyss-1",
   "skipped": {"vibe-link":"crashes in the emulator a second or two after boot (a CPU exception at 0x0200338E: its own crash screen); held back until that is understood","lsdjburrito":"boots to its instructions, but makes no audio until an LSDJ song is sent to it over USB from its web page, which the emulator's page cannot do"},
   "firmwares": [
-    { "id": "abyss-1", "name": "ABYSS-1", "version": "Beta 1.3", "author": "Gabor Varga",
-      "about": "Pick a sea creature and play the keys, or press PLAY to hear the quartet.",
+    { "id": "abyss-1", "name": "ABYSS-1", "version": "Beta 1.4", "author": "Gabor Varga",
+      "about": "Play the keys. ARP lets another creature answer your phrase. PLAY starts the quartet.",
       "repo": "https://github.com/cofab-apps/abyss-1", "package": "../builds/abyss-1.fwsc" },
     { "id": "mvave-v15", "name": "M-VAVE stock firmware", "version": "V15", "author": "M-VAVE", "license": "Apache-2.0 (M-VAVE's FM1 Open recovery image)",
       "about": "The firmware the FM-1 ships with, version 15: a DX7-style FM synth, both cores running. M-VAVE publishes this version under the Apache License 2.0, as the recovery image of its FM1 Open SDK; it plays here from the FM-1 Firmware Hub's unchanged copy. Its patches live in flash an update does not carry, so it starts with a small bank of the emulator's own; \"DX7 bank…\" loads a 32-voice .syx.",

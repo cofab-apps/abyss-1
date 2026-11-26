@@ -130,6 +130,24 @@ with sync_playwright() as playwright:
         page.wait_for_timeout(140)
         touch.send("Input.dispatchTouchEvent", {"type": "touchEnd", "touchPoints": []})
 
+    def mark(x, y, colour):
+        page.wait_for_function("""([x, y, c]) => {
+            const v = document.querySelector('#big').getContext('2d').getImageData(x,y,1,1).data;
+            return (((v[0] >> 3) << 11) | ((v[1] >> 2) << 5) | (v[2] >> 3)) === c;
+        }""", arg=[x, y, colour], timeout=10000)
+
+    if os.environ.get("ABYSS_REPLY_BROWSER"):
+        gesture(1047, 340)  # ARP
+        mark(101, 11, 0x5F1B)
+        gesture(384, 735)
+        mark(101, 131, 0xFFAE)
+        page.wait_for_function("audioPeak() > 0.003", timeout=5000)
+        mark(101, 11, 0x5F1B)
+        gesture(1047, 340)
+        page.wait_for_function("audioPeak() < 0.003", timeout=15000)
+        assert not errors, errors
+        print("PASS ARP on the touch panel, listening fish, answering fish, audible answer and return to the player.")
+
     if os.environ.get("ABYSS_DEMO_BROWSER"):
         if os.environ["ABYSS_DEMO_BROWSER"] != "home":
             gesture(1105, 340)  # SEQ
@@ -160,12 +178,6 @@ with sync_playwright() as playwright:
     check_screen(page, ids)
     assert not errors, errors
     print("PASS public-panel touch gestures: four PRESETS changes, four SCL portraits, four HOME returns and a cross-family ALGORITHM change. All four tiles matched after every reassignment.")
-    def mark(x, y, colour):
-        page.wait_for_function("""([x, y, c]) => {
-            const v = document.querySelector('#big').getContext('2d').getImageData(x,y,1,1).data;
-            return (((v[0] >> 3) << 11) | ((v[1] >> 2) << 5) | (v[2] >> 3)) === c;
-        }""", arg=[x, y, colour], timeout=10000)
-
     gesture(1221, 340)  # REC arms
     mark(22, 10, 0xF800)
     gesture(384, 735)   # first key starts the clock

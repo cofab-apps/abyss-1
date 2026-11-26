@@ -103,6 +103,14 @@ def build(checkout, host=False):
         change(src/"seq/seq.c", "    kb_kind[k] = KS_NONE;\n    kb_trk[k] = (uint8_t)sel;",
                "    key_vel = touch_is_on() ? touch_vel(k) : 100;\n"
                "    kb_kind[k] = KS_NONE;\n    kb_trk[k] = (uint8_t)sel;")
+        seq = src/"seq/seq.c"
+        signature = "static void audition_notes(uint32_t tr, const uint8_t *nt, uint32_t n, uint32_t vel)"
+        change(seq, signature, "static volatile uint32_t an_blocks;\n"
+               + signature.replace("audition_notes(", "audition_notes_for(").replace("vel)", "vel, uint32_t blocks)"))
+        change(seq, "    an_req = 1;", "    an_blocks = blocks;\n    an_req = 1;")
+        change(seq, "static void audition_notes_block(void)", signature
+               + "\n{\n    audition_notes_for(tr, nt, n, vel, AUD_NOTE_BLOCKS);\n}\nstatic void audition_notes_block(void)")
+        change(seq, "an_left = AUD_NOTE_BLOCKS;", "an_left = an_blocks;")
         change(src/"io/midi/midi_control.c", "    MIDI_EXPR_HOOK(t, c);",
                "    abyss_channel_pressure[t - trk] = c->press;\n    MIDI_EXPR_HOOK(t, c);")
         change(src/"core/voice.c", "        if (v->vel > 110)",
@@ -127,6 +135,7 @@ def build(checkout, host=False):
             assert n == 1, path
             replace(path, data)
         replace(ui/"abyss_art.h", generate())
+        replace(ui/"reef-reply.h", (ROOT/"firmware/reef-reply.h").read_text())
         replace(ui/"phrase-history.h", (ROOT/"firmware/phrase-history.h").read_text())
         replace(ui/"abyss_panel.h", (ROOT/"firmware/panel.h").read_text())
         p = ui/"opt_ui.c"

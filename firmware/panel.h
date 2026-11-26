@@ -300,6 +300,8 @@ static void abyss_demo(void)
     step_signature = ~0u;
 }
 
+#include "reef-reply.h"
+
 static void abyss_input(void)
 {
     uint32_t buttons = fm1_input_edges(0), keys = fm1_input_note_edges();
@@ -332,6 +334,19 @@ static void abyss_input(void)
     enc_hold = 0;
     int select = panel_enc(EN_SELECT), family = panel_enc(EN_ALGO), variant = panel_enc(EN_PRESET);
     if (buttons || keys || select || family || variant) ui_input_ms = fm1_ms;
+    if (buttons & BIT(B_ARP) && page == ORCHESTRA && !song.playing && !rec_wait && !song.rec) {
+        reply_reset();
+        reply.enabled ^= 1;
+        paint_mask = 15;
+    } else if (reply.enabled && (buttons || song.playing || rec_wait || page != ORCHESTRA)) {
+        reply_reset();
+        reply.enabled = 0;
+        paint_mask = 15;
+    }
+    if (reply.enabled && (select || family || variant)) {
+        reply_reset();
+        paint_mask = 15;
+    }
     if (buttons & BIT(B_HOME)) abyss_scene(ORCHESTRA);
     if (buttons & BIT(B_GLO)) abyss_scene(page == MIX ? ORCHESTRA : MIX);
     if (buttons & BIT(B_SEQ)) abyss_scene(page == STEPS ? ORCHESTRA : STEPS);
@@ -358,6 +373,7 @@ static void abyss_input(void)
         }
     }
     unsigned part = song.sel, id = creature[part];
+    reply_tick(keys);
     if (family || variant) {
         unsigned f = (id / 4 + family) & 3;
         editor_dirty = 1;
@@ -541,11 +557,19 @@ static void abyss_draw(void)
                 if (trk[i].p[P_MUTE]) lcd_fill(x+52,y+99,5,17,0xFFFF);
             }
         }
-        if (page == ORCHESTRA || page == PORTRAIT)
+        if (page == ORCHESTRA || page == PORTRAIT) {
+            unsigned previous_pose = drawn_cel[i];
             abyss_animate(i, creature[i], x, y, stride,
                           page == PORTRAIT ? 184 : show_macro ? 215 : 240, repaint);
+            if (reply.enabled && (i & 1) == (song.sel & 1) && drawn_cel[i] != previous_pose)
+                reply.dirty = 1;
+        }
         int active = !trk[i].p[P_MUTE] && (trk[i].seq_n || trk[i].nheld || (i == song.sel && (int32_t)(flash_until - fm1_ms) > 0));
         int colour = active ? 0xFFE0 : i == song.sel ? 0xFFFF : 0x0862;
+        if (reply.enabled && reply.answering && page == ORCHESTRA) {
+            if (i == (song.sel ^ 2)) colour = 0xffae;
+            else if (i == song.sel) colour = 0x0862;
+        }
         if (repaint || colour != border_cache[i]) {
             abyss_frame(x,y,w,page == PORTRAIT ? 184 : w,(uint16_t)colour);
             border_cache[i] = colour;
@@ -589,6 +613,11 @@ static void abyss_draw(void)
         }
         drawn_status = status;
     }
+    if (reply.enabled && page == ORCHESTRA && (reply.dirty || paint_mask)) {
+        reply_badge(song.sel, 0);
+        reply_badge(song.sel ^ 2, 1);
+        reply.dirty = 0;
+    }
     if (page == PORTRAIT && paint_mask) abyss_legend();
     if (show_macro && (macro_dirty || paint_mask)) {
         macro_dirty = 0;
@@ -621,4 +650,5 @@ static void abyss_lights(void)
     fm1_led_key(panel.btn[B_FX], page == FX_EDIT && !TSEL->p[P_FXOFF]);
     fm1_led_key(panel.btn[B_LFO], TSEL->p[P_L2DA] == LT_PIT);
     fm1_led_key(panel.btn[B_REC], rec_wait || song.rec);
+    fm1_led_key(panel.btn[B_ARP], reply.enabled);
 }

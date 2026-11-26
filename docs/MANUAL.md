@@ -2,7 +2,7 @@
 
 ## Play the firmware in the web emulator
 
-[Launch ABYSS-1 in the simulator](https://joakimeriksson.github.io/fm1-emu/?package=https%3A%2F%2Fraw.githubusercontent.com%2Fcofab-apps%2Fabyss-1%2Fmain%2Fbuilds%2Fabyss-1-beta-1.3.fwsc&name=ABYSS-1&embed=1&mhz=60). Tap **Start** for audio. The link selects a 60 MHz emulated clock. On the S22, the 100 MHz setting was observed running at 0.5× real time. Turn the phone sideways and tap the keys. The firmware opens on four portraits. At rest the white frame shows which creature the keys will play. A sounding creature moves on its own tile. Four pearls mark the beats while the loop plays.
+[Launch ABYSS-1 in the simulator](https://joakimeriksson.github.io/fm1-emu/?package=https%3A%2F%2Fraw.githubusercontent.com%2Fcofab-apps%2Fabyss-1%2Fmain%2Fbuilds%2Fabyss-1-beta-1.4.fwsc&name=ABYSS-1&embed=1&mhz=60). Tap **Start** for audio. The link selects a 60 MHz emulated clock. On the S22, the 100 MHz setting was observed running at 0.5× real time. Turn the phone sideways and tap the keys. The firmware opens on four portraits. At rest the white frame shows which creature the keys will play. A sounding creature moves on its own tile. Four pearls mark the beats while the loop plays.
 
 | Control | What it does |
 |---|---|
@@ -10,6 +10,7 @@
 | PRESETS / ALGORITHM | Pick a variant within the family / move to another family. Listen for its short preview while stopped. |
 | HOME / SCL (SEL) | See the whole orchestra / one full-screen portrait. |
 | K1–K4 | Change the four sound parameters shown in the selected family’s portrait. On the FX page they control drive, chorus, echo and room. |
+| ARP on stopped HOME | Play a phrase. Lift your fingers and the creature above or below you answers. Play again to take the next turn. ARP leaves the game. |
 | REC | Arm a 16-step loop. The first note starts the clock. Turn SELECT and play to overdub a different creature. Tap REC again to finish recording while the loop continues. |
 | PLAY | From HOME or SEQ, start the four-creature groove on a fresh song. With your own notes, stop or restart your song. |
 | EDIT on HOME | Lift the last completed take, step edit or factory groove. Press again to bring it back. A new musical edit replaces that undo. Undo is available during playback and when stopped. |
@@ -22,9 +23,15 @@
 
 On the phone, drag an encoder up or down to turn it. To start a blank take after trying the factory groove, press PLAY to stop, HOME, EDIT, then REC. The first key starts your new bar. Browser saves belong to the exact firmware file. Opening an older package retrieves that package’s saved song.
 
+### Take turns with another creature
+
+Start on the four portraits with the transport stopped. Press **ARP**. The bright little fish shows whose turn it is. Play a short call and lift your fingers. The other portrait gets a gold frame when it answers. A held key keeps the turn yours. Try the same pattern on a different pair using SELECT. PRESETS changes the selected creature’s voice.
+
+Each call holds up to eight attacks in an eight-second phrase. Keys struck together make one attack with a shared duration. The partner uses its own pitch range and sound. REC leaves the game and arms a new take. Practice leaves your song untouched.
+
 ### Load a different package manually
 
-1. Download [abyss-1-beta-1.3.fwsc](../builds/abyss-1-beta-1.3.fwsc). On the GitHub file page, choose **Download raw file**. Keep the `.fwsc` extension.
+1. Download [abyss-1-beta-1.4.fwsc](../builds/abyss-1-beta-1.4.fwsc). On the GitHub file page, choose **Download raw file**. Keep the `.fwsc` extension.
 2. Open the [FM-1 web emulator](https://joakimeriksson.github.io/fm1-emu/). Under **Now running**, choose **Open .fwsc…** and select the downloaded file.
 3. Press **Start** and play the onscreen keys. On a phone, landscape mode gives the keyboard more room. The four portraits appear on the device LCD.
 
