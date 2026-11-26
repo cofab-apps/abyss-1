@@ -4,7 +4,7 @@
 
 Passed: recursive public checkout, verified compiler and SDK setup, upstream default target release build, four-part target build, second build from saved configuration, package boot and display in desktop Chromium, emulator audio from four MIDI channels, both original prototype entry points, prototype record/playback/track mute and save/load smoke tests. See evidence/. The original archive SHA-256 is b49889a22e33d7e35ce960afcf6b9df5064bd8adbb46d950377b659811931c14.
 
-The hardware, user’s Mac, creator permissions and hosted CI are outstanding. A local Git repository and a manual CI workflow exist. Approval to publish is outstanding. Preserve the reference unit. No physical test results exist.
+Physical hardware, the Mac environment and character permissions remain open. The private GitHub repository contains the engineering kit and original prototype. The manual firmware build workflow is available in Actions. Its configuration alone does not establish a successful hosted firmware build. Preserve the reference unit. No physical test results exist.
 
 ## Phase 1 implementation order
 
