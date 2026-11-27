@@ -19,7 +19,7 @@ Start with Hydra. Hold a white key and turn K1 slowly from closed to open. Two r
 
 Turn a knob with the keys released to hear what the knob does. Holding a note gives continuous control. Keyboard lights match the suggested or sounding keys. Changing creature loads that creature’s own four settings.
 
-The recorder keeps one take in RAM, for up to 30 seconds or 512 gesture changes. A take includes key releases, chords, creature selections and knob turns. Arming and cancelling an empty take preserves the previous performance. Power cycling clears the take. The versioned Beta 1.5 player is still the place to open songs saved with the four-track instrument.
+The recorder keeps one take in RAM, for up to 30 seconds or 512 gesture changes. A take includes key releases, chords, creature selections and knob turns. Arming and cancelling an empty take preserves the previous performance. Power cycling clears the take. See the [choir design](backlog.md) for the proposed two-bar, four-singer recorder.
 
 ## Sound and artwork
 
@@ -35,8 +35,8 @@ The tested build environment used Linux x86-64, Python 3.12 and Pillow 13.0.0. T
 sh scripts/build-monsters.sh
 cmp out/monster-keys.fwsc builds/abyss-1-monster-keys-2.0.1.fwsc
 node scripts/test-performance.mjs simulator out/monster-keys.fwsc out/monsters --monsters
-node scripts/test-performance.mjs simulator out/monster-keys.fwsc out/legacy --monster-legacy builds/abyss-1-beta-1.5.fwsc
-ABYSS_MONSTER_BROWSER=1 python3 scripts/test-simulator-launch.py simulator out/monster-keys.fwsc
+ABYSS_MHZ=100 node scripts/test-performance.mjs simulator out/monster-keys.fwsc out/monsters-100 --monsters
+python3 scripts/test-simulator-launch.py simulator out/monster-keys.fwsc
 ```
 
 The last command requires Python Playwright and Chromium. Set `CHROMIUM` when using a system executable. The capture writes native RGB565 frames and interleaved signed 16-bit stereo samples taken from the simulated DAC at 44.1 kHz.
@@ -53,9 +53,9 @@ The last command requires Python Playwright and Chromium. Set `CHROMIUM` when us
 - At 60 MHz all 20 portraits changed on navigation and on a held note. All 20 creatures produced sound on the same key and accepted a four-note chord. The emulator reported zero missed DAC refills for those tests. The largest measured chord peak was 0.606 of digital full scale after smoothing the louder radio voices.
 - A four-note chord remained audible after all four fingers rocked onto and off their paired raised keys. Plain, bent and released-bend chord RMS measured 0.127, 0.124 and 0.125; the same result passed at 60 and 100 MHz.
 - The Bloop put 89% of its measured sustained-note energy below 250 Hz. The Crab put 23% above 8 kHz. All four knobs altered the DAC output. The [measurement file](../evidence/monsters/measurements-2.0.1.json) includes the windowed frequency-band energy fractions, chord peaks and finger-bend levels.
-- A recorded two-note take retained the intervening rest after an empty REC cycle. Replay RMS measured 0.060 on the first note, 0.000047 in the gap and 0.063 on the second note. A separate test saved a Beta 1.5 user song, played and recorded in Monster Keys with that flash state, returned to Beta 1.5 and verified the original step, empty tracks and audible playback.
+- A recorded two-note take retained the intervening rest after an empty REC cycle. Replay RMS measured 0.060 on the first note, 0.000047 in the gap and 0.063 on the second note.
 - The public 2.0.1 link booted the exact raw GitHub package at 60 MHz, rendered the Hydra screen and responded to a panel-key click with the matching highlighted keyboard cue. The target simulator separately measured the resulting firmware’s native LCD and stereo DAC stream.
 
 The frequency measurements describe the emulator’s electrical output. Listening on the physical speaker, pressure response, and whether a child discovers the side symbols unaided remain untested. The firmware currently uses on/off contacts; the raised-key bend is discrete rather than pressure-sensitive. A next physical experiment is to measure whether that rocking gesture feels natural on the FM-1 keybed.
 
-[Download the preserved 2.0 package](../builds/abyss-1-monster-keys-2.0.fwsc) · [Open the legacy Beta 1.5 sequencer](BETA-1.5.md)
+[Player guide](MANUAL.md) · [Proposed choir and looping controls](backlog.md)

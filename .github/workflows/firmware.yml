@@ -1,4 +1,4 @@
-name: Build and exercise firmware
+name: Build and exercise Monster Keys
 on: [workflow_dispatch]
 permissions:
   contents: read
@@ -12,11 +12,10 @@ jobs:
           python-version: '3.12'
       - uses: actions/setup-node@v4
         with:
-          node-version: '22'
+          node-version: '24'
       - run: python3 -m pip install Pillow==13.0.0
-      - run: python3 scripts/test-art.py
-      - run: sh scripts/build.sh creatures
-      - run: node scripts/test-creatures.mjs simulator out/creatures.fwsc
-      - run: node scripts/test-performance.mjs simulator out/creatures.fwsc out/reply --reply
-      - run: ABYSS_PRIOR=builds/abyss-1-beta-1.4.1.fwsc ABYSS_QUARTET_SECONDS=30 node scripts/test-performance.mjs simulator out/creatures.fwsc out/reef --reef
-      - run: node scripts/four-channels.mjs simulator out/creatures.fwsc
+      - run: sh scripts/build-monsters.sh
+      - run: cmp out/monster-keys.fwsc builds/abyss-1-monster-keys-2.0.1.fwsc
+      - run: sha256sum -c evidence/checksums.txt
+      - run: node scripts/test-performance.mjs simulator out/monster-keys.fwsc out/check-60 --monsters
+      - run: ABYSS_MHZ=100 node scripts/test-performance.mjs simulator out/monster-keys.fwsc out/check-100 --monsters

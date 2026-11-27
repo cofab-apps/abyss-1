@@ -1,5 +1,0 @@
-parts    USB audio in, USB audio out, the SD card, the second core, the screen reader, companion services  (not built in: Bluetooth MIDI, Bluetooth MIDI devices, Bluetooth audio, USB MIDI host, USB disk mode, WiFi, velocity, pressure, screen mirroring, backup and restore, a resource region, WiFi (own stack), Ableton Link (GPL-3.0-only), WiFi access point (MODE AP), WiFi MODE JANK (open, no keys))
-build    C450E559  (FM1B_BUILD: the build a crash record names, fm1_remote.py crashes)
-parts    USB audio in, USB audio out, the SD card, the second core, the screen reader, companion services  (not built in: Bluetooth MIDI, Bluetooth MIDI devices, Bluetooth audio, USB MIDI host, USB disk mode, WiFi, velocity, pressure, screen mirroring, backup and restore, a resource region, WiFi (own stack), Ableton Link (GPL-3.0-only), WiFi access point (MODE AP), WiFi MODE JANK (open, no keys))
-build    C450E559  (FM1B_BUILD: the build a crash record names, fm1_remote.py crashes)
-exact:   flash 556,140 of 823,228, sram 174,596 of 486,144 (ram 79,288, pool 55,816, ramtext 39,492)

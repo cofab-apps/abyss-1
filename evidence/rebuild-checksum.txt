@@ -1,1 +1,0 @@
-17368df20e80a11eee4f9ee9512400fc5930d523fdcbd93ee8066e71d839716c  out/four-part.fwsc

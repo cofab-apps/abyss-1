@@ -1,4 +1,0 @@
- bc68fcd635a918e16019767acad67cc1d773dd6a fm1base (remotes/origin/integ/optimist-1126)
- fdd709fd0066b878b03c144776404d63811db13e fm1base/bsp (heads/main)
- 395e6cc469ba1d6eae9922a752d1f416ff07b69a third_party/m-bootloader (v2.4)
- 1309094869fc860f57671b466fce7769af7e1a18 third_party/m-flasher (v0.9.2)

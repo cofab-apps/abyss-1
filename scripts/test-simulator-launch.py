@@ -12,8 +12,7 @@ from playwright.sync_api import sync_playwright
 
 target, package = sys.argv[1:3]
 use_file_picker = sys.argv[3:] == ["--file"]
-monster_keys = os.environ.get("ABYSS_MONSTER_BROWSER")
-firmware_id = "abyss-monsters" if monster_keys else "abyss-1"
+firmware_id = "abyss-monsters"
 if target.startswith(("https://", "http://")):
     launch_url = target if "?" in target else target.rstrip("/") + f"/?fw={firmware_id}&embed=1&mhz=60"
 else:
@@ -25,34 +24,6 @@ else:
     query = "fw=local&mhz=60" if use_file_picker else f"fw={firmware_id}&embed=1&mhz=60"
     prefix = "/simulator" if bundled else ""
     launch_url = f"http://127.0.0.1:{server.server_port}{prefix}/?{query}"
-
-def expected_pixels(ids):
-    """Sample each tile's interior directly from the supplied 240px portrait."""
-    result = []
-    scale = 1 if len(ids) == 1 else 2
-    for slot, creature in enumerate(ids):
-        art = Path(__file__).resolve().parents[1] / "prototype" / "abyss1" / "assets" / f"{creature:02d}.png"
-        pic = Image.open(art).convert("RGB").quantize(colors=16, dither=Image.Dither.NONE).convert("RGB")
-        for y in range(12, 182 if scale == 1 else 240 // scale - 3, 10):
-            for x in range(12, 240 // scale - 3, 10):
-                r, g, b = pic.getpixel((scale * x, scale * y))
-                colour = ((r >> 3) << 11) | ((g >> 2) << 5) | (b >> 3)
-                offset = (slot % 2) * 120 + x + 240 * ((slot // 2) * 120 + y)
-                result.append([offset, colour])
-    return result
-
-
-def check_screen(page, ids):
-    page.wait_for_function("""expected => {
-        const canvas = document.querySelector('#big');
-        const pixels = canvas.getContext('2d').getImageData(0, 0, 240, 240).data;
-        return expected.every(([offset, expectedColour]) => {
-            const i = 4 * offset;
-            const c = ((pixels[i] >> 3) << 11) | ((pixels[i+1] >> 2) << 5) | (pixels[i+2] >> 3);
-            return c === expectedColour;
-        });
-    }""", arg=expected_pixels(ids), timeout=15000)
-
 
 with sync_playwright() as playwright:
     proxy = os.environ.get("ABYSS_BROWSER_PROXY")
@@ -138,94 +109,22 @@ with sync_playwright() as playwright:
             return (((v[0] >> 3) << 11) | ((v[1] >> 2) << 5) | (v[2] >> 3)) === c;
         }""", arg=[x, y, colour], timeout=10000)
 
-    if monster_keys:
-        # Match the actual idle LCD to the target capture, then turn SELECT
-        # one detent and check that the portrait and worklet both respond.
-        base = Path(__file__).resolve().parents[1]
-        img = Image.open(base / "monster-keys/hydra.png").convert("RGB")
-        def colour(x, y):
-            r, g, b = img.getpixel((x, y))
-            return (r >> 3) << 11 | (g >> 2) << 5 | (b >> 3)
-        for x,y in [(80,75),(112,110),(150,143)]:
-            mark(x,y,colour(x,y))
-        gesture(250,135,16)
-        page.wait_for_function("audioPeak() > 0.005", timeout=5000)
-        page.wait_for_function("audioPeak() < 0.002", timeout=12000)
-        gesture(250,135,-16)
-        page.wait_for_timeout(1800)
-        for x,y in [(80,75),(112,110),(150,143)]:
-            mark(x,y,colour(x,y))
-        assert not errors, errors
-        print("PASS Hydra LCD matches the firmware capture, SELECT audibly changes creature and returns to Hydra.")
-        browser.close()
-        sys.exit(0)
-    if os.environ.get("ABYSS_REPLY_BROWSER"):
-        mark(42, 2, 0x5F1B)
-        mark(42, 122, 0xFFAE)
-        gesture(1047, 340)  # ARP
-        mark(101, 11, 0x5F1B)
-        gesture(384, 735)
-        mark(101, 131, 0xFFAE)
-        page.wait_for_function("audioPeak() > 0.003", timeout=5000)
-        mark(101, 11, 0x5F1B)
-        gesture(1163, 340)  # PLAY keeps the completed exchange
-        mark(9, 10, 0x57EC)
-        page.wait_for_timeout(450)
-        page.wait_for_function("audioPeak() > 0.003", timeout=5000)
-        gesture(1163, 340)
-        page.wait_for_function("audioPeak() < 0.003", timeout=15000)
-        assert not errors, errors
-        print("PASS idle invitation, touch ARP, listening and answering fish, audible response, PLAY conversion and the kept duet.")
-
-    if os.environ.get("ABYSS_DEMO_BROWSER"):
-        if os.environ["ABYSS_DEMO_BROWSER"] != "home":
-            gesture(1105, 340)  # SEQ
-        gesture(1163, 340)  # PLAY, without entering any notes
-        page.wait_for_function("audioPeak() > 0.008", timeout=8000)
-        # Let the panel scan the released button before the next finger tap.
-        page.wait_for_timeout(350)
-        gesture(1163, 340)
-        page.wait_for_function("audioPeak() < 0.002", timeout=12000)
-        assert not errors, errors
-        print("PASS onscreen PLAY started the factory groove; PLAY stopped it.")
-        browser.close()
-        sys.exit(0)
-    ids = [0, 4, 8, 12]
-    check_screen(page, ids)
-    for part in range(4):
-        if part:
-            gesture(250, 135, 16)  # SELECT
-        gesture(110, 295, 16)  # PRESETS
-        ids[part] += 1
-        check_screen(page, ids)
-        gesture(989, 264)  # SCL
-        check_screen(page, [ids[part]])
-        gesture(931, 340)  # HOME
-        check_screen(page, ids)
-    gesture(250, 295, 16)  # ALGORITHM changes the fourth slot from atmosphere to bass
-    ids[3] = 1
-    check_screen(page, ids)
+    # Match the actual idle LCD to the target capture, then turn SELECT
+    # one detent and check that the portrait and worklet both respond.
+    base = Path(__file__).resolve().parents[1]
+    img = Image.open(base / "monster-keys/hydra.png").convert("RGB")
+    def colour(x, y):
+        r, g, b = img.getpixel((x, y))
+        return (r >> 3) << 11 | (g >> 2) << 5 | (b >> 3)
+    for x,y in [(80,75),(112,110),(150,143)]:
+        mark(x,y,colour(x,y))
+    gesture(250,135,16)
+    page.wait_for_function("audioPeak() > 0.005", timeout=5000)
+    page.wait_for_function("audioPeak() < 0.002", timeout=12000)
+    gesture(250,135,-16)
+    page.wait_for_timeout(1800)
+    for x,y in [(80,75),(112,110),(150,143)]:
+        mark(x,y,colour(x,y))
     assert not errors, errors
-    print("PASS public-panel touch gestures: four PRESETS changes, four SCL portraits, four HOME returns and a cross-family ALGORITHM change. All four tiles matched after every reassignment.")
-    gesture(1221, 340)  # REC arms
-    mark(22, 10, 0xF800)
-    gesture(384, 735)   # first key starts the clock
-    mark(9, 10, 0x57EC)
-    gesture(250, 135, 16)  # move from the fourth part to the first
-    gesture(533, 735)
-    gesture(1221, 340)  # end the take
-    gesture(1163, 340)  # PLAY stops
-    page.wait_for_function("audioPeak() < 0.001", timeout=10000)
-    gesture(989, 340)   # SAVE
-    mark(32, 10, 0xFFFF)
-    page.wait_for_function("document.querySelector('#save-status').textContent.includes('Saved in this browser')", timeout=20000)
-    page.reload(wait_until="domcontentloaded")
-    page.wait_for_function("t => document.querySelector('#title')?.textContent.includes(t)", arg=title, timeout=60000)
-    page.locator("#start").tap()
-    check_screen(page, ids)
-    gesture(1163, 340)
-    mark(9, 10, 0x57EC)
-    page.wait_for_function("audioPeak() > 0.005", timeout=10000)
-    assert not errors, errors
-    print("PASS REC, overdub, stop, SAVE, reload, Start, PLAY. All four assignments restored and the saved loop produced audio without a new note.")
+    print("PASS Hydra LCD matches the firmware capture, SELECT audibly changes creature and returns to Hydra.")
     browser.close()

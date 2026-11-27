@@ -34,7 +34,7 @@ const loaded = (r) => { if (!r.ok) throw new Error(`HTTP ${r.status}`); return r
 const catalog = await needed("the list of firmwares", async () => loaded(await fetch("firmwares.json")).json());
 // The Hub's firmwares not in the file yet, listed last as not yet run here (none when the Hub
 // does not answer in time; the read goes on for the package fallback). The SMK-37's list is its own.
-const abyssLaunch = DEVICE === "fm1" && (params.get("fw") || stored(DEV.key + "fw") || catalog.default) === "abyss-1";
+const abyssLaunch = DEVICE === "fm1" && (params.get("fw") || stored(DEV.key + "fw") || catalog.default) === "abyss-monsters";
 let hubWait;
 const newcomers = DEVICE === "fm1" && !abyssLaunch
   ? await Promise.race([hubNewcomers(catalog), new Promise((ok) => { hubWait = setTimeout(() => ok([]), 3000); })]).finally(() => clearTimeout(hubWait))
@@ -94,7 +94,7 @@ function endTryOut() {
 const clockOf = (v) => { const c = Number(v); return Number.isInteger(c) && c >= CLOCKS[0] && c <= CLOCKS[CLOCKS.length - 1] ? c : null; };
 // A firmware runs at its package's catalog minimum when that is above the picked clock;
 // the pick stays apart so the next firmware runs at it again.
-let pickedMhz = clockOf(params.get("mhz")) ?? clockOf(stored("fm1.mhz")) ?? (fw.id === "abyss-1" ? 60 : 100);
+let pickedMhz = clockOf(params.get("mhz")) ?? clockOf(stored("fm1.mhz")) ?? (fw.id === "abyss-monsters" ? 60 : 100);
 let mhz = pickedMhz;
 // the audio buffer: "interactive" (small: keys answer quickly) unless this device needed a larger
 // one ("playback", offered when the sound drops out with time to spare; ?latency= overrides)

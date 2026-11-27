@@ -1,62 +1,20 @@
-# Playing ABYSS-1
+# Play Monster Keys 2.0.1
 
-## Play the firmware in the web emulator
+[Open the player](https://joakimeriksson.github.io/fm1-emu/?package=https%3A%2F%2Fraw.githubusercontent.com%2Fcofab-apps%2Fabyss-1%2Fmain%2Fbuilds%2Fabyss-1-monster-keys-2.0.1.fwsc&name=ABYSS-1%20Monster%20Keys&embed=1&mhz=60) and tap **Start**. Follow the little keyboard under Hydra. Press a white key, add a second for a chord, then turn K1 while holding both. The arrows beside the name invite you to browse.
 
-[Launch ABYSS-1 in the simulator](https://joakimeriksson.github.io/fm1-emu/?package=https%3A%2F%2Fraw.githubusercontent.com%2Fcofab-apps%2Fabyss-1%2Fmain%2Fbuilds%2Fabyss-1-beta-1.5.fwsc&name=ABYSS-1&embed=1&mhz=60). Tap **Start** for audio. The link selects a 60 MHz emulated clock. On the S22, the 100 MHz setting was observed running at 0.5× real time. Turn the phone sideways and tap the keys. The firmware opens on four portraits. At rest the white frame shows which creature the keys will play. A sounding creature moves on its own tile. Four pearls mark the beats while the loop plays.
-
-| Control | What it does |
+| Control | Playing the released instrument |
 |---|---|
-| SELECT encoder | Move between the four tracks. In step view, move between the 16 steps. |
-| PRESETS / ALGORITHM | Pick a variant within the family / move to another family. Listen for its short preview while stopped. |
-| HOME / SCL (SEL) | See the whole orchestra / one full-screen portrait. |
-| K1–K4 | Change the four sound parameters shown in the selected family’s portrait. On the FX page they control drive, chorus, echo and room. |
-| ARP on stopped HOME | Play a phrase. Lift your fingers and the creature above or below you answers. Play again to take the next turn. ARP leaves the game. |
-| REC | Arm a 16-step loop. The first note starts the clock. Turn SELECT and play to overdub a different creature. Tap REC again to finish recording while the loop continues. |
-| PLAY | After a Reef Reply, keep the call and answer as a two-creature loop. Otherwise, from HOME or SEQ, start the four-creature groove on a fresh song; with your own notes, stop or restart it. |
-| EDIT on HOME | Lift the last completed take, step edit or factory groove. Press again to bring it back. A new musical edit replaces that undo. Undo is available during playback and when stopped. |
-| SEQ | Show the step grid. Turn SELECT to choose a step and tap a note to enter it. EDIT clears the selected step. Tap SEQ again to return. |
-| GLO | Open the four-track mixer. SELECT picks a track, SCL mutes it, K1 sets its level and K2 changes tempo. HOME returns to the orchestra. |
-| SAVE | Store the current song when stopped and quiet. A white indicator confirms the write. The same package restores it on restart. |
-| LFO | Open the selected track’s speed, pitch swing, waveform and amplitude controls. Press LFO again on this page to bypass. |
-| FX / ENV | Open the four effect controls / toggle physical key sensing with all keys released. Press SCL again in the portrait to switch minor pentatonic on or off. |
-| MASTER / OCT− / OCT+ | Set output volume / keyboard octave. |
+| SELECT, PRESETS, ALGORITHM | Turn either way to browse the 20 monsters. With the keys up, the new creature gives a short call. SEL / SCL advances one creature. |
+| White and raised keys | White keys play pentatonic pitches. A paired raised key bends and colours its neighbouring white note. Up to four notes sound with the selected creature’s voice. |
+| K1 · Mouth | Open the lips symbol to move between vowel shapes. |
+| K2 · Teeth | Lengthen the teeth to add rasp or a metallic edge. |
+| K3 · Wobble | Enlarge the wave to animate articulation and pitch. |
+| K4 · Cave | Widen the echo symbol for stereo repeats. |
+| HOME | Restore the selected creature's four starting knob values. |
+| OCT− / OCT+ | Move the keyboard down or up one octave within the instrument's range. |
+| REC | Arm recording. The first note or audition starts it. REC again finishes the take. Arming and cancelling an empty take keeps the previous recording. |
+| PLAY | Hear the take once, or hear a short call when no take exists. During recording, PLAY finishes the take and starts replay. Playing a fresh key interrupts replay. |
 
-On the phone, drag an encoder up or down to turn it. To start a blank take after trying the factory groove, press PLAY to stop, HOME, EDIT, then REC. The first key starts your new bar. Browser saves belong to the exact firmware file. Opening an older package retrieves that package’s saved song.
+**Try recording a conversation.** Play two short Bloop notes, leave a rest, then turn SELECT and answer in another voice. PLAY repeats those events in order once. The recorder holds one performance, up to 30 seconds or 512 gesture changes, for the current power session.
 
-### Take turns with another creature
-
-Start on the four portraits with the transport stopped. Press **ARP**. The bright little fish shows whose turn it is. Play a short call and lift your fingers. The other portrait gets a gold frame when it answers. The same physical keys light up under your fingers and again during the answer. Rests leave them dark. A held key keeps the turn yours. Try the same pattern on a different pair using SELECT. PRESETS changes the selected creature’s voice.
-
-On a fresh empty instrument, pausing for about four seconds makes the two fish and their portrait frames take turns while ARP pulses. Any touch clears the invitation. Once ARP has been tried, it stays out of the way for the rest of the session. Restored songs never receive it.
-
-Each call holds up to eight attacks in an eight-second phrase. Overlapping fingers that land within 45 ms make one chord with a shared duration. Released taps remain separate. The partner uses its own pitch range and sound. After the answer finishes, PLAY pulses. On an empty song, press it to fit the call into steps 1–8 and the response into steps 9–16, then start the loop. EDIT removes or restores both halves together, and SAVE retains the duet. Another key starts a new call; ARP discards it. If a song already exists, PLAY simply starts that song and never adds the temporary reply. REC leaves the game and arms a normal take.
-
-### Load a different package manually
-
-1. Download [abyss-1-beta-1.5.fwsc](../builds/abyss-1-beta-1.5.fwsc). On the GitHub file page, choose **Download raw file**. Keep the `.fwsc` extension.
-2. Open the [FM-1 web emulator](https://joakimeriksson.github.io/fm1-emu/). Under **Now running**, choose **Open .fwsc…** and select the downloaded file.
-3. Press **Start** and play the onscreen keys. On a phone, landscape mode gives the keyboard more room. The four portraits appear on the device LCD.
-
-The creature package is tested in the chip emulator. This revision still needs a physical FM-1 and Samsung S22 playtest. The emulator runs the package without a connected instrument.
-
-### Run the bundled emulator locally
-
-From the repository root, start a local server and open <http://127.0.0.1:8765/simulator/?fw=abyss-1&embed=1&mhz=60>. Press **Start**. The bundled player loads the local firmware directly. Press Ctrl-C in the terminal to stop the server.
-
-```sh
-python3 -m http.server 8765 --bind 127.0.0.1
-```
-
-## Play the creature prototype
-
-The [original prototype](../prototype/abyss1/) is included in this repository.
-
-From the repository root, run the following command and open <http://127.0.0.1:8000/abyss1/>. GitHub’s HTML file viewer displays the source.
-
-```sh
-python3 -m http.server 8000 --bind 127.0.0.1 --directory prototype
-```
-
-Tap **Demo groove** to load a pattern. Use the transport to play or stop it. Select a track, use the arrows to choose a creature, then play the keys. The grid button switches between one portrait and the four-track orchestra. Try muting one track to hear its contribution. Save and load operate in the browser.
-
-The prototype synthesizes its voices with Web Audio. Recording writes one note per step. The separate firmware beta supports sustained note-off, per-family patches and optional key sensing. [Beta 1 evidence](BETA-1.md) [Prototype details](../prototype/abyss1/README.md)
+[Proposed four-singer loop](backlog.md) · [Firmware verification](MONSTER-KEYS.md)
