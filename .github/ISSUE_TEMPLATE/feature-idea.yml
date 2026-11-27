@@ -1,0 +1,15 @@
+name: Feature idea
+description: Tell us what you wanted the monsters to do next.
+body:
+  - type: textarea
+    id: wish
+    attributes:
+      label: What would you like to play, hear or make?
+      placeholder: I wanted one monster to sing a long note while the others…
+    validations:
+      required: true
+  - type: textarea
+    id: gesture
+    attributes:
+      label: How would you like to play it?
+      description: A button, a gesture or a few words about what you imagined is enough.

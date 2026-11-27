@@ -1,0 +1,12 @@
+{
+  "what": "Play twenty sea monsters on a touch keyboard. Build a four-part choir, teach it a 32-step loop, or trade two calls and two replies. Dive an octave, add a cavern echo, or catch a two-second sound and play it backwards.",
+  "author": "Gabor Varga",
+  "kinds": [
+    "synth"
+  ],
+  "play": "https://joakimeriksson.github.io/fm1-emu/?package=https%3A%2F%2Fraw.githubusercontent.com%2Fcofab-apps%2Fabyss-1%2F9e74f6bf9f4524a1b2f64ac891ee89f97de69525%2Fbuilds%2Fseamonster-choir-2.3.0.fwsc&name=Seamonster%20Choir&embed=1&mhz=60",
+  "cheat": "https://github.com/cofab-apps/abyss-1/blob/main/docs/MANUAL.md",
+  "video": "https://raw.githubusercontent.com/cofab-apps/abyss-1/9e74f6bf9f4524a1b2f64ac891ee89f97de69525/evidence/choir/shell-2.3.0.mp4",
+  "image": "evidence/choir/four-singers.png",
+  "color": "#5EDCCF"
+}

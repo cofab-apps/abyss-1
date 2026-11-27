@@ -1,0 +1,25 @@
+name: Playtest or bug
+description: Tell us what happened while you were playing.
+body:
+  - type: dropdown
+    id: device
+    attributes:
+      label: Where did you play?
+      options:
+        - Browser player
+        - Physical M-VAVE FM-1
+        - Both
+    validations:
+      required: true
+  - type: textarea
+    id: observation
+    attributes:
+      label: What did you try, and what happened?
+      description: For a bug, include the buttons or keys you used and what you expected to hear or see.
+    validations:
+      required: true
+  - type: input
+    id: setup
+    attributes:
+      label: Firmware version and setup, if known
+      placeholder: e.g. 2.3.0 on Chrome for Android, or 2.3.0 on an FM-1 with Puya flash

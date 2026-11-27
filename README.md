@@ -6,6 +6,12 @@ Play twenty sea monsters on the M-VAVE FM-1. Trade singing calls, shape a four-p
 
 Tap **Start**, press **HOME** and tap **SEL** three times to fill a fresh choir. Press **ARP**. Play a short call as the top-left monster, then another when the marker reaches the top right. Lift your fingers and the two monsters below sing your phrases back. Each turn lasts two beats. Press **PLAY** to stop and press it again to loop your exchange.
 
+## Come playtest
+
+Can you teach four sea monsters a tune? Try it in the browser, on your own or with a child. Give the two top-row singers different calls, then listen for which monster answers each one. Tell us where you got stuck, or what you wanted the monsters to do next.
+
+[Suggest a feature](https://github.com/cofab-apps/abyss-1/issues/new?template=feature-idea.yml) · [Report a playtest or bug](https://github.com/cofab-apps/abyss-1/issues/new?template=playtest.yml)
+
 ![Four choir seats on the native FM-1 display](evidence/choir/four-singers.png)
 
 The screen shows four of the 20 portraits made for Monster Keys from Gabor Varga’s descriptions. His visual reference was MetaVine Labs’ [Legendary Sea Monsters 2025](https://www.youtube.com/watch?v=VciSINFWAzw). [Portrait atlas, SCP creator credits and artwork licence](LICENSING.md).
