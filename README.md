@@ -1,10 +1,20 @@
 # ABYSS-1
 
-ABYSS-1 is a four-track musical instrument in development for the M-VAVE FM-1. A child picks a sea creature, plays its voice, and layers a loop. Portraits and sound provide the cues for players who cannot yet read.
+**[Play Monster Keys 2.0.1 in your browser](https://joakimeriksson.github.io/fm1-emu/?package=https%3A%2F%2Fraw.githubusercontent.com%2Fcofab-apps%2Fabyss-1%2Fmain%2Fbuilds%2Fabyss-1-monster-keys-2.0.1.fwsc&name=ABYSS-1%20Monster%20Keys&embed=1&mhz=60)** · [Firmware](builds/abyss-1-monster-keys-2.0.1.fwsc) · [See and hear four monsters](evidence/monsters/monster-calls-2.0.1.mp4)
 
-**Project creator and maintainer:** Gabor Varga · Zurich, Switzerland. Firmware base: Optimist on fm1-base. Browser emulator: Joakim Eriksson’s fm1-emu.
+Tap **Start**. The three-headed Hydra is already an instrument. Hold any piano key and turn the first coloured knob to open its mouth. Turn **SELECT** to find a teeth-clicking Crab, the deep Bloop or a Space Bloop whose voice breaks into a radio transmission. Turning a sound knob with both hands off the keys makes the creature call once.
 
-## Play Beta 1.5
+![The actual Hydra startup screen on the 240-pixel FM-1 display](monster-keys/hydra.png)
+
+The four knobs shape **Mouth**, **Teeth**, **Wobble** and **Cave**. The symbols around the portrait change with the knobs. The little keyboard and the panel lights show where to play. **REC** captures a performance, including knob movements. Press **REC** again to finish, then **PLAY** to hear it. The take lasts for the current power session.
+
+The raised keys are finger bends for their neighbouring white notes. Hold a white key and rock onto the raised key beside it: the same voice bends and brightens without stealing another note from a chord.
+
+[Player guide, reproducible build and simulator checks](docs/MONSTER-KEYS.md) · [All twenty portraits](monster-keys/bestiary.png)
+
+Project creator and maintainer is Gabor Varga, Zurich, Switzerland. Monster Keys runs directly on fm1-base. Joakim Eriksson’s fm1-emu runs the target firmware in the browser.
+
+## Play or recover a Beta 1.5 song
 
 **[Open ABYSS-1 in the FM-1 simulator](https://joakimeriksson.github.io/fm1-emu/?package=https%3A%2F%2Fraw.githubusercontent.com%2Fcofab-apps%2Fabyss-1%2Fmain%2Fbuilds%2Fabyss-1-beta-1.5.fwsc&name=ABYSS-1&embed=1&mhz=60)** · [Download the firmware](builds/abyss-1-beta-1.5.fwsc) · [Watch and hear a Reef Reply become a song](evidence/duet/reef-duet.mp4)
 

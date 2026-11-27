@@ -86,7 +86,30 @@ function cell(i){return screen()[(200+Math.floor(i/8)*21)*240+6+30*(i%8)];}
 function pattern(){
     return Array.from({length:16},(_,i)=>cell(i)===0x5f1b?i:-1).filter(i=>i>=0);
 }
-if (['--reef','--probe-shell','--showcase','--reply'].includes(process.argv[5])) {
+if(process.argv[5]==='--monster-legacy') {
+    const legacy=fs.readFileSync(process.argv[6]);
+    function snapshot() {
+        const n=chip.fm1_flash_len();
+        const base=new Uint8Array(chip.memory.buffer,chip.fm1_flash_base(),n);
+        const flash=new Uint8Array(chip.memory.buffer,chip.fm1_flash(),n);
+        return packSectors(changedSectors(base,flash));
+    }
+    boot(null,legacy);
+    enc(0,2);btn(11);enc(0,3);btn(24);run(950);btn(9);run(900);
+    const saved=snapshot();
+    boot(saved);
+    btn(13);btn(21);enc(2,5);btn(13);btn(12);run(850);
+    boot(snapshot(),legacy);
+    btn(11);
+    for(let i=0;i<4;i++) {
+        assert.deepEqual(pattern(),i===0?[3]:[],'user song after Monster Keys, part '+i);
+        btn(8);enc(0,1);btn(11);
+    }
+    btn(12);assert.ok(run(800)>.001,'original song plays');
+    console.log('PASS saved Beta 1.5 track and three empty parts survived a Monster Keys record/play session and a return to Beta 1.5.');
+    process.exit(0);
+}
+if (['--reef','--probe-shell','--showcase','--reply','--monsters'].includes(process.argv[5])) {
     const {checkReef, probeShell, showcase} = await import('./reef-check.mjs');
     const movieStart = (name = "quartet") => {
         audio=fs.openSync(path.join(out,name+'.s16'),'w');
@@ -99,6 +122,11 @@ if (['--reef','--probe-shell','--showcase','--reply'].includes(process.argv[5]))
         if(panelVideo!==undefined) {fs.closeSync(panelVideo);panelVideo=undefined;}
     };
     const rig = {boot,btn,enc,run,chip,shots,screen,panelFrame,pattern,out,movieStart,movieEnd,saveAndReboot, time: () => count/44100};
+    if (process.argv[5] === '--monsters') {
+        const {checkMonsters} = await import('./test-monsters.mjs');
+        checkMonsters(rig);
+        process.exit(0);
+    }
     if (process.argv[5] === '--reply') {
         const {checkReply} = await import('./test-reply.mjs');
         checkReply(rig);

@@ -12,15 +12,17 @@ from playwright.sync_api import sync_playwright
 
 target, package = sys.argv[1:3]
 use_file_picker = sys.argv[3:] == ["--file"]
+monster_keys = os.environ.get("ABYSS_MONSTER_BROWSER")
+firmware_id = "abyss-monsters" if monster_keys else "abyss-1"
 if target.startswith(("https://", "http://")):
-    launch_url = target if "?" in target else target.rstrip("/") + "/?fw=abyss-1&embed=1&mhz=60"
+    launch_url = target if "?" in target else target.rstrip("/") + f"/?fw={firmware_id}&embed=1&mhz=60"
 else:
     site = Path(target).resolve()
     bundled = site.name == "simulator" and (site.parent/"builds").is_dir()
     handler = functools.partial(http.server.SimpleHTTPRequestHandler, directory=site.parent if bundled else site)
     server = http.server.ThreadingHTTPServer(("127.0.0.1", 0), handler)
     threading.Thread(target=server.serve_forever, daemon=True).start()
-    query = "fw=local&mhz=60" if use_file_picker else "fw=abyss-1&embed=1&mhz=60"
+    query = "fw=local&mhz=60" if use_file_picker else f"fw={firmware_id}&embed=1&mhz=60"
     prefix = "/simulator" if bundled else ""
     launch_url = f"http://127.0.0.1:{server.server_port}{prefix}/?{query}"
 
@@ -136,6 +138,27 @@ with sync_playwright() as playwright:
             return (((v[0] >> 3) << 11) | ((v[1] >> 2) << 5) | (v[2] >> 3)) === c;
         }""", arg=[x, y, colour], timeout=10000)
 
+    if monster_keys:
+        # Match the actual idle LCD to the target capture, then turn SELECT
+        # one detent and check that the portrait and worklet both respond.
+        base = Path(__file__).resolve().parents[1]
+        img = Image.open(base / "monster-keys/hydra.png").convert("RGB")
+        def colour(x, y):
+            r, g, b = img.getpixel((x, y))
+            return (r >> 3) << 11 | (g >> 2) << 5 | (b >> 3)
+        for x,y in [(80,75),(112,110),(150,143)]:
+            mark(x,y,colour(x,y))
+        gesture(250,135,16)
+        page.wait_for_function("audioPeak() > 0.005", timeout=5000)
+        page.wait_for_function("audioPeak() < 0.002", timeout=12000)
+        gesture(250,135,-16)
+        page.wait_for_timeout(1800)
+        for x,y in [(80,75),(112,110),(150,143)]:
+            mark(x,y,colour(x,y))
+        assert not errors, errors
+        print("PASS Hydra LCD matches the firmware capture, SELECT audibly changes creature and returns to Hydra.")
+        browser.close()
+        sys.exit(0)
     if os.environ.get("ABYSS_REPLY_BROWSER"):
         mark(42, 2, 0x5F1B)
         mark(42, 122, 0xFFAE)

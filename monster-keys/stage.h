@@ -1,0 +1,168 @@
+/* SPDX-License-Identifier: MPL-2.0
+ * The portrait occupies the same place during every interaction. The lower
+ * strip points at the panel: sixteen white keys and the four coloured knobs. */
+#define OCEAN RGB(4,13,22)
+#define FOAM RGB(220,241,237)
+#define TIDE RGB(71,216,205)
+#define STONE RGB(77,105,119)
+static const uint16_t ink[4]={RGB(250,110,114),RGB(102,195,254),RGB(116,221,143),RGB(255,200,96)};
+static const char *const effects[4]={"MOUTH","TEETH","WOBBLE","CAVE"};
+static uint16_t portrait[TILE*TILE] __attribute__((section(".pool")));
+static int portrait_id=-1, last_motion=-1, old_guide=-1, old_focus=-2;
+static uint32_t previous_paint;
+
+static void unpack_portrait(int id)
+{
+    const uint8_t *src=&monster_pixels[id*TILE*TILE*3/4];
+    const uint16_t *pal=&monster_palette[id*64];
+    for (int i=0; i<TILE*TILE; i+=4,src+=3) {
+        portrait[i]=pal[src[0]>>2];
+        portrait[i+1]=pal[((src[0]&3)<<4)|(src[1]>>4)];
+        portrait[i+2]=pal[((src[1]&15)<<2)|(src[2]>>6)];
+        portrait[i+3]=pal[src[2]&63];
+    }
+    portrait_id=id;
+}
+
+static void chevron(int x,int y,int sign,uint16_t col)
+{
+    for(int i=0;i<3;i++) {
+        cv_line(x,y-5+i,x+sign*5,y+i,col);
+        cv_line(x+sign*5,y+i,x,y+5+i,col);
+    }
+}
+
+static void crown(void)
+{
+    const char *name=creatures[animal].name;
+    cv_begin(240,25,OCEAN);
+    chevron(14,11,-1,TIDE); chevron(225,11,1,TIDE);
+    cv_text((240-text_w(&FONT_B,name))/2,4,&FONT_B,name,FOAM);
+    cv_blit(0,0);
+}
+
+static void paint_animal(int motion)
+{
+    /* Render a breathing call in horizontal bands. Stretch the centre
+     * against fixed edges, so the creature never swims out of its frame. */
+    for (int y=0;y<TILE;y+=8) {
+        int source=y + (sine_wave[y*128/TILE]*motion >> 7);
+        source=clamp(source,0,TILE-8);
+        lcd_sync();
+        lcd_blit(36,25+y,TILE,8,&portrait[source*TILE]);
+    }
+}
+
+static void bubbles(int side,int voice)
+{
+    cv_begin(36,54,OCEAN);
+    if(voice) {
+        for(int j=0;j<3;j++) {
+            int h=4+(j*5+voice*4)%17, x=side?6+j*7:28-j*7;
+            cv_rect(x,27-h/2,3,h,j?STONE:TIDE);
+        }
+    }
+    cv_blit(side?204:0,83);
+}
+
+static void signet(int k)
+{
+    int left=k%2?204:0, top=k<2?40:144;
+    int amt=knob[k], span=2+amt/21;
+    uint16_t c=ink[k];
+    cv_begin(36,36,OCEAN);
+    if(k==0) { /* opening lips */
+        for(int x=0;x<=24;x++) {
+            int curve=(12-(x>12?x-12:12-x))*span/12;
+            cv_rect(6+x,17-curve,1,2,c); cv_rect(6+x,18+curve,1,2,c);
+        }
+    } else if(k==1) { /* three teeth grow into the open jaw */
+        cv_rect(5,11,26,2,c);
+        for(int x=6;x<29;x+=8) {
+            cv_line(x,13,x+3,17+span,c); cv_line(x+3,17+span,x+6,13,c);
+        }
+    } else if(k==2) { /* vibrating wave */
+        for(int x=4;x<30;x++) {
+            int y=18+(sine_wave[((x-4)*14)&255]*span>>7);
+            cv_line(x,y,x+1,18+(sine_wave[((x-3)*14)&255]*span>>7),c);
+        }
+    } else { /* echoes move away from their source */
+        cv_rect(5,16,3,4,c);
+        for(int i=0;i<3;i++) {
+            int x=10+i*6,h=3+(span+i*4)/2;
+            cv_line(x,18-h,x+3,18,c);cv_line(x+3,18,x,18+h,c);
+        }
+    }
+    if(focus==k) cv_rect(9,32,18,2,c);
+    cv_blit(left,top);
+}
+
+static void guidance(int guide,uint32_t keys)
+{
+    cv_begin(240,47,OCEAN);
+    for(int k=0;k<4;k++) {
+        int x=11+k*59;
+        cv_rect(x,3,8,6,ink[k]); cv_rect(x+2,1,4,2,ink[k]);
+        cv_rect(x+10,5,36,3,STONE);
+        cv_rect(x+10,5,1+knob[k]*35/127,3,ink[k]);
+    }
+    if(focus>=0) {
+        const char *label=effects[focus];
+        cv_text(12,17,&FONT_B,label,ink[focus]);
+        int x=94, full=132;
+        cv_rect(x,23,full,7,STONE);
+        cv_rect(x,23,1+knob[focus]*(full-1)/127,7,ink[focus]);
+    } else {
+        for(int w=0;w<16;w++) {
+            int key=white_ids[w], x=8+w*14;
+            int active=(keys>>key)&1u;
+            if(key+1<NKEYS && (raised&(1u<<(key+1)))) active|=(keys>>(key+1))&1u;
+            cv_rect(x,19,12,24,active?ink[3]:(!keys && guide==w?TIDE:FOAM));
+            if(key+1<NKEYS && (raised&(1u<<(key+1))))
+                cv_rect(x+8,19,4,12,(keys & (1u<<(key+1)))?ink[0]:OCEAN);
+        }
+        int x=14+guide*14;
+        if(!keys) { cv_line(x-4,12,x,16,TIDE); cv_line(x,16,x+4,12,TIDE); }
+    }
+    if(tape_mode==RECORD) cv_rect(2,13,4,5,ink[0]);
+    if(tape_mode==REPLAY) chevron(3,13,1,TIDE);
+    cv_blit(0,193);
+}
+
+void app_ui_init(void)
+{
+    lcd_fill(0,0,240,240,OCEAN);
+    redraw=1;
+}
+void app_frame(void)
+{
+    input_monster();
+    uint32_t now=plat_ms();
+    if(now-previous_paint<65 && !redraw) return;
+    previous_paint=now;
+    int guide=4+(int)((now/800u)%3u)*2;
+    int singing=held_keys || (int32_t)(preview_until-now)>0;
+    int motion=singing?2+(int)((now/(110-knob[2]/2))%4):0;
+    int fresh=portrait_id!=animal;
+    if(fresh) {unpack_portrait(animal); crown();}
+    if(fresh || motion!=last_motion) {
+        paint_animal(motion); bubbles(0,motion); bubbles(1,motion);
+        last_motion=motion;
+    }
+    if(redraw || fresh || guide!=old_guide || focus!=old_focus) {
+        if(redraw || fresh || focus!=old_focus) for(int k=0;k<4;k++) signet(k);
+        guidance(guide,held_keys);
+        uint32_t lights=tape_mode==RECORD?(1u<<B_REC):tape_mode==REPLAY?LED_PLAY_GREEN:0;
+        plat_lights(lights,held_keys,LED_PLAY_GREEN,held_keys?0:1u<<white_ids[guide],2);
+        old_guide=guide; old_focus=focus; redraw=0;
+    }
+}
+
+void app_say(const char *a,const char *b)
+{
+    cv_begin(240,25,OCEAN);
+    int x=cv_text(5,4,&FONT_B,a?a:"",FOAM);
+    if(b) cv_text(x+4,4,&FONT_S,b,TIDE);
+    cv_blit(0,0);
+    portrait_id=-1;
+}

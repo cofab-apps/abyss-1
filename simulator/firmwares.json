@@ -1,8 +1,11 @@
 {
   "note": "Community firmwares for the M-VAVE FM-1: the FM-1 Firmware Hub's list (thefirmwarehub.com, tools/hub_catalog.mjs; its packages fetched from the Hub), then our own list (web/firmwares-own.json: this repository's FM-1 SID, M-VAVE's own, a few from fm1-editor.com/firmware). Generated: edit web/firmwares-own.json (the default too), not this file. The web page fetches each package when started and unpacks it with web/fwsc.js; tools/fetch_firmwares.mjs does the same into reference/firmwares for fm1-live. \"hub\": the firmware's id on the Hub (its card: thefirmwarehub.com/#fw-<hub>). \"minMhz\": the lowest clock it plays at without running out of time, measured on the package whose SHA-256 begins with \"minMhzPackage\" (tools/clock_floors.py). \"skipped\": Hub firmwares not run here, by the Hub's id, with why; the page lists the Hub's other firmwares not in this file after these, marked as not yet run here (web/fwsc.js hubNewcomers).",
-  "default": "abyss-1",
+  "default": "abyss-monsters",
   "skipped": {"vibe-link":"crashes in the emulator a second or two after boot (a CPU exception at 0x0200338E: its own crash screen); held back until that is understood","lsdjburrito":"boots to its instructions, but makes no audio until an LSDJ song is sent to it over USB from its web page, which the emulator's page cannot do"},
   "firmwares": [
+    { "id": "abyss-monsters", "name": "ABYSS-1 Monster Keys", "version": "2.0.1", "author": "Gabor Varga",
+      "about": "Hold a key and turn the four knobs to shape twenty monster voices. REC captures a live take.",
+      "repo": "https://github.com/cofab-apps/abyss-1", "package": "../builds/abyss-1-monster-keys-2.0.1.fwsc" },
     { "id": "abyss-1", "name": "ABYSS-1", "version": "Beta 1.5", "author": "Gabor Varga",
       "about": "Play the keys. ARP lets another creature answer your phrase. PLAY keeps the exchange as a loop.",
       "repo": "https://github.com/cofab-apps/abyss-1", "package": "../builds/abyss-1.fwsc" },

@@ -10,3 +10,7 @@ f109f85496181c6916af6e613f71719b606f43afb197d68ce1bb1e310cf70a66  builds/four-pa
 1aad3e160f90f78cff8094a595f2790cc5e3b6dbdc82ba7b4c59bb4b7cb67aed  builds/abyss-1-beta-1.4.2.fwsc
 b763c8354a737294ce0d3268d3d5ea736b50c49f953a009769a414ef51c43156  builds/abyss-1-beta-1.5.fwsc
 b763c8354a737294ce0d3268d3d5ea736b50c49f953a009769a414ef51c43156  builds/abyss-1.fwsc
+6ff4d3b01b302f6f81f52aa5947af155c4cb7fa59d46c14f4fc0f24eca8830cb  builds/abyss-1-monster-keys-2.0.fwsc
+db9ceddaab95290201db3cde63d951a52d9f349bba763784d69f2b4483db6371  builds/abyss-1-monster-keys-2.0.1.fwsc
+80940f42ac82e9b1161acb7ad1f514952304169f42d9708c03fada2ccf16cb70  evidence/monsters/measurements-2.0.1.json
+f85fd93eaff464fcfbffb4e172adcbed26ee1d3ba308ba2057508bc83ebc7184  evidence/monsters/monster-calls-2.0.1.mp4

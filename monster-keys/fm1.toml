@@ -1,0 +1,17 @@
+name = "MONSTER-KEYS"
+title = "ABYSS-1 Monster Keys"
+id_prefix = "FM-1_709"
+usb_manufacturer = "COFAB"
+usb_product = "ABYSS Monster Keys"
+repo = "https://github.com/cofab-apps/abyss-1"
+author = "Gabor Varga"
+description = "Play twenty sea monsters and shape their calls with four knobs."
+tagline = "A sea monster under every finger"
+install = "https://github.com/cofab-apps/abyss-1/tree/main/builds"
+screenshot = "hydra.png"
+tags = ["synth"]
+licence = "MPL-2.0"
+ble = false
+ram_layout = "packed"
+app_end = 0xCE000
+gen = ["pack.py {gen}"]

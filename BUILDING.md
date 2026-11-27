@@ -1,6 +1,10 @@
 # Building and testing ABYSS-1
 
-Run these commands from the root of a clone of this repository. For playback of an existing package, see the [player guide](docs/MANUAL.md).
+The current live instrument builds with `sh scripts/build-monsters.sh`. The [Monster Keys handoff](docs/MONSTER-KEYS.md) gives the pinned inputs, output checksum and simulator tests.
+
+## Legacy sequencer builds
+
+Run these commands from the root of a clone of this repository. For playback of a Beta 1.5 song, see the [player guide](docs/MANUAL.md).
 
 | Build target | Input | Local output | Checked-in package |
 |---|---|---|---|
