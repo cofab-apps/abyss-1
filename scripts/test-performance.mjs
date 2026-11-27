@@ -6,6 +6,8 @@ import {pathToFileURL} from 'node:url';
 import {createHash} from 'node:crypto';
 const [site,fw,out] = process.argv.slice(2);
 const clock = Number(process.env.ABYSS_MHZ || 60);
+const flashPart = process.env.ABYSS_FLASH || 'p25q80';
+assert.ok(['p25q80','uc25hq80'].includes(flashPart), 'ABYSS_FLASH must be p25q80 or uc25hq80');
 fs.mkdirSync(out, {recursive:true});
 const {jitImports} = await import(pathToFileURL(path.resolve(site,'jit.js')));
 let chip;
@@ -14,7 +16,7 @@ chip=mod.instance.exports;
 chip.fm1_jit(1,16); chip.fm1_ahead(1024);
 const file=fs.readFileSync(fw);
 const hash = data => createHash('sha256').update(data).digest('hex');
-console.log('Firmware SHA-256',hash(file));
+console.log('Firmware SHA-256', hash(file), 'flash', flashPart, 'MHz', clock);
 const screen=()=>new Uint16Array(chip.memory.buffer,chip.fm1_lcd(),57600);
 const rawScreen=()=>Buffer.from(new Uint8Array(screen().buffer,screen().byteOffset,115200));
 const shots=name=>fs.writeFileSync(path.join(out,name+'.rgb'),rawScreen());
@@ -64,6 +66,8 @@ function chipInput(bytes) {
     return at;
 }
 function boot(saved) {
+    // Select the flash before each boot, including the saved-favourite restart.
+    chip.fm1_flash_part(flashPart === 'uc25hq80' ? 1 : 0);
     const at = chipInput(file);
     assert.equal(chip.fm1_boot_fwsc(at, file.length, 0, 0, clock), 0);
     if (saved?.length) assert.equal(chip.fm1_flash_restore(chipInput(saved),saved.length),0);

@@ -19,6 +19,26 @@ The packaged FM-1 image ran in the chip emulator at 60 and 100 MHz. These measur
 
 [60 MHz results](../evidence/choir/results-60.json) · [100 MHz results](../evidence/choir/results-100.json) · [Native four-seat display](../evidence/choir/four-singers.png)
 
+## FM-1 hardware compatibility
+
+The same 2.1.0 package was tested at 60 MHz with each flash chip selected explicitly before every simulated boot.
+
+| M-VAVE FM-1 flash | JEDEC ID | Result in the chip emulator |
+|---|---|---|
+| Puya P25Q80 | `0x856014` | Boot, call and answer, four-part save, and favourite replay after restarting passed. |
+| UC25HQ80 | `0xB36014` | Boot, call and answer, four-part save, and favourite replay after restarting passed. |
+
+On each model the first save changed sector `0xD8000`. After restoring the saved flash on a fresh boot, the call and answer measured 0.0635 and 0.0736 left-channel RMS. The four-singer chord had zero missed DAC refills. The package reports `FM-1_709020100` and carries the 13,396-byte update loader. Physical installation from V15 and another firmware, cold power-cycle recall and switching away still need a real unit. To identify a unit, read **Device Info → Flash Chip** in M-Flasher. [M-VAVE compatibility notice](https://forum.m-vave.com/topic/89) · [Firmware Hub requirements](https://thefirmwarehub.com/submit/).
+
+Run these from the repository root with Node 24.
+
+```sh
+for chip in p25q80 uc25hq80; do
+    ABYSS_FLASH="$chip" ABYSS_MHZ=60 node scripts/test-performance.mjs simulator \
+        builds/abyss-1-monster-choir-2.1.0.fwsc "out/compat-$chip" --choir
+done
+```
+
 ## Reproduce
 
 Use the [build and test commands](../BUILDING.md). Firmware identity is `FM-1_709020100`. The package is 858216 bytes with SHA-256 `9d6d60c411e1621956c29a6bfe1f53ed522862a368cab61f04ad8800f51367c6`. The [choir test](../scripts/test-choir.mjs) plays through the panel, restores a saved flash snapshot, and injects velocity and aftertouch at the emulated key contacts.

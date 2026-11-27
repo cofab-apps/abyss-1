@@ -6,6 +6,8 @@ Tap **Start**, press **ARP**, then play two notes and lift your fingers. Hydra s
 
 ![Four choir seats on the native FM-1 display](evidence/choir/four-singers.png)
 
+The screen shows four of the 20 portraits made for Monster Keys from Gabor Varga’s descriptions. His visual reference was MetaVine Labs’ [Legendary Sea Monsters 2025](https://www.youtube.com/watch?v=VciSINFWAzw). [Portrait atlas, SCP creator credits and artwork licence](LICENSING.md).
+
 | To play | On the FM-1 |
 |---|---|
 | Build a choir | HOME opens four portrait seats. SELECT moves the yellow marker. Turn PRESETS to audition, then press SEL/SCL to invite that singer. |
@@ -13,6 +15,8 @@ Tap **Start**, press **ARP**, then play two notes and lift your fingers. Hydra s
 | Make a repeating song | REC arms one singer. The first note starts two bars. Your phrase repeats after 32 steps. Arm another seat to join on the next downbeat. PLAY stops or restarts them together. EDIT undoes the most recent take. |
 | Keep a favourite | In the choir, SAVE keeps one complete arrangement. During playback a save waits for STOP and key release. GLO recalls it while stopped. The next boot restores it when you enter the choir. |
 | Whisper and growl | Hold a white note and rock onto its paired raised key. The bend grows into a growl over 0.7 seconds. On the FM-1, press ENV with all keys up to enable continuous finger pressure on the lower 20 keys. |
+
+**Hardware.** Monster Choir targets the M-VAVE FM-1. The 2.1.0 package passed playback and favourite recall after a simulated restart on both the Puya P25Q80 and UC25HQ80 flash models. Physical installation and power-cycle testing remain open. [Compatibility results](docs/MONSTER-KEYS.md#fm-1-hardware-compatibility).
 
 [Player guide](docs/MANUAL.md) · [Verification and limitations](docs/MONSTER-KEYS.md) · [Rebuild](BUILDING.md) · [All 20 portraits](monster-keys/bestiary.png) · [Credits](LICENSING.md)
 
