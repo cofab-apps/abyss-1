@@ -28,7 +28,15 @@ The same 2.1.0 package was tested at 60 MHz with each flash chip selected explic
 | Puya P25Q80 | `0x856014` | Boot, call and answer, four-part save, and favourite replay after restarting passed. |
 | UC25HQ80 | `0xB36014` | Boot, call and answer, four-part save, and favourite replay after restarting passed. |
 
-On each model the first save changed sector `0xD8000`. After restoring the saved flash on a fresh boot, the call and answer measured 0.0635 and 0.0736 left-channel RMS. The four-singer chord had zero missed DAC refills. The package reports `FM-1_709020100` and carries the 13,396-byte update loader. Physical installation from V15 and another firmware, cold power-cycle recall and switching away still need a real unit. To identify a unit, read **Device Info → Flash Chip** in M-Flasher. [M-VAVE compatibility notice](https://forum.m-vave.com/topic/89) · [Firmware Hub requirements](https://thefirmwarehub.com/submit/).
+On each model the first save changed sector `0xD8000`. After restoring the saved flash on a fresh boot, the call and answer measured 0.0635 and 0.0736 left-channel RMS. The four-singer chord had zero missed DAC refills. The package reports `FM-1_709020100` and carries the 13,396-byte update loader. To identify a unit, read **Device Info → Flash Chip** in M-Flasher. [M-VAVE compatibility notice](https://forum.m-vave.com/topic/89) · [Firmware Hub requirements](https://thefirmwarehub.com/submit/).
+
+### Physical FM-1 with Puya P25Q80 flash
+
+On 27 November 2026 Gabor installed the released package on a black M-VAVE FM-1. M-Flasher 0.10.0 reported stock 015, chip ID `0x856014` (1 MiB) and m-bootloader 2.3-6bc8f45 before the write. It identified the package as `FM-1_709020100`, saved a full backup and verified all 203 sectors in the write plan. The settings and Bluetooth erase option was selected for this installation.
+
+After boot, the physical LCD showed Lernaean Hydra, Jacob Leviathan and The Bloop, including the Wobble control. Gabor’s phone video shows live key presses and captures pitched tones during play. Physical four-part looping, favourite recall after power-off, USB identity, installation from another firmware, switching away and a UC25HQ80 unit remain unverified.
+
+### Repeat the emulator checks
 
 Run these from the repository root with Node 24.
 

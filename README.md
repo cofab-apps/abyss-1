@@ -16,7 +16,7 @@ The screen shows four of the 20 portraits made for Monster Keys from Gabor Varga
 | Keep a favourite | In the choir, SAVE keeps one complete arrangement. During playback a save waits for STOP and key release. GLO recalls it while stopped. The next boot restores it when you enter the choir. |
 | Whisper and growl | Hold a white note and rock onto its paired raised key. The bend grows into a growl over 0.7 seconds. On the FM-1, press ENV with all keys up to enable continuous finger pressure on the lower 20 keys. |
 
-**Hardware.** Monster Choir targets the M-VAVE FM-1. The 2.1.0 package passed playback and favourite recall after a simulated restart on both the Puya P25Q80 and UC25HQ80 flash models. Physical installation and power-cycle testing remain open. [Compatibility results](docs/MONSTER-KEYS.md#fm-1-hardware-compatibility).
+**Hardware.** Monster Choir 2.1.0 booted on a physical M-VAVE FM-1 with Puya P25Q80 flash after installation from stock 015. Gabor played notes, browsed portraits and brought up Bloop’s Wobble control. Four-part playback and favourite recall after a restart passed in the simulator on both flash models. The UC25HQ80 still needs a physical test. [Compatibility results](docs/MONSTER-KEYS.md#fm-1-hardware-compatibility).
 
 [Player guide](docs/MANUAL.md) · [Verification and limitations](docs/MONSTER-KEYS.md) · [Rebuild](BUILDING.md) · [All 20 portraits](monster-keys/bestiary.png) · [Credits](LICENSING.md)
 
