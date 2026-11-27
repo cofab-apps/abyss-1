@@ -1,6 +1,6 @@
 name = "SEAMONSTER-CHOIR"
 title = "Seamonster Choir"
-id_prefix = "FM-1_709"
+id_prefix = "FM-1_85"
 usb_manufacturer = "COFAB"
 usb_product = "Seamonster Choir"
 repo = "https://github.com/cofab-apps/abyss-1"

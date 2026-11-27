@@ -15,7 +15,7 @@ jobs:
           node-version: '24'
       - run: python3 -m pip install Pillow==13.0.0
       - run: sh scripts/build-monsters.sh
-      - run: cmp out/monster-keys.fwsc builds/seamonster-choir-2.3.0.fwsc
+      - run: cmp out/monster-keys.fwsc builds/seamonster-choir-2.3.1.fwsc
       - run: sha256sum -c evidence/checksums.txt
       - run: node scripts/test-performance.mjs simulator out/monster-keys.fwsc out/check-60 --monsters
       - run: ABYSS_MHZ=100 node scripts/test-performance.mjs simulator out/monster-keys.fwsc out/check-100 --monsters

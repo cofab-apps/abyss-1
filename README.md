@@ -1,6 +1,6 @@
-# Seamonster Choir 2.3
+# Seamonster Choir 2.3.1 beta
 
-**[Play Seamonster Choir](https://joakimeriksson.github.io/fm1-emu/?package=https%3A%2F%2Fraw.githubusercontent.com%2Fcofab-apps%2Fabyss-1%2Fmain%2Fbuilds%2Fseamonster-choir-2.3.0.fwsc&name=Seamonster%20Choir&embed=1&mhz=60)** · [Download the firmware](builds/seamonster-choir-2.3.0.fwsc) · [Hear the sampler](evidence/choir/shell-2.3.0.mp4) · [See and hear the four turns and sea effects](evidence/choir/rows-and-sea-2.2.0.mp4)
+**[Play Seamonster Choir](https://joakimeriksson.github.io/fm1-emu/?package=https%3A%2F%2Fraw.githubusercontent.com%2Fcofab-apps%2Fabyss-1%2Fmain%2Fbuilds%2Fseamonster-choir-2.3.1.fwsc&name=Seamonster%20Choir&embed=1&mhz=60)** · [Download 2.3.1 beta for FM-1](builds/seamonster-choir-2.3.1.fwsc) · [Previous 2.3.0](builds/seamonster-choir-2.3.0.fwsc) · [Hear the sampler](evidence/choir/shell-2.3.0.mp4) · [See and hear the four turns and sea effects](evidence/choir/rows-and-sea-2.2.0.mp4)
 
 Play twenty sea monsters on the M-VAVE FM-1. Trade singing calls, shape a four-part choir or turn a sound from home into an instrument.
 
@@ -26,7 +26,7 @@ The screen shows four of the 20 portraits made for Monster Keys from Gabor Varga
 | Keep a favourite | In the choir, SAVE keeps one complete arrangement. During playback a save waits for STOP and key release. GLO recalls it while stopped. The next boot restores it when you enter the choir. |
 | Whisper and growl | Hold a white note and rock onto its paired raised key. The bend grows into a growl over 0.7 seconds. On the FM-1, press ENV with all keys up to enable continuous finger pressure on the lower 20 keys. |
 
-**Hardware.** Monster Choir 2.1.0 booted on a physical M-VAVE FM-1 with Puya P25Q80 flash after installation from stock 015. Gabor played notes, browsed portraits and brought up Bloop’s Wobble control. Version 2.3.0 passed on the simulated Puya P25Q80 and UC25HQ80. Physical USB sample transfer and the 2.3.0 hardware playtest are open. [Compatibility results](docs/MONSTER-KEYS.md#fm-1-hardware-compatibility).
+**Hardware.** Monster Choir 2.1.0 booted on a physical M-VAVE FM-1 with Puya P25Q80 flash after installation from stock 015. Gabor played notes, browsed portraits and brought up Bloop’s Wobble control. Version 2.3.1 beta carries the Hub-compatible format for its firmware ID, `FM-1_85020301`. It passed on the simulated Puya P25Q80 and UC25HQ80. The real-device install from stock and another firmware, USB identity after boot, switch away and physical USB sample transfer are open. [Beta evidence and hardware test](docs/MONSTER-KEYS.md#firmware-hub-candidate) · [Previous hardware results](docs/MONSTER-KEYS.md#fm-1-hardware-compatibility).
 
 [Player guide](docs/MANUAL.md) · [Verification and limitations](docs/MONSTER-KEYS.md) · [Rebuild](BUILDING.md) · [All 20 portraits](monster-keys/bestiary.png) · [Credits](LICENSING.md)
 

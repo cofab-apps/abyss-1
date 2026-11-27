@@ -1,4 +1,24 @@
-# Seamonster Choir 2.3.0
+# Seamonster Choir
+
+## Firmware Hub candidate
+
+[Download 2.3.1 beta](../builds/seamonster-choir-2.3.1.fwsc) · [Play in the browser](../README.md) · [Simulator measurements](../evidence/choir/results-2.3.1.json)
+
+2.3.1 beta packages the 2.3.0 instrument with the eight-digit ID `FM-1_85020301`. The Hub's identity checker reported it free on 27 November 2026. The candidate is 858216 bytes. SHA-256 is `ad289835fce7d9bd79caaad79f908b3978f1bf7952d99227b5cdd5d6667f7683`. A second clean cross-build produced identical bytes. The package marker and firmware application both contain the new ID. Both package entries passed their CRC checks. The included 13396-byte update loader matched the pinned build output.
+
+The packaged firmware was exercised at 60 MHz on simulated Puya P25Q80 flash and at 100 MHz on UC25HQ80. The tests covered all 20 voices, seat retention, two calls and two replies, four-part playback, favourite recall, the sea effects and the sampler. In touch Chromium the package booted, matched the Hydra LCD capture and sounded a note on touch. [Build and reproduction](../BUILDING.md)
+
+### Physical test for the Hub
+
+Use the exact candidate above on a backed-up M-VAVE FM-1. If the instrument currently runs Monster Choir 2.1.0, this sequence covers the Hub's requirements in three installs. Use the normal USB firmware updater for the switches so the test exercises the firmware's own update path.
+
+1. From 2.1.0 install 2.3.1 beta. After boot, read the running USB firmware ID and record whether it is `FM-1_85020301`. Play a note and check the LCD.
+2. From the beta install stock V15. Confirm that stock boots.
+3. From stock V15 install the same beta again and confirm the USB firmware ID after boot.
+
+Record the model, flash chip, starting and ending IDs and result of each switch. The only physical playtest on record is for 2.1.0. After the candidate passes, submit the repository and hardware results through the [Firmware Hub maker form](https://thefirmwarehub.com/submit/).
+
+## Seamonster Choir 2.3.0
 
 [Play or download](../README.md) · [Play the sampler or load a sound](MANUAL.md#catch-a-sound) · [Native LCD and stereo sampler recording](../evidence/choir/shell-2.3.0.mp4)
 
