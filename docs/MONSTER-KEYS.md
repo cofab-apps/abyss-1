@@ -1,5 +1,24 @@
 # Seamonster Choir
 
+## Combined hardware beta 2.4.0
+
+[Play or download the firmware](../README.md) · [22-second native LCD and stereo DAC capture](../evidence/choir/2.4.0/ensemble.mp4) · [Three native screens](../evidence/choir/2.4.0/screens.png) · [Measured results on both simulated flash chips](../evidence/choir/2.4.0/results.json) · [Reproduce the runs](../BUILDING.md)
+
+The firmware identifies as `FM-1_85020400`. The 858216-byte package has SHA-256 `2603bc05d6bfd72c499ac454068d9ef054d559a2af1697e19760467555f6c474`. A clean rebuild produced identical bytes. The tested target is the M-VAVE FM-1. Hardware acceptance of this version is open. The photographs of a successful 2.1.0 installation establish the earlier Puya FM-1 result.
+
+| Feature | How it was checked |
+|---|---|
+| Guest Singer | Captured Crab in Shell Sampler, assigned it to bottom-left Bloop and measured its reply against the actual captured waveform. Checked pitched duration at two roots, isolated each of the other three voices, and rebooted a saved song. The caller survived and the missing PCM seat was silent. |
+| Strum the Choir | Held a low root, swept four rightmost white keys forwards and backwards, read each active portrait from the native LCD and measured DAC output. Checked silence on root alone, empty seat and root release. |
+| Songs in Shells | Recorded different first pitches in A, B and C, rebooted, then observed the saved C–A–B order on the LCD and measured an audible first note at each boundary. Preview and playback left the flash image intact. Re-saving the working song after preview recovered A’s pitch. |
+| Previous workflows | All 20 voices, call and response, four recorded lanes, pressure, four underwater effects, sampler, and the 2.1.0 favourite fixture ran through the packaged target. Chromium also exercised the default player with touch and the file loader with a compiled receiver. |
+
+The video starts with two strums, followed by the captured reply and the three-shell performance. Its three songs hold a short note near the start of each 32-step phrase. Listen for the rests and watch the progress line move to the next shell.
+
+A flash pair is reserved for each arrangement and for the play order. Shell A uses the existing favourite sectors at `0xD8000`. B starts at `0xDA000`, C at `0xDC000`, and order at `0xDE000`. Stored songs are validated before playback. The guest’s mono PCM lives in RAM. Its identifying signature lives with the song.
+
+**On the physical FM-1**, verify boot and the running USB ID, speaker and headphone sound, pad response while strumming, three songs after power-off and computer audio over USB. Document the flash chip and starting firmware with each result. Keep the stock full-flash backup for that unit. The Firmware Hub submission remains on hold for this iteration.
+
 ## Firmware Hub candidate
 
 [Download 2.3.1 beta](../builds/seamonster-choir-2.3.1.fwsc) · [Play in the browser](../README.md) · [Simulator measurements](../evidence/choir/results-2.3.1.json)

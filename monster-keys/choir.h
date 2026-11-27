@@ -2,9 +2,20 @@
 enum { SEATS=4, STEPS=32, STEP_MS=150, EMPTY=255 };
 struct syllable { uint8_t note, bend, pressure, strike, knobs[4]; };
 struct singer { uint8_t species, knobs[4]; struct syllable line[STEPS]; };
-struct arrangement { uint32_t format; struct singer seats[SEATS]; uint8_t sea[4]; };
+struct arrangement { uint32_t format; struct singer seats[SEATS]; uint8_t sea[4]; uint32_t guest_seat, guest_hash; };
 static const uint32_t choir_format=0x314b434d; /* MCK1 */
-static struct arrangement song;
+static struct arrangement song, shells[3], working_song;
+static uint8_t shell_used[3], order[3]={0,1,2}, new_order[3];
+static int shelf, cursor, building_order=-1, chain_at=-1, shell_playing=-1, shelf_message;
+static int strum, strum_root=-1, rung;
+static uint32_t guest_signature;
+static int sample_target;
+static uint32_t pad_keys(void)
+{
+    uint32_t mask=0;
+    for(int i=0;i<SEATS;i++) if(song.seats[i].species!=EMPTY) mask|=1u<<white_ids[12+i];
+    return mask;
+}
 static struct syllable draft[STEPS], undo_lines[SEATS][STEPS];
 static unsigned undo_mask;
 static int selected, step_index, running, armed=-1, recording=-1;
@@ -41,12 +52,14 @@ static void invite_singer(void)
         return;
     }
 }
-static int recall_favourite(void)
+static int load_shell(int slot)
 {
     static struct arrangement saved;
-    int bytes=plat_store_load(OBJ_FAVOURITE,&saved,sizeof(saved));
-    if(bytes==(int)sizeof(saved)-4) memset(saved.sea,0,sizeof(saved.sea));
-    else if(bytes!=(int)sizeof(saved)) return 0;
+    memset(&saved,0,sizeof(saved));
+    int bytes=plat_store_load(OBJ_FAVOURITE+slot,&saved,sizeof(saved));
+    if(bytes!=(int)sizeof(saved) && bytes!=(int)__builtin_offsetof(struct arrangement,guest_seat)
+       && bytes!=(int)__builtin_offsetof(struct arrangement,sea)) return 0;
+    if(saved.guest_seat>SEATS || (saved.guest_seat && !saved.guest_hash)) return 0;
     for(int k=0;k<4;k++) if(saved.sea[k]>127) return 0;
     if (saved.format!=choir_format || saved.seats[0].species>=SPECIES) return 0;
     for(int i=0;i<SEATS;i++) {
@@ -59,12 +72,31 @@ static int recall_favourite(void)
             for(int k=0;k<4;k++) if(v->knobs[k]>127) return 0;
         }
     }
-    song=saved;
-    for(int k=0;k<4;k++) sea[k]=saved.sea[k];
+    shells[slot]=saved;
     return 1;
+}
+static void use_song(const struct arrangement *a)
+{
+    song=*a;
+    for(int k=0;k<4;k++) sea[k]=a->sea[k];
+}
+static int recall_favourite(void)
+{
+    if(!shell_used[0]) return 0;
+    use_song(&shells[0]); return 1;
+}
+static int store_shell(int slot)
+{
+    for(int k=0;k<4;k++) song.sea[k]=sea[k];
+    if(plat_store_save(OBJ_FAVOURITE+slot,&song,sizeof(song))!=0) return 0;
+    shells[slot]=song; shell_used[slot]=1; return 1;
 }
 static void init_choir(void)
 {
+    for(int i=0;i<3;i++) shell_used[i]=load_shell(i);
+    uint8_t saved_order[3];
+    if(plat_store_load(OBJ_ORDER,saved_order,3)==3 && saved_order[0]<3 &&
+       saved_order[1]<3 && saved_order[2]<3) memcpy(order,saved_order,3);
     if(recall_favourite()) { initialized=1; return; }
     memset(&song,0,sizeof(song)); song.format=choir_format;
     for(int i=0;i<SEATS;i++) song.seats[i].species=EMPTY;
@@ -82,7 +114,7 @@ static void answer_turn(void);
 static void stop_choir(void)
 {
     if(echo_game && recording>=0) answer_turn(); else finish_lane();
-    running=echo_game=0; audition=-1; step_index=0; redraw=1;
+    strum=rung=0; strum_root=-1; running=echo_game=0; audition=-1; step_index=0; redraw=1;
 }
 static void toggle_choir(void)
 {
@@ -125,11 +157,21 @@ static void answer_turn(void)
     }
     recording=armed=-1; nonempty=0;
 }
+static void shelf_stop(void)
+{
+    if(shell_playing>=0) { stop_choir(); use_song(&working_song); }
+    shell_playing=chain_at=-1;
+}
 static void advance_step(void)
 {
     step_index=(step_index+1)%STEPS;
     if(echo_game && step_index==16) answer_turn();
     if(step_index==0) {
+        if(shell_playing>=0) {
+            if(chain_at<0 || chain_at>=2) { shelf_stop(); return; }
+            shell_playing=order[++chain_at]; use_song(&shells[shell_playing]);
+            for(int i=0;i<SEATS;i++) ++attack_count[i];
+        }
         int waiting=armed;
         finish_lane();
         if(echo_game) begin_lane(turn_seat(0));
@@ -151,9 +193,25 @@ static void start_game(void)
     reply_ready=0;
     echo_game=1; armed=turn_seat(0);
 }
+#include "shells.h"
+
 static void choir_input(uint32_t now,uint32_t keys,uint32_t buttons)
 {
     int move=plat_enc(EN_SELECT), browse=plat_enc(EN_PRESET)+plat_enc(EN_ALGO);
+    if(shelf) {
+        shelf_controls(now,keys,buttons,move);
+        keys=buttons=0; move=browse=0;
+    } else {
+        int edit=gesture_button(B_EDIT,buttons,now), glo=gesture_button(B_GLO,buttons,now);
+        buttons &= ~((1u<<B_EDIT)|(1u<<B_GLO));
+        if(edit==1) buttons|=1u<<B_EDIT;
+        if(glo==1) buttons|=1u<<B_GLO;
+        if(!running && armed<0 && !echo_game && !keys) {
+            if(edit==2) { strum=!strum; strum_root=-1; rung=0; audition=-1; redraw=1; }
+            if(glo==2) { enter_shelf(); keys=buttons=0; }
+        }
+    }
+    if(buttons&((1u<<B_REC)|(1u<<B_ARP)|(1u<<B_PLAY))) { strum=rung=0; strum_root=-1; }
     if(move && recording<0 && armed<0 && !echo_game) {
         selected=wrap_index(selected+move,SEATS);
         audition=-1;
@@ -197,8 +255,7 @@ static void choir_input(uint32_t now,uint32_t keys,uint32_t buttons)
     }
     if(buttons&(1u<<B_SAVE)) { save_pending=1; favourite_status=0; }
     if(save_pending && !running && !keys && armed<0) {
-        for(int k=0;k<4;k++) song.sea[k]=sea[k];
-        favourite_status=plat_store_save(OBJ_FAVOURITE,&song,sizeof(song))==0?1:-1;
+        favourite_status=store_shell(0)?1:-1;
         save_pending=0;
     }
     if(armed>=0 && !running && keys) start_clock(now);
@@ -228,6 +285,17 @@ static void choir_input(uint32_t now,uint32_t keys,uint32_t buttons)
     unsigned back=sound_front^1;
     static const int intervals[4]={0,7,4,-12};
     int root=live.note;
+    if(strum) {
+        int low=-1;
+        for(int k=0;k<8;k++) if(keys&voice_keys(white_ids[k])) low=white_ids[k];
+        if(low!=strum_root) { rung=0; strum_root=low; }
+        if(low>=0) {
+            root=48+key_pitch[low]+12*register_shift;
+            for(int i=0;i<SEATS;i++) if(fresh&(1u<<white_ids[12+i])) {
+                rung|=1u<<i; ++attack_count[i];
+            }
+        }
+    }
     for(int i=0;i<SEATS;i++) {
         struct singer *s=&song.seats[i];
         struct syllable val={0};
@@ -241,12 +309,12 @@ static void choir_input(uint32_t now,uint32_t keys,uint32_t buttons)
         } else if(running && id!=EMPTY) {
             val=s->line[step_index];
             if(i==recording || (i==selected && keys)) val=live;
-        } else if(keys && id!=EMPTY) {
+        } else if(keys && id!=EMPTY && (!strum || (rung&(1u<<i)))) {
             val=live; val.note=root+intervals[i];
             if(i==2 && (root%12==2 || root%12==4 || root%12==9)) --val.note;
             memcpy(val.knobs,s->knobs,4);
         }
-        if(strike && (echo_game ? i==turn && step_index<16 : !running || i==selected)) ++attack_count[i];
+        if(!strum && strike && (echo_game ? i==turn && step_index<16 : !running || i==selected)) ++attack_count[i];
         if(!echo_game && i==selected && audition>=0 && !keys) {
             id=audition; val.note=60;
             const struct species *p=&creatures[id];
@@ -254,6 +322,10 @@ static void choir_input(uint32_t now,uint32_t keys,uint32_t buttons)
         }
         struct choir_sound *out=&sound_frames[back][i];
         out->note=id==EMPTY?0:val.note; out->species=id==EMPTY?0:id;
+        if(id!=EMPTY && song.guest_seat==(unsigned)(i+1)) {
+            out->species=SPECIES;
+            if(guest_signature!=song.guest_hash) out->note=0;
+        }
         out->pressure=val.pressure; out->bend=val.bend; out->attack=attack_count[i];
         memcpy(out->knobs,val.knobs,4);
     }

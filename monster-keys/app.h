@@ -9,8 +9,8 @@
 #define APP_SYSEX
 int app_sysex(const uint8_t *p, uint32_t n);
 /* Panel calibration and favourite use separate A/B sector pairs. */
-enum { OBJ_PANEL, OBJ_FAVOURITE, OBJ_NOBJ };
-#define APP_STORE_MAP {0xCE000u, 0xD8000u}
+enum { OBJ_PANEL, OBJ_FAVOURITE, OBJ_SHELL_B, OBJ_SHELL_C, OBJ_ORDER, OBJ_NOBJ };
+#define APP_STORE_MAP {0xCE000u, 0xD8000u, 0xDA000u, 0xDC000u, 0xDE000u}
 void app_init(void);
 void app_ui_init(void);
 void app_render(int32_t *lr, uint32_t n, uint32_t master_q12);

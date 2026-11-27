@@ -150,6 +150,13 @@ static void paint_seat(int i,int id,int light)
     if(light) border=TIDE;
     int marker=x+91;
     lcd_fill(marker,y,12,84,OCEAN);
+    if(song.guest_seat==(unsigned)(i+1)) {
+        uint16_t c=guest_signature!=song.guest_hash?ink[0]:light?FOAM:TIDE;
+        lcd_fill(marker,y+9,10,2,c); lcd_fill(marker+2,y+5,2,8,c);
+        if(guest_signature==song.guest_hash) lcd_fill(marker+6,y+2,2,14,c);
+        else lcd_fill(marker+4,y+15,3,3,c);
+    }
+    if(strum && id!=EMPTY) lcd_fill(marker,y+19,9,3,ink[i]);
     if(marked) {
         lcd_fill(marker,y+35,3,13,ink[3]); lcd_fill(marker+3,y+38,3,7,ink[3]);
     }
@@ -187,7 +194,7 @@ static void paint_choir(void)
     }
     cv_begin(240,15,OCEAN);
     const char *label=echo_game?(step_index<16?"TOP ROW CALLS":"BOTTOM REPLIES"):
-        recording>=0?"RECORD":armed>=0?"READY":running?"CHOIR LOOP":sea_page?"SEA FX":"SEAMONSTER CHOIR";
+        strum?"STRUM THE CHOIR":recording>=0?"RECORD":armed>=0?"READY":running?"CHOIR LOOP":sea_page?"SEA FX":"SEAMONSTER CHOIR";
     cv_text(6,0,&FONT_S,label,FOAM);
     if(save_pending || favourite_status) cv_text(167,0,&FONT_S,
         save_pending?"SAVE ...":favourite_status==2?"RECALLED":favourite_status>0?"SAVED":"NO SAVE",ink[3]);
@@ -206,15 +213,74 @@ static void paint_choir(void)
         cv_rect(x,y,11,7,j==step_index && running?ink[3]:note?TIDE:STONE);
     }
     if(echo_game) cv_text(5,25,&FONT_S,step_index<16?"PLAY YOUR CALL":"LISTEN TO THE REPLY",FOAM);
-    else if(sea_page) {
+    else if(strum) {
+        cv_text(5,25,&FONT_S,"HOLD LOW",FOAM);
+        for(int i=0;i<4;i++) cv_rect(129+i*22,24,16,15,
+            song.seats[i].species==EMPTY?STONE:(rung&(1u<<i))?FOAM:ink[i]);
+    } else if(song.guest_seat && guest_signature!=song.guest_hash) {
+        cv_text(5,25,&FONT_S,"GUEST MISSING   SEQ + SAVE",ink[0]);
+    } else if(sea_page) {
         int k=focus>=0?focus:DEPTH;
         cv_text(5,25,&FONT_S,sea_names[k],ink[k]);
         cv_rect(85,31,143,4,STONE); cv_rect(85,31,1+sea[k]*142/127,4,ink[k]);
-    } else if(!running && armed<0) cv_text(5,25,&FONT_S,"SEL + SINGER    SELECT: SEAT",FOAM);
+    } else if(!running && armed<0) {
+        const char *guide=plat_ms()/2500%2?"HOLD EDIT STRUM / GLO SHELLS":"SEL + SINGER    SELECT: SEAT";
+        cv_text(5,25,&FONT_S,guide,FOAM);
+    }
     else cv_text(5,25,&FONT_S,"REC    PLAY    ARP",FOAM);
     cv_blit(0,198);
     plat_lights((running?LED_PLAY_GREEN:0)|((armed>=0||recording>=0)?1u<<B_REC:0),
-                musical_keys,0,0,0);
+                musical_keys,0,strum?pad_keys():0,2);
+    redraw=0;
+}
+static void paint_shelf(void)
+{
+    static const char *const letters[]={"A","B","C"};
+    cv_begin(240,46,OCEAN);
+    cv_text(7,4,&FONT_B,"SONGS IN SHELLS",FOAM);
+    cv_text(7,28,&FONT_S,building_order>=0?"PICK THREE SHELLS":"SELECT A SHELL",TIDE);
+    cv_blit(0,0);
+    cv_begin(240,62,OCEAN);
+    for(int i=0;i<3;i++) {
+        int x=12+i*79; uint16_t col=shell_used[i]?ink[i]:STONE;
+        /* A scallop, a pointed conch and a spiral remain distinct in grayscale. */
+        if(i==0) {
+            for(int k=0;k<5;k++) {
+                int y=15+(k-2)*(k-2)*3;
+                cv_line(x+25,46,x+k*12,y,col);
+                if(k) cv_line(x+(k-1)*12,15+(k-3)*(k-3)*3,x+k*12,y,col);
+            }
+        } else if(i==1) {
+            cv_line(x+3,45,x+42,11,col); cv_line(x+42,11,x+46,36,col);
+            cv_line(x+46,36,x+3,45,col);
+            for(int k=1;k<5;k++) cv_line(x+3+k*8,45-k*7,x+9+k*8,44-k*2,col);
+        } else {
+            static const int8_t spiral[][2]={{46,43},{27,48},{9,43},{4,29},{12,17},
+                {30,14},{41,22},{41,34},{30,40},{18,35},{17,26},{26,22},{32,28},{27,32}};
+            for(unsigned k=1;k<sizeof(spiral)/sizeof(*spiral);k++)
+                cv_line(x+spiral[k-1][0],spiral[k-1][1],x+spiral[k][0],spiral[k][1],col);
+        }
+        cv_text(x+20,2,&FONT_S,letters[i],FOAM);
+        if(i==cursor) cv_rect(x,52,50,3,FOAM);
+        if(i==shell_playing) cv_rect(x,58,1+49*step_index/31,3,TIDE);
+    }
+    cv_blit(0,46);
+    cv_begin(240,56,OCEAN);
+    cv_text(8,3,&FONT_S,"ORDER",FOAM);
+    for(int i=0;i<3;i++) {
+        int slot=building_order>=0?new_order[i]:order[i];
+        cv_text(89+45*i,1,&FONT_B,building_order>=0 && i>=building_order?"-":letters[slot],ink[slot]);
+    }
+    cv_text(8,29,&FONT_S,shelf_message==-2?"EMPTY SHELL":shelf_message<0?"SAVE FAILED":
+            shelf_message>0?"SAVED":shell_playing>=0?"SINGING":"LOW KEYS PREVIEW",TIDE);
+    cv_blit(0,108);
+    cv_begin(240,66,OCEAN);
+    cv_text(7,2,&FONT_S,"SAVE STORE      SEL LOAD",FOAM);
+    cv_text(7,23,&FONT_S,"REC ORDER       PLAY SONGS",FOAM);
+    cv_text(7,44,&FONT_S,"GLO BACK",FOAM); cv_blit(0,172);
+    uint32_t pads=0;
+    for(int i=0;i<3;i++) if(shell_used[i]) pads|=1u<<white_ids[i];
+    plat_lights(running?LED_PLAY_GREEN:0,0,0,pads,2);
     redraw=0;
 }
 static int sample_visible;
@@ -246,8 +312,11 @@ static void paint_sampler(void)
     cv_text(8,38,&FONT_S,sample_usb?"SOURCE: USB AUDIO":creatures[animal].name,ink[1]);
     cv_blit(0,126);
     cv_begin(240,42,OCEAN);
-    cv_text(8,1,&FONT_S,"SEL: SOURCE     ARP: STYLE",FOAM);
-    cv_text(8,22,&FONT_S,"PLAY: HEAR IT     SEQ: EXIT",FOAM);
+    cv_text(8,1,&FONT_S,sample_origin && song.guest_seat==(unsigned)(sample_target+1)?
+            "EDIT REMOVE GUEST":"SEL SOURCE     ARP STYLE",FOAM);
+    cv_text(8,22,&FONT_S,"SAVE >",ink[3]);
+    int target=sample_origin?song.seats[sample_target].species:initialized?song.seats[0].species:animal;
+    cv_text(72,22,&FONT_S,creatures[target==EMPTY?animal:target].name,FOAM);
     cv_blit(0,196);
     plat_lights((sample_arm?(1u<<B_REC):0)|(sample_pos>=0?LED_PLAY_GREEN:0),musical_keys,0,0,0);
     redraw=0;
@@ -263,11 +332,13 @@ void app_frame(void)
         grid_visible=-1; portrait_id=-1; redraw=1;
     }
     if(sample_mode) { paint_sampler(); return; }
-    if(choir_mode!=grid_visible) {
-        grid_visible=choir_mode; lcd_fill(0,0,240,240,OCEAN);
+    int stage=shelf?2:choir_mode;
+    if(stage!=grid_visible) {
+        grid_visible=stage; lcd_fill(0,0,240,240,OCEAN);
         portrait_id=-1; redraw=1;
         for(int i=0;i<SEATS;i++) grid_id[i]=-2;
     }
+    if(shelf) { paint_shelf(); return; }
     if(choir_mode) { paint_choir(); return; }
     int guide=4+(int)((now/800u)%3u)*2;
     int singing=musical_keys || (int32_t)(preview_until-now)>0;

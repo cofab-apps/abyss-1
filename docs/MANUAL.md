@@ -1,5 +1,25 @@
 # Play Seamonster Choir
 
+## Give Bloop your sound
+
+From a fresh solo screen, press **ARP** to see Hydra and Bloop, then **PLAY** to leave the game. Turn **SELECT** two seats to bottom-left Bloop. Press **SEQ**. Turn **PRESETS** until the recording source is Crab, press **REC**, play a short click and press **REC** again. The waveform shows what you caught. Press **SAVE** under Bloop’s name to give that seat the clip and return to the choir.
+
+Press **ARP**, play your call and release the keys. Bloop answers in your rhythm with the captured sound. Higher notes play the clip faster. Choose any other seat before opening the sampler to move the guest there. One choir seat can use the sample at a time. Recording into the sampler again leaves the assigned clip available until you assign another. To give the seat its original synth voice back, select it, open **SEQ**, press **EDIT**, and return with **SEQ**.
+
+A song remembers the guest seat. The audio clip lives in RAM. After power-off the red marker and **GUEST MISSING** identify the silent seat. Load the clip again in SEQ and press SAVE to reattach it. You can also use an uploaded sound. [Load a sound from a computer](#load-a-sound-from-a-computer)
+
+## Strum the choir
+
+From the stopped choir with all keys up, hold **EDIT** for just over half a second until **STRUM THE CHOIR** appears. Hold one of the eight leftmost white keys. Sweep the four rightmost white keys. From left to right they play the top-left, top-right, bottom-left and bottom-right portraits. Sweep backwards or pause between two singers. Each singer sustains while the root stays down. Tap a pad again to rearticulate it, or lift the root to release everyone. Empty seats stay quiet. Hold EDIT again for one-key harmony. REC, ARP and PLAY also leave strum mode.
+
+## Put three songs in shells
+
+While the choir is stopped, release the keys and hold **GLO** for just over half a second. The scallop, conch and spiral are three separate song slots. **SELECT** moves the underline. **SAVE** stores your working song in that shell, replacing its previous contents. **SEL** loads the highlighted song and returns to the choir. **GLO** or **HOME** leaves the shelf with your working song.
+
+Tap one of the **first three white keys** to hear one pass of its saved song. To make an order, press **REC**, then tap three occupied shells on those same keys. For **C → A → B**, tap the third, first and second white keys. Repeated shells are allowed. The third tap saves the order. **PLAY** performs the three songs once, 32 steps each. Press PLAY again to stop early. Both preview and chain playback return you to your working song.
+
+A quick SAVE or GLO on the choir screen still writes or recalls **A**, including a favourite made by an earlier version. All three arrangements and their play order survive power-off. A guest seat remembers which clip belongs there. To keep a guest recording across power cycles, keep the original audio file on your computer.
+
 ## Trade calls
 
 Tap **Start** in the [player](../README.md). From a fresh solo screen, press **ARP** and play two notes as Hydra. In the second bar Bloop answers with your pitches and rhythm. The next note you play in a new calling bar starts another exchange.
@@ -57,7 +77,7 @@ Select another singer and press REC. The new part starts on the next downbeat wh
 
 ## Keep a favourite
 
-Press SAVE in choir mode to keep the current portraits, settings and musical parts in one favourite slot. Stop the transport and release the keys if SAVE is waiting. Watch for **SAVED**. GLO recalls that favourite while stopped with the keys up. Booting the same package and pressing HOME also restores it. A later successful save replaces the previous favourite. Browser storage belongs to that browser and firmware package.
+Press SAVE in choir mode to keep the current portraits, settings and musical parts in shell A. Stop the transport and release the keys if SAVE is waiting. Watch for **SAVED**. GLO recalls that favourite while stopped with the keys up. Booting the same package and pressing HOME also restores it. A later successful save replaces the previous favourite. Browser storage belongs to that browser and firmware package.
 
 The large solo screen also retains its original REC/PLAY gesture recorder. It replays a single take once and clears on power-off. Use HOME for the repeating four-part recorder.
 

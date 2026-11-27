@@ -16,3 +16,7 @@ f2fddb6518aeab1f97b132546361eec4f337d0ce422dd79664713f8ddf5c1734  evidence/choir
 2089fefd0940517b60058afb586273ee6cc76833b2a0c436645dbed323680bf2  evidence/choir/shell-2.3.0.mp4
 ad289835fce7d9bd79caaad79f908b3978f1bf7952d99227b5cdd5d6667f7683  builds/seamonster-choir-2.3.1.fwsc
 19519c7865e10db6b8aa4bf4ae4cb63082301299e3f2429d7faf307ad7a5264e  evidence/choir/results-2.3.1.json
+2603bc05d6bfd72c499ac454068d9ef054d559a2af1697e19760467555f6c474  builds/seamonster-choir-2.4.0.fwsc
+6876dcca74febc8da2b08ac318a5d5ef9ad446dc71f894da0bc5600d194bf113  evidence/choir/2.4.0/ensemble.mp4
+234b07842f33960a172ad75b4864870a8cb95f1d04c57b1b9b29875ba4445265  evidence/choir/2.4.0/results.json
+2f464505701059930519f9aa45e112fdcfb4d9fe928a1e93a72daaf039d81606  evidence/choir/2.4.0/screens.png

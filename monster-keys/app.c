@@ -71,6 +71,7 @@ static void start_call(int key, int species)
 static int speaker_sample(int sample,int master);
 #include "sea.h"
 #include "choir.h"
+static void render_guest(struct call *,int32_t *,unsigned);
 
 /* Advance the slower articulators once per DAC block. The mouth oscillator,
  * modulation oscillator, glottal rasp and envelope run at the sample rate. */
@@ -170,7 +171,8 @@ static void render_monsters(int32_t *lr, uint32_t n, uint32_t master_q12)
             v->pressure=s->pressure;
             if (v->level) {
                 int32_t part[APP_BLOCK]={0};
-                render_call(v,part,n,s->knobs);
+                if(v->species==SPECIES) render_guest(v,part,n);
+                else render_call(v,part,n,s->knobs);
                 for (unsigned j=0;j<n;j++) {
                     mix[j]+=part[j];
                     send[j]+=part[j]*s->knobs[3] >> 7;
@@ -230,6 +232,34 @@ static void render_monsters(int32_t *lr, uint32_t n, uint32_t master_q12)
 }
 
 #include "sampler.h"
+static int16_t guest_pcm[CLIP_MAX] __attribute__((section(".pool")));
+static int guest_length;
+static void render_guest(struct call *v,int32_t *part,unsigned n)
+{
+    unsigned step=v->step/(note_step[48]/1024u);
+    for(unsigned i=0;i<n;i++) {
+        unsigned j=v->phase>>12;
+        if(j+1>=(unsigned)guest_length) { v->level=0; break; }
+        int a=guest_pcm[j], b=guest_pcm[j+1];
+        int value=a+((b-a)*(int)(v->phase&4095)>>12);
+        v->level=clamp(v->level+(v->gated?1:-1),0,64);
+        int fade=clamp((guest_length-1-(int)j)*4,0,v->level);
+        part[i]=value*fade/128; v->phase+=step;
+    }
+}
+static void adopt_guest(void)
+{
+    unsigned hash=2166136261u;
+    guest_length=sample_len;
+    memcpy(guest_pcm,clips[sample_bank],guest_length*sizeof(*guest_pcm));
+    for(int i=0;i<guest_length;i++) hash=(hash^(uint16_t)guest_pcm[i])*16777619u;
+    guest_signature=hash?hash:1;
+    sample_mode=0; transfer_id=-1; sample_pos=-1; plat_usb_audio_route(0);
+    toggle_choir(); selected=sample_target;
+    if(song.seats[selected].species==EMPTY) assign_singer(selected,animal);
+    song.guest_seat=selected+1; song.guest_hash=guest_signature;
+    app_panic(); redraw=1;
+}
 
 void app_render(int32_t *lr,uint32_t n,uint32_t master)
 {
@@ -280,15 +310,22 @@ static void input_monster(void)
         finger_force[i]=force;
     }
     prior_contacts=keys;
+    if(shelf && choir_mode) { choir_input(now,keys,press); return; }
+    if(sample_mode && sample_origin && !sample_arm && !import_ready && transfer_id<0 &&
+       (press&(1u<<B_EDIT)) && song.guest_seat==(unsigned)(sample_target+1)) {
+        song.guest_hash=song.guest_seat=0; redraw=1; return;
+    }
+    if(sample_mode && (press&(1u<<B_SAVE)) && !sample_arm && !sample_stop &&
+       !import_ready && transfer_id<0 && sample_len>=CLIP_MIN) { adopt_guest(); return; }
     if((press&(1u<<B_SEQ)) || (sample_mode && (press&(1u<<B_HOME)))) {
         if(sample_mode) {
             transfer_id=-1; sample_mode=0; sample_arm=sample_count=sample_stop=0;
             sample_pos=-1; plat_usb_audio_route(0);
-            if(sample_origin || (press&(1u<<B_HOME))) toggle_choir();
+            if(sample_origin || (press&(1u<<B_HOME))) { toggle_choir(); selected=sample_target; }
         } else {
             if(tape_mode==REPLAY) end_replay();
             if(tape_mode==RECORD) finish_take(now);
-            sample_origin=choir_mode;
+            sample_origin=choir_mode; sample_target=choir_mode?selected:0;
             if(choir_mode) toggle_choir();
             sample_mode=1; plat_usb_audio_route(sample_usb);
         }
