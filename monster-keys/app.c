@@ -68,6 +68,8 @@ static void start_call(int key, int species)
         .step=note_step[note]};
 }
 
+static int speaker_sample(int sample,int master);
+#include "sea.h"
 #include "choir.h"
 
 /* Advance the slower articulators once per DAC block. The mouth oscillator,
@@ -86,6 +88,7 @@ static void render_call(struct call *v, int32_t *mix, uint32_t n, const volatile
     int onset = 255 - (int)(v->age < 11264 ? v->age*255u/11264u : 255u);
     int bend = p->scoop*onset + v->accent*160 + (movement*wobble >> 4);
     uint32_t step = v->step + (int32_t)(v->step >> 14)*bend;
+    step-=(step>>8)*(depth_q8>>8);
     uint32_t second = step * p->ratio;
     int pulse = 128, type = p->type;
     if (type == CHOIR) second = step + (step >> 1) + (step >> 9);
@@ -136,6 +139,7 @@ static int speaker_sample(int sample, int master)
 
 void app_render(int32_t *lr, uint32_t n, uint32_t master_q12)
 {
+    smooth_depth();
     int32_t mix[APP_BLOCK] = {0};
     uint32_t keys = musical_keys, fresh = keys & ~played_keys;
     int species = animal;
@@ -177,9 +181,10 @@ void app_render(int32_t *lr, uint32_t n, uint32_t master_q12)
             int l=echo_ring[(echo_pos-5767)&(RING-1)], r=echo_ring[(echo_pos-7823)&(RING-1)];
             echo_ring[echo_pos]=clamp(send[j]+r/5,-30000,30000);
             echo_pos=(echo_pos+1)&(RING-1);
-            lr[2*j]=speaker_sample(mix[j]+l/2,master_q12);
-            lr[2*j+1]=speaker_sample(mix[j]+r/2,master_q12);
+            lr[2*j]=mix[j]+l/2;
+            lr[2*j+1]=mix[j]+r/2;
         }
+        sea_render(lr,n,master_q12);
         return;
     }
     if (species != last_species) {
@@ -218,9 +223,10 @@ void app_render(int32_t *lr, uint32_t n, uint32_t master_q12)
         int l = echo_ring[(echo_pos-5767)&(RING-1)], r = echo_ring[(echo_pos-7823)&(RING-1)];
         echo_ring[echo_pos] = clamp(dry+(r*wet >> 9),-30000,30000);
         echo_pos = (echo_pos+1)&(RING-1);
-        lr[2*i] = speaker_sample(dry+(l*wet >> 8),master_q12);
-        lr[2*i+1] = speaker_sample(dry+(r*wet >> 8),master_q12);
+        lr[2*i] = dry+(l*wet >> 8);
+        lr[2*i+1] = dry+(r*wet >> 8);
     }
+    sea_render(lr,n,master_q12);
 }
 
 void app_panic(void)
@@ -228,6 +234,8 @@ void app_panic(void)
     musical_keys = played_keys = audition_blocks = 0;
     for (int i=0;i<POLY;i++) calls[i] = (struct call){0};
     for (int i=0;i<RING;i++) echo_ring[i] = 0;
+    memset(tide_line,0,sizeof(tide_line)); memset(cavern_line,0,sizeof(cavern_line));
+    lowpass[0]=lowpass[1]=cavern_damp=0;
 }
 
 void app_init(void)
@@ -265,6 +273,11 @@ static void input_monster(void)
         if (tape_mode==RECORD) finish_take(now);
         toggle_choir();
     }
+    if(press & ((1u<<B_FX)|(1u<<B_LFO))) {
+        sea_page=(press&(1u<<B_LFO))?1:!sea_page;
+        focus=sea_page?((press&(1u<<B_LFO))?CURRENT:DEPTH):-1;
+        focus_until=now+1400; redraw=1;
+    }
     if (choir_mode) { choir_input(now,keys,press); return; }
     int nav=plat_enc(EN_SELECT)+plat_enc(EN_PRESET)+plat_enc(EN_ALGO);
     if (press & (1u<<B_SEL)) ++nav;
@@ -294,7 +307,8 @@ static void input_monster(void)
     for (int i=0;i<4;++i) {
         int d=delta[i];
         if (d) {
-            knob[i]=clamp(knob[i]+d*7,0,127);
+            if(sea_page) adjust_sea(i,d,now);
+            else knob[i]=clamp(knob[i]+d*7,0,127);
             focus=i; focus_until=now+1400; redraw=1;
             /* A child turning the first knob can hear its effect before
              * learning to hold a key with the other hand. */

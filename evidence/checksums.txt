@@ -7,3 +7,7 @@ f85fd93eaff464fcfbffb4e172adcbed26ee1d3ba308ba2057508bc83ebc7184  evidence/monst
 55d2fc6c7c89bf84e17393959122fb863c37f56393e718bcde229d4dd1c7c3df  evidence/choir/four-singers.png
 a61f3d646739c344a8adadc9c811220e35280db4fe8147606b95f07d41a3f847  evidence/choir/results-100.json
 4265282f3516589da50394009128d74bb743e7d2b607c849cbedbee046270884  evidence/choir/results-60.json
+429781e17d4ade8dc28a6ccfc5cd0577d242e17091db401261f8ad894a3f608f  builds/abyss-1-monster-choir-2.2.0.fwsc
+2dbd178950a76ed2e7978f05e78b0dc5a58bca16e3d9c8db4040a462297ff26f  evidence/choir/rows-and-sea-2.2.0.mp4
+de064224ddd68d562824817318c30eafc40dd2691bcbf2cfa4f701c3c056b6a5  evidence/choir/results-2.2.0.json
+5ff4616a940e0427a37afaa53b10a455ebfd2caf57f52a9d4d6012f39a0d9b0d  evidence/choir/four-lanes-2.1.0.bin

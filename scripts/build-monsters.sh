@@ -39,5 +39,5 @@ fi
 export SOURCE_DATE_EPOCH=1795651200
 mkdir -p "$base/monster-keys"
 cp "$project"/monster-keys/* "$base/monster-keys/"
-python3 "$base/tools/build.py" "$base/monster-keys" --release 2.1.0
-cp "$base/monster-keys/build/"*2.1.0.fwsc "$project/out/monster-keys.fwsc"
+python3 "$base/tools/build.py" "$base/monster-keys" --release 2.2.0
+cp "$base/monster-keys/build/"*2.2.0.fwsc "$project/out/monster-keys.fwsc"

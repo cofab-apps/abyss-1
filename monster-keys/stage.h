@@ -68,10 +68,14 @@ static void bubbles(int side,int voice)
 static void signet(int k)
 {
     int left=k%2?204:0, top=k<2?40:144;
-    int amt=knob[k], span=2+amt/21;
+    int amt=sea_page?sea[k]:knob[k], span=2+amt/21;
     uint16_t c=ink[k];
     cv_begin(36,36,OCEAN);
-    if(k==0) { /* opening lips */
+    if(sea_page && k==0) {
+        cv_rect(5,5,26,2,c);
+        int y=10+span*2;
+        cv_line(18,8,18,y,c); cv_line(13,y-4,18,y,c); cv_line(18,y,23,y-4,c);
+    } else if(k==0) { /* opening lips */
         for(int x=0;x<=24;x++) {
             int curve=(12-(x>12?x-12:12-x))*span/12;
             cv_rect(6+x,17-curve,1,2,c); cv_rect(6+x,18+curve,1,2,c);
@@ -105,15 +109,16 @@ static void guidance(int guide,uint32_t keys)
         int x=11+k*59;
         cv_rect(x,3,8,6,ink[k]); cv_rect(x+2,1,4,2,ink[k]);
         cv_rect(x+10,5,36,3,STONE);
-        cv_rect(x+10,5,1+knob[k]*35/127,3,ink[k]);
+        cv_rect(x+10,5,1+(sea_page?sea[k]:knob[k])*35/127,3,ink[k]);
     }
     if(focus>=0) {
-        const char *label=effects[focus];
+        const char *label=sea_page?sea_names[focus]:effects[focus];
         cv_text(12,17,&FONT_B,label,ink[focus]);
         int x=94, full=132;
         cv_rect(x,23,full,7,STONE);
-        cv_rect(x,23,1+knob[focus]*(full-1)/127,7,ink[focus]);
+        cv_rect(x,23,1+(sea_page?sea[focus]:knob[focus])*(full-1)/127,7,ink[focus]);
     } else {
+        if(sea_page) cv_text(9,9,&FONT_T,"SEA FX",TIDE);
         for(int w=0;w<16;w++) {
             int key=white_ids[w], x=8+w*14;
             int active=(keys>>key)&1u;
@@ -140,11 +145,12 @@ static uint16_t thumb[84*84] __attribute__((section(".pool")));
 static void paint_seat(int i,int id,int light)
 {
     int x=8+(i%2)*119, y=19+(i/2)*91;
-    uint16_t border=i==selected?ink[3]:STONE;
+    int marked=echo_game ? i==turn_seat(step_index) : i==selected;
+    uint16_t border=marked?ink[3]:STONE;
     if(light) border=TIDE;
     int marker=x+91;
     lcd_fill(marker,y,12,84,OCEAN);
-    if(i==selected) {
+    if(marked) {
         lcd_fill(marker,y+35,3,13,ink[3]); lcd_fill(marker+3,y+38,3,7,ink[3]);
     }
     if(light) {
@@ -175,18 +181,18 @@ static void paint_choir(void)
 {
     const struct choir_sound *voices=sound_frames[sound_front];
     for(int i=0;i<SEATS;i++) {
-        int id=i==selected && candidate!=EMPTY?candidate:song.seats[i].species;
+        int id=song.seats[i].species;
         int light=voices[i].note?1+voices[i].pressure/24:0;
         if(redraw || id!=grid_id[i] || light!=grid_light[i]) paint_seat(i,id,light);
     }
     cv_begin(240,15,OCEAN);
-    const char *label=echo_game?(step_index<16?"YOUR CALL":"THE ANSWER"):
-        recording>=0?"RECORD":armed>=0?"READY":running?"CHOIR LOOP":"MONSTER CHOIR";
+    const char *label=echo_game?(step_index<16?"TOP ROW CALLS":"BOTTOM REPLIES"):
+        recording>=0?"RECORD":armed>=0?"READY":running?"CHOIR LOOP":sea_page?"SEA FX":"MONSTER CHOIR";
     cv_text(6,0,&FONT_S,label,FOAM);
     if(save_pending || favourite_status) cv_text(167,0,&FONT_S,
         save_pending?"SAVE ...":favourite_status==2?"RECALLED":favourite_status>0?"SAVED":"NO SAVE",ink[3]);
     if(echo_game) {
-        int turn=step_index<16?selected:partner;
+        int turn=turn_seat(step_index);
         for(int i=0;i<SEATS;i++) cv_rect(136+i*6,5,4,4,i==turn?ink[3]:STONE);
         chevron(116,6,step_index<16?1:-1,TIDE);
     }
@@ -195,9 +201,17 @@ static void paint_choir(void)
     const struct syllable *line=recording==selected?draft:song.seats[selected].line;
     for(int j=0;j<STEPS;j++) {
         int x=5+(j%16)*14+(j%16)/4, y=1+(j/16)*11;
-        cv_rect(x,y,11,7,j==step_index && running?ink[3]:line[j].note?TIDE:STONE);
+        int note=echo_game ? (j<16 && recording>=0 ? draft[j].note :
+            song.seats[turn_seat(j)].line[j].note) : line[j].note;
+        cv_rect(x,y,11,7,j==step_index && running?ink[3]:note?TIDE:STONE);
     }
-    cv_text(5,25,&FONT_S,echo_game?"CALL  >  ANSWER":"REC    PLAY    ARP: DUET",FOAM);
+    if(echo_game) cv_text(5,25,&FONT_S,step_index<16?"PLAY YOUR CALL":"LISTEN TO THE REPLY",FOAM);
+    else if(sea_page) {
+        int k=focus>=0?focus:DEPTH;
+        cv_text(5,25,&FONT_S,sea_names[k],ink[k]);
+        cv_rect(85,31,143,4,STONE); cv_rect(85,31,1+sea[k]*142/127,4,ink[k]);
+    } else if(!running && armed<0) cv_text(5,25,&FONT_S,"SEL + SINGER    SELECT: SEAT",FOAM);
+    else cv_text(5,25,&FONT_S,"REC    PLAY    ARP",FOAM);
     cv_blit(0,198);
     plat_lights((running?LED_PLAY_GREEN:0)|((armed>=0||recording>=0)?1u<<B_REC:0),
                 musical_keys,0,0,0);

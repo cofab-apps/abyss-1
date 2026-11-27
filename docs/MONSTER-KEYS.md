@@ -1,4 +1,26 @@
-# Monster Choir 2.1.0
+# Monster Choir 2.2.0
+
+[Play or download](../README.md) · [Player guide](MANUAL.md) · [Native LCD and stereo audio demo](../evidence/choir/rows-and-sea-2.2.0.mp4)
+
+## Four turns and underwater effects
+
+The original 2.1.0 package reproduced both reports. A browsed portrait vanished when SELECT moved on without a confirmation press. In a real four-lane simulator save, other recorded voices sounded during the call and reply rests. The two-bar game now assigns the upper row to the call and the lower row to the answer. A left/right pair splits a bar into two beats each. A lone singer gets a full bar. SEL invites a distinct singer and browsing commits immediately.
+
+### Target verification
+
+| Exercise | Observed with the 2.2.0 package |
+|---|---|
+| Four occupied seats | The native LCD marker visited top left, top right, bottom left and bottom right. Saved notes stayed in their own eight-step windows. Each reply reproduced its caller’s pitches, lengths and rests. At 60 MHz all four rest windows measured below 0.0007 RMS. Three-seat layouts gave the lone singer a full bar. |
+| Add, recall and undo | Three SEL taps filled a fresh choir with distinct portraits. A browsed third portrait remained when moving to the fourth. A four-part favourite created by 2.1.0 loaded into 2.2.0. EDIT restored its original four parts after a new correspondence. |
+| Depth and Anger | Full Depth shifted a steady Loch Ness whistle from 329 Hz to 166 Hz. Full Anger increased harmonics 4–10 from 0.3% to 5.4% of the energy in the first ten harmonics on that test note. |
+| Current and Cavern | Current’s stereo phase swept on a held note. Cavern was audible after release and decayed to digital silence. A four-voice chord with all four sea effects at maximum had zero missed DAC refills at both test clocks. |
+| Earlier play modes | All 20 solo portraits and voices, finger bends, solo replay, 32-step overdubbing and favourite recall passed their target regressions. |
+
+The primary run used the Puya model at 60 MHz, the second the UC25HQ80 at 100 MHz. Browser touch playback and a clean cross-build were checked against the release bytes. Firmware ID `FM-1_709020200`, package size 858216 bytes, SHA-256 `429781e17d4ade8dc28a6ccfc5cd0577d242e17091db401261f8ad894a3f608f`. [Measurements](../evidence/choir/results-2.2.0.json) · [Build and test commands](../BUILDING.md)
+
+Each singer has one note at a time. The game runs at 100 BPM. Sea settings apply to the full choir and are saved as one set per favourite. Physical results below apply to 2.1.0. A 2.2.0 hardware playtest, especially the row cues and stereo effects over headphones, remains open. [Previous 2.1.0 firmware](../builds/abyss-1-monster-choir-2.1.0.fwsc)
+
+## Monster Choir 2.1.0 verification
 
 [Play or download](../README.md) · [Player guide](MANUAL.md) · [Watch the LCD and hear the stereo DAC](../evidence/choir/duet.mp4)
 

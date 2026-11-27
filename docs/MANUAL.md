@@ -2,11 +2,15 @@
 
 ## Trade calls
 
-Tap **Start** in the [player](../README.md). Press **ARP**. Play two notes and leave a gap. The first note starts the clock. You get one bar to ask a question. The next seat in reading order (or a new partner if it is empty) sings back your pitches and rhythm in its own voice in bar two. The turn then comes back to you. A completed call and answer becomes a two-bar duet. PLAY stops the game. Press PLAY again to loop the duet, or ARP to start another conversation.
+Tap **Start** in the [player](../README.md). From a fresh solo screen, press **ARP** and play two notes as Hydra. In the second bar Bloop answers with your pitches and rhythm. The next note you play in a new calling bar starts another exchange.
+
+With four occupied seats, the first note starts the clock. The top-left singer gets beats 1–2, then the top-right gets beats 3–4. In bar two, the bottom-left answers the first call and the bottom-right answers the second. Follow the gold marker and leave gaps for the replies. A row with one singer gives that monster all four beats. If the lower row is empty, ARP adds a partner.
+
+A new nonempty call replaces the participating singers’ lines. PLAY stops the game and PLAY again loops the completed exchange. EDIT restores the previous arrangement’s musical parts after the game stops.
 
 ## Pick four singers
 
-HOME switches between the large solo portrait and the four seats. SELECT moves the yellow marker. PRESETS or ALGORITHM auditions a candidate. SEL/SCL confirms it. Swapping a creature keeps its phrase. At rest, one white key makes the occupied seats harmonise. During playback, the keyboard plays the selected seat over the others. OCT− and OCT+ shift the live keyboard an octave.
+Press **HOME** for the four portrait seats. From a fresh choir, tap **SEL** three times to invite three different partners. To choose them yourself, turn **SELECT** to a seat, then turn **PRESETS** or **ALGORITHM**. Each turn seats the portrait immediately. Changing a monster keeps its phrase. At rest, hold one white key for a harmony. During ordinary loop playback, the keyboard plays the selected seat over the others. OCT− and OCT+ shift the live keyboard an octave.
 
 ## Shape the voice
 
@@ -14,11 +18,24 @@ K1 opens the mouth, K2 adds teeth, K3 adds wobble and K4 adds cave echo. In the 
 
 For continuous force on a physical keyboard, press ENV with all keys released. Let the note settle, then lean into it or ease off. The lower 20 keys support held pressure. The highest seven use the other gestures. Press ENV again with all keys up to return to normal scanning. The browser’s paired-key gesture can be played with two keyboard keys.
 
+## Dive underwater
+
+Hold a note, press **FX**, then turn the four knobs. The sea affects the whole instrument, including a playing choir. Turn a knob fully left to remove that effect. Press **FX** again to edit Mouth, Teeth, Wobble and Cave. The sea settings continue to sound while you edit the voice. **LFO** opens the sea controls with Current highlighted.
+
+| Knob | What you hear |
+|---|---|
+| K1 · Depth | The note glides down by up to an octave and loses brightness as you descend. Turn back to surface. |
+| K2 · Anger | Drive and clipping turn the voice into a rougher, more harmonically rich growl. |
+| K3 · Current | A short moving delay sweeps through the note, with a wider swirl in stereo. |
+| K4 · Cavern | Reflections build into a dark stereo tail that continues after you release the key. |
+
+The choir favourite stores all four sea settings. The 32-step lanes record each singer’s voice controls. Sea controls are shared across the song. The solo gesture recorder also captures live sea-knob movements.
+
 ## Loop a phrase
 
 In the choir, REC arms the selected seat. The first note starts two bars of 4/4 at 100 BPM. Two rows of 16 lights show the 32 sixteenth notes. A quick tap occupies one cell. Hold a note across cells to sustain it. Bends, pressure and the four knob settings are sampled while notes sound. REC again finishes early and leaves the remaining cells silent. The transport keeps going.
 
-Select another singer and press REC. The new part starts on the next downbeat while the other parts play. A nonempty pass replaces the focused part. An empty pass keeps it. EDIT undoes the last committed take. For a duet it restores both affected parts. PLAY stops or restarts the group from the beginning.
+Select another singer and press REC. The new part starts on the next downbeat while the other parts play. A nonempty pass replaces the focused part. An empty pass keeps it. EDIT undoes the last committed take. For a call and answer it restores every participating part. PLAY stops or restarts the group from the beginning.
 
 ## Keep a favourite
 

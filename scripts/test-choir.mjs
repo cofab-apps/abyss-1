@@ -29,8 +29,8 @@ export async function checkChoir({boot,chip,run,btn,enc,shots,out,chipInput,movi
     const restoredCall=run(90); run(730); const restoredReply=run(90);
     assert.ok(restoredCall>.005 && restoredReply>.005,'both phrases survive reboot');
     btn(12);
-    // Add two more seats. Each uses the confirmed auditioned species.
-    for(const [seat,creature] of [[2,1],[1,6]]) {enc(0,seat);enc(1,creature);btn(3);}
+    // Add two more seats. Browsing immediately seats each singer.
+    for(const [seat,creature] of [[1,1],[2,6]]) {enc(0,seat);enc(1,creature);}
     run(200);
     const missed=chip.fm1_starved();key(7,true);const chord=run(150);shots('four-singers');
     key(7,false);run(140);
@@ -44,9 +44,9 @@ export async function checkChoir({boot,chip,run,btn,enc,shots,out,chipInput,movi
             bends:Array.from({length:32},(_,j)=>raw[i*261+6+j*8]),
             mouths:Array.from({length:32},(_,j)=>raw[i*261+9+j*8])}));
     }
-    // Select seat 3 (index 2) from seat 4, and capture a phrase immediately.
-    enc(0,-1);btn(13);key(4,true);run(120);key(4,false);
-    run(1600);enc(0,1);btn(13);run(1500);
+    // Select seat 2 (index 1) from seat 4, and capture a phrase immediately.
+    enc(0,-2);btn(13);key(4,true);run(120);key(4,false);
+    run(1600);enc(0,2);btn(13);run(1500);
     key(7,true);run(90);key(8,true);enc(2,4);run(90);
     key(8,false);key(7,false);run(1500);
     btn(12);btn(9);run(200);
@@ -61,7 +61,7 @@ export async function checkChoir({boot,chip,run,btn,enc,shots,out,chipInput,movi
     assert.ok(lanes,'four independent recorded lines in saved favourite');
     assert.ok(lanes.every(l=>l.notes.some(n=>n===0)),'each lane retained its rests');
     assert.equal(new Set(lanes.map(l=>l.id)).size,4,'four different portraits');
-    assert.deepEqual(lanes[0].notes.slice(0,16),lanes[1].notes.slice(16),'answer repeats caller rhythm and pitches');
+    assert.deepEqual(lanes[0].notes.slice(0,16),lanes[2].notes.slice(16),'answer repeats caller rhythm and pitches');
     assert.ok(lanes[3].bends.includes(1) && !lanes[2].bends.includes(1),'bend belongs to the fourth seat');
     const mouths=lanes[3].mouths.filter((v,j)=>lanes[3].notes[j]);
     assert.ok(new Set(mouths).size>=2,'fourth seat recorded mouth movement');

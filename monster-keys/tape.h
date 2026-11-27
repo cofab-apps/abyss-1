@@ -4,7 +4,7 @@
 enum { TAPE_IDLE, RECORD, REPLAY, EVENTS=512, TAKE_MS=30000 };
 struct gesture_state {
     uint32_t keys;
-    uint8_t animal, value[4], preview;
+    uint8_t animal, value[4], ocean[4], preview;
     int8_t oct;
 };
 struct tape_event { uint32_t at; struct gesture_state state; };
@@ -17,13 +17,13 @@ static uint8_t prior_preview;
 static struct gesture_state get_state(uint32_t keys)
 {
     struct gesture_state s={.keys=keys,.animal=animal,.oct=register_shift,.preview=preview_serial};
-    for(int k=0;k<4;k++) s.value[k]=knob[k];
+    for(int k=0;k<4;k++) { s.value[k]=knob[k]; s.ocean[k]=sea[k]; }
     return s;
 }
 static void set_state(const struct gesture_state *s)
 {
     animal=s->animal; register_shift=s->oct;
-    for(int k=0;k<4;k++) knob[k]=s->value[k];
+    for(int k=0;k<4;k++) { knob[k]=s->value[k]; sea[k]=s->ocean[k]; }
     redraw=1;
 }
 static void finish_take(uint32_t now)
@@ -46,7 +46,7 @@ static void capture_event(uint32_t now,uint32_t keys)
     if(draft_count) {
         struct gesture_state *last=&draft[draft_count-1].state;
         int same=last->keys==s.keys && last->animal==s.animal && last->oct==s.oct && last->preview==s.preview;
-        for(int k=0;k<4;k++) same &= last->value[k]==s.value[k];
+        for(int k=0;k<4;k++) same &= last->value[k]==s.value[k] && last->ocean[k]==s.ocean[k];
         if(same) return;
     }
     draft[draft_count++]=(struct tape_event){now-tape_start,s};
