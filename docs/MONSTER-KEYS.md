@@ -1,5 +1,7 @@
 # Seamonster Choir
 
+For the current instrument, see the [feature definition](FEATURES.md) and [illustrated player manual](MANUAL.md). This page records versioned tests, hardware evidence and open checks.
+
 ## Combined hardware beta 2.4.0
 
 [Play or download the firmware](../README.md) · [22-second native LCD and stereo DAC capture](../evidence/choir/2.4.0/ensemble.mp4) · [Three native screens](../evidence/choir/2.4.0/screens.png) · [Measured results on both simulated flash chips](../evidence/choir/2.4.0/results.json) · [Reproduce the runs](../BUILDING.md)

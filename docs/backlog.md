@@ -1,5 +1,7 @@
 # Monster Choir · design and acceptance
 
+**Historical proposal.** Use the [current feature definition](FEATURES.md) and [illustrated player manual](MANUAL.md) for the released behavior. Browsing now commits a singer immediately, and three song slots are available.
+
 **Original design brief.** The playable implementation and its remaining validation work are in the [2.1 release notes](MONSTER-KEYS.md). Monster Keys 2.0.1 plays one creature with up to four notes. This proposal uses those four voices in a second way: four different creatures, each with a recognisable place, sound and melody.
 
 ## A child's first choir

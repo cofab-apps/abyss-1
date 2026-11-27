@@ -32,6 +32,6 @@ The screen shows four of the 20 portraits made for Monster Keys from Gabor Varga
 
 **Hardware.** Monster Choir 2.1.0 booted on a physical M-VAVE FM-1 with Puya P25Q80 flash after installation from stock 015. Gabor played notes, browsed portraits and brought up Bloop’s Wobble control. Version 2.4.0 has passed the packaged simulator checks and awaits physical UAT on this firmware. The earlier 2.3.1 beta carries the Hub-compatible format for its firmware ID, `FM-1_85020301`. It passed on the simulated Puya P25Q80 and UC25HQ80. The real-device install from stock and another firmware, USB identity after boot, switch away and physical USB sample transfer are open. [Beta evidence and hardware test](docs/MONSTER-KEYS.md#firmware-hub-candidate) · [Previous hardware results](docs/MONSTER-KEYS.md#fm-1-hardware-compatibility).
 
-[Player guide](docs/MANUAL.md) · [Verification and limitations](docs/MONSTER-KEYS.md) · [Rebuild](BUILDING.md) · [All 20 portraits](monster-keys/bestiary.png) · [Credits](LICENSING.md)
+[Illustrated player manual](docs/MANUAL.md) · [Current feature definition](docs/FEATURES.md) · [Verification and limitations](docs/MONSTER-KEYS.md) · [Rebuild](BUILDING.md) · [All 20 portraits](monster-keys/bestiary.png) · [Credits](LICENSING.md)
 
 Created by Gabor Varga, Zurich. Built on fm1-base. Browser player by Joakim Eriksson.
