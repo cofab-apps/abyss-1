@@ -1,20 +1,29 @@
-# Play Monster Keys 2.0.1
+# Play Monster Choir
 
-[Open the player](https://joakimeriksson.github.io/fm1-emu/?package=https%3A%2F%2Fraw.githubusercontent.com%2Fcofab-apps%2Fabyss-1%2Fmain%2Fbuilds%2Fabyss-1-monster-keys-2.0.1.fwsc&name=ABYSS-1%20Monster%20Keys&embed=1&mhz=60) and tap **Start**. Follow the little keyboard under Hydra. Press a white key, add a second for a chord, then turn K1 while holding both. The arrows beside the name invite you to browse.
+## Trade calls
 
-| Control | Playing the released instrument |
-|---|---|
-| SELECT, PRESETS, ALGORITHM | Turn either way to browse the 20 monsters. With the keys up, the new creature gives a short call. SEL / SCL advances one creature. |
-| White and raised keys | White keys play pentatonic pitches. A paired raised key bends and colours its neighbouring white note. Up to four notes sound with the selected creature’s voice. |
-| K1 · Mouth | Open the lips symbol to move between vowel shapes. |
-| K2 · Teeth | Lengthen the teeth to add rasp or a metallic edge. |
-| K3 · Wobble | Enlarge the wave to animate articulation and pitch. |
-| K4 · Cave | Widen the echo symbol for stereo repeats. |
-| HOME | Restore the selected creature's four starting knob values. |
-| OCT− / OCT+ | Move the keyboard down or up one octave within the instrument's range. |
-| REC | Arm recording. The first note or audition starts it. REC again finishes the take. Arming and cancelling an empty take keeps the previous recording. |
-| PLAY | Hear the take once, or hear a short call when no take exists. During recording, PLAY finishes the take and starts replay. Playing a fresh key interrupts replay. |
+Tap **Start** in the [player](../README.md). Press **ARP**. Play two notes and leave a gap. The first note starts the clock. You get one bar to ask a question. The next seat in reading order (or a new partner if it is empty) sings back your pitches and rhythm in its own voice in bar two. The turn then comes back to you. A completed call and answer becomes a two-bar duet. PLAY stops the game. Press PLAY again to loop the duet, or ARP to start another conversation.
 
-**Try recording a conversation.** Play two short Bloop notes, leave a rest, then turn SELECT and answer in another voice. PLAY repeats those events in order once. The recorder holds one performance, up to 30 seconds or 512 gesture changes, for the current power session.
+## Pick four singers
 
-[Proposed four-singer loop](backlog.md) · [Firmware verification](MONSTER-KEYS.md)
+HOME switches between the large solo portrait and the four seats. SELECT moves the yellow marker. PRESETS or ALGORITHM auditions a candidate. SEL/SCL confirms it. Swapping a creature keeps its phrase. At rest, one white key makes the occupied seats harmonise. During playback, the keyboard plays the selected seat over the others. OCT− and OCT+ shift the live keyboard an octave.
+
+## Shape the voice
+
+K1 opens the mouth, K2 adds teeth, K3 adds wobble and K4 adds cave echo. In the choir each seat remembers its own settings. A paired raised key bends a held white note. Hold both for up to 0.7 seconds to open and roughen the sound. Releasing the raised key takes you back to the white note.
+
+For continuous force on a physical keyboard, press ENV with all keys released. Let the note settle, then lean into it or ease off. The lower 20 keys support held pressure. The highest seven use the other gestures. Press ENV again with all keys up to return to normal scanning. The browser’s paired-key gesture can be played with two keyboard keys.
+
+## Loop a phrase
+
+In the choir, REC arms the selected seat. The first note starts two bars of 4/4 at 100 BPM. Two rows of 16 lights show the 32 sixteenth notes. A quick tap occupies one cell. Hold a note across cells to sustain it. Bends, pressure and the four knob settings are sampled while notes sound. REC again finishes early and leaves the remaining cells silent. The transport keeps going.
+
+Select another singer and press REC. The new part starts on the next downbeat while the other parts play. A nonempty pass replaces the focused part. An empty pass keeps it. EDIT undoes the last committed take. For a duet it restores both affected parts. PLAY stops or restarts the group from the beginning.
+
+## Keep a favourite
+
+Press SAVE in choir mode to keep the current portraits, settings and musical parts in one favourite slot. Stop the transport and release the keys if SAVE is waiting. Watch for **SAVED**. GLO recalls that favourite while stopped with the keys up. Booting the same package and pressing HOME also restores it. A later successful save replaces the previous favourite. Browser storage belongs to that browser and firmware package.
+
+The large solo screen also retains its original REC/PLAY gesture recorder. It replays a single take once and clears on power-off. Use HOME for the repeating four-part recorder.
+
+[Play or download](../README.md) · [Measured results](MONSTER-KEYS.md)

@@ -63,9 +63,10 @@ function chipInput(bytes) {
     new Uint8Array(chip.memory.buffer, at, bytes.length).set(bytes);
     return at;
 }
-function boot() {
+function boot(saved) {
     const at = chipInput(file);
     assert.equal(chip.fm1_boot_fwsc(at, file.length, 0, 0, clock), 0);
+    if (saved?.length) assert.equal(chip.fm1_flash_restore(chipInput(saved),saved.length),0);
     run(1300, false, true);
 }
 function btn(id){chip.fm1_key(id,1);run(50);chip.fm1_key(id,0);run(70);}
@@ -83,5 +84,10 @@ function movieEnd() {
     fs.closeSync(video);
     if(panelVideo!==undefined) fs.closeSync(panelVideo);
 }
-const {checkMonsters} = await import('./test-monsters.mjs');
-checkMonsters({boot, chip, run, enc, btn, shots, screen, out, movieStart, movieEnd});
+if (process.argv.includes('--choir')) {
+    const {checkChoir} = await import('./test-choir.mjs');
+    await checkChoir({boot, chip, run, enc, btn, shots, screen, out, chipInput, movieStart, movieEnd});
+} else {
+    const {checkMonsters} = await import('./test-monsters.mjs');
+    checkMonsters({boot, chip, run, enc, btn, shots, screen, out, movieStart, movieEnd});
+}

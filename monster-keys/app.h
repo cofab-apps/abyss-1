@@ -5,9 +5,10 @@
 #define APP_SPLASH_RGB RGB(84, 231, 204)
 #define APP_BLOCK 128u
 #define APP_CANVAS_PX (240u * 68u)
-/* Same platform calibration sectors as Beta 1.5. No song sectors are used. */
-enum { OBJ_PANEL, OBJ_NOBJ };
-#define APP_STORE_MAP {0xCE000u}
+#define APP_TOUCH
+/* Panel calibration and favourite use separate A/B sector pairs. */
+enum { OBJ_PANEL, OBJ_FAVOURITE, OBJ_NOBJ };
+#define APP_STORE_MAP {0xCE000u, 0xD8000u}
 void app_init(void);
 void app_ui_init(void);
 void app_render(int32_t *lr, uint32_t n, uint32_t master_q12);

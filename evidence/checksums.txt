@@ -2,3 +2,8 @@
 db9ceddaab95290201db3cde63d951a52d9f349bba763784d69f2b4483db6371  builds/abyss-1-monster-keys-2.0.1.fwsc
 80940f42ac82e9b1161acb7ad1f514952304169f42d9708c03fada2ccf16cb70  evidence/monsters/measurements-2.0.1.json
 f85fd93eaff464fcfbffb4e172adcbed26ee1d3ba308ba2057508bc83ebc7184  evidence/monsters/monster-calls-2.0.1.mp4
+9d6d60c411e1621956c29a6bfe1f53ed522862a368cab61f04ad8800f51367c6  builds/abyss-1-monster-choir-2.1.0.fwsc
+50f44438d05673c1d2b07932cc67d19d016ff85b605754df57a9cc990dc0a756  evidence/choir/duet.mp4
+55d2fc6c7c89bf84e17393959122fb863c37f56393e718bcde229d4dd1c7c3df  evidence/choir/four-singers.png
+a61f3d646739c344a8adadc9c811220e35280db4fe8147606b95f07d41a3f847  evidence/choir/results-100.json
+4265282f3516589da50394009128d74bb743e7d2b607c849cbedbee046270884  evidence/choir/results-60.json

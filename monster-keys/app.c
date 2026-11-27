@@ -6,7 +6,7 @@
 enum { SPECIES = 20, POLY = 4, TILE = 168, RING = 8192 };
 static volatile uint8_t animal, knob[4], preview_serial;
 static volatile int8_t register_shift;
-static volatile uint32_t held_keys;
+static volatile uint32_t musical_keys;
 static uint32_t note_step[112], scanned_keys, previous_buttons, focus_until, preview_until;
 static int focus = -1, redraw = 1;
 static const uint8_t white_ids[] = PLAT_WHITE_KEYS;
@@ -20,7 +20,7 @@ static const uint32_t raised = (1u<<1)|(1u<<3)|(1u<<5)|(1u<<8)|(1u<<10)|
 
 struct call {
     uint32_t phase, companion, throat, nose, lfo, step, age;
-    int level, key, gated, accent, species;
+    int level, key, gated, accent, species, pressure;
 };
 static struct call calls[POLY];
 static int16_t echo_ring[RING];
@@ -68,12 +68,15 @@ static void start_call(int key, int species)
         .step=note_step[note]};
 }
 
+#include "choir.h"
+
 /* Advance the slower articulators once per DAC block. The mouth oscillator,
  * modulation oscillator, glottal rasp and envelope run at the sample rate. */
-static void render_call(struct call *v, int32_t *mix, uint32_t n)
+static void render_call(struct call *v, int32_t *mix, uint32_t n, const volatile uint8_t *controls)
 {
     const struct species *p = &creatures[v->species];
-    int mouth = knob[0], teeth = knob[1], wobble = knob[2];
+    int mouth = clamp(controls[0] + v->pressure/2, 0, 127);
+    int teeth = clamp(controls[1] + v->pressure/2, 0, 127), wobble = controls[2];
     v->lfo += (uint32_t)(2 + p->syllables) * (22u + wobble) * n * 45u;
     int movement = sine_wave[v->lfo >> 24];
     int openness = clamp(mouth*3 + (movement*wobble >> 9), 0, 383);
@@ -95,7 +98,7 @@ static void render_call(struct call *v, int32_t *mix, uint32_t n)
     int f2=next[band]+(((int)next[band+1]-next[band])*blend>>7);
     uint32_t tract=75000u+v->species%5*5600u+teeth*130u;
     uint32_t throat_step=f1*tract, nose_step=f2*tract;
-    int target = v->gated ? 4096 : 0;
+    int target = v->gated ? 4096 + 12*v->pressure : 0;
     for (uint32_t i=0; i<n; ++i) {
         v->phase += step; v->companion += second;
         int mod = sine_wave[v->companion >> 24];
@@ -134,8 +137,51 @@ static int speaker_sample(int sample, int master)
 void app_render(int32_t *lr, uint32_t n, uint32_t master_q12)
 {
     int32_t mix[APP_BLOCK] = {0};
-    uint32_t keys = held_keys, fresh = keys & ~played_keys;
+    uint32_t keys = musical_keys, fresh = keys & ~played_keys;
     int species = animal;
+    static int was_choir;
+    int ensemble = choir_mode;
+    if (ensemble != was_choir) {
+        for (int i=0; i<POLY; ++i) calls[i]=(struct call){0};
+        played_keys=audition_blocks=0;
+        fresh=keys;
+        last_preview=preview_serial;
+        was_choir=ensemble;
+    }
+    int wet = knob[3];
+    if (ensemble) {
+        const struct choir_sound *frame = sound_frames[sound_front];
+        int32_t send[APP_BLOCK] = {0};
+        for (int i=0; i<POLY; ++i) {
+            const struct choir_sound *s = &frame[i];
+            struct call *v = &calls[i];
+            if (s->note && (!v->gated || v->key!=s->note || v->species!=s->species ||
+                            last_attack[i]!=s->attack)) {
+                *v=(struct call){.step=note_step[s->note], .species=s->species,
+                                 .key=s->note, .level=1, .gated=1};
+            }
+            last_attack[i]=s->attack;
+            v->gated=!!s->note;
+            v->accent=s->bend;
+            v->pressure=s->pressure;
+            if (v->level) {
+                int32_t part[APP_BLOCK]={0};
+                render_call(v,part,n,s->knobs);
+                for (unsigned j=0;j<n;j++) {
+                    mix[j]+=part[j];
+                    send[j]+=part[j]*s->knobs[3] >> 7;
+                }
+            }
+        }
+        for (unsigned j=0;j<n;j++) {
+            int l=echo_ring[(echo_pos-5767)&(RING-1)], r=echo_ring[(echo_pos-7823)&(RING-1)];
+            echo_ring[echo_pos]=clamp(send[j]+r/5,-30000,30000);
+            echo_pos=(echo_pos+1)&(RING-1);
+            lr[2*j]=speaker_sample(mix[j]+l/2,master_q12);
+            lr[2*j+1]=speaker_sample(mix[j]+r/2,master_q12);
+        }
+        return;
+    }
     if (species != last_species) {
         for (int i=0; i<POLY; ++i) calls[i].gated = 0;
         fresh = keys;
@@ -163,8 +209,10 @@ void app_render(int32_t *lr, uint32_t n, uint32_t master_q12)
     }
     if (audition_blocks && !--audition_blocks)
         for (int i=0; i<POLY; ++i) if (calls[i].key == NKEYS) calls[i].gated = 0;
-    for (int i=0; i<POLY; ++i) if (calls[i].level) render_call(&calls[i],mix,n);
-    int wet = knob[3];
+    for (int i=0; i<POLY; ++i) if (calls[i].level) {
+        calls[i].pressure=calls[i].key<NKEYS ? finger_force[calls[i].key] : 0;
+        render_call(&calls[i],mix,n,knob);
+    }
     for (uint32_t i=0; i<n; ++i) {
         int dry = mix[i];
         int l = echo_ring[(echo_pos-5767)&(RING-1)], r = echo_ring[(echo_pos-7823)&(RING-1)];
@@ -177,7 +225,7 @@ void app_render(int32_t *lr, uint32_t n, uint32_t master_q12)
 
 void app_panic(void)
 {
-    held_keys = played_keys = audition_blocks = 0;
+    musical_keys = played_keys = audition_blocks = 0;
     for (int i=0;i<POLY;i++) calls[i] = (struct call){0};
     for (int i=0;i<RING;i++) echo_ring[i] = 0;
 }
@@ -187,6 +235,7 @@ void app_init(void)
     for (int i=0; i<112; ++i)
         note_step[i] = (uint32_t)(440.f*fm_exp2f((i-69)/12.f)*(4294967296.f/44100.f));
     select_animal(2);
+    init_choir();
 }
 
 #include "tape.h"
@@ -196,6 +245,27 @@ static void input_monster(void)
     uint32_t now=plat_ms(), keys=plat_keys(), buttons=plat_buttons();
     uint32_t press=buttons & ~previous_buttons;
     previous_buttons=buttons;
+    if ((press & (1u<<B_ENV)) && !keys) touch_on(!touch_is_on());
+    if (touch_is_on()) { touch_poll(); keys=touch_keys(); }
+    static uint32_t rock_start[NKEYS], prior_contacts;
+    for(int i=0;i<NKEYS;i++) {
+        int force=touch_is_on()?touch_pressure(i):0;
+        uint32_t group=voice_keys(i);
+        if((group & raised) && !(raised & (1u<<i)) && (keys & group)==group) {
+            if((prior_contacts & group)!=group) rock_start[i]=now;
+            uint32_t age=now-rock_start[i];
+            int rock=age>=700u?127:(int)(age*127u/700u);
+            if(rock>force) force=rock;
+        }
+        finger_force[i]=force;
+    }
+    prior_contacts=keys;
+    if ((press & (1u<<B_HOME)) || (!choir_mode && (press & (1u<<B_ARP)))) {
+        if (tape_mode==REPLAY) end_replay();
+        if (tape_mode==RECORD) finish_take(now);
+        toggle_choir();
+    }
+    if (choir_mode) { choir_input(now,keys,press); return; }
     int nav=plat_enc(EN_SELECT)+plat_enc(EN_PRESET)+plat_enc(EN_ALGO);
     if (press & (1u<<B_SEL)) ++nav;
     int delta[4], gesture=nav || keys;
@@ -209,7 +279,7 @@ static void input_monster(void)
         focus=-1;
         if (!keys) { ++preview_serial; preview_until=now+450; }
     }
-    if (press & (1u<<B_HOME)) { select_animal(animal); focus=-1; }
+
     if (press & (1u<<B_OCTDN)) register_shift=clamp(register_shift-1,-1,1);
     if (press & (1u<<B_OCTUP)) register_shift=clamp(register_shift+1,-1,1);
     if (press & (1u<<B_REC)) {
@@ -236,7 +306,7 @@ static void input_monster(void)
     if (focus>=0 && (int32_t)(now-focus_until)>=0) {focus=-1; redraw=1;}
     if (tape_mode==RECORD) capture_event(now,keys);
     if (tape_mode==REPLAY) keys=replay_event(now);
-    held_keys=keys;
+    musical_keys=keys;
     if (keys!=scanned_keys) {scanned_keys=keys; redraw=1;}
 }
 void app_input_only(void) { input_monster(); }

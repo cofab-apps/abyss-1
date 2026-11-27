@@ -1,61 +1,28 @@
-# Monster Keys 2.0.1
+# Monster Choir 2.1.0
 
-[Play the firmware](https://joakimeriksson.github.io/fm1-emu/?package=https%3A%2F%2Fraw.githubusercontent.com%2Fcofab-apps%2Fabyss-1%2Fmain%2Fbuilds%2Fabyss-1-monster-keys-2.0.1.fwsc&name=ABYSS-1%20Monster%20Keys&embed=1&mhz=60) · [Download the package](../builds/abyss-1-monster-keys-2.0.1.fwsc) · [Watch the native LCD with stereo DAC audio](../evidence/monsters/monster-calls-2.0.1.mp4)
+[Play or download](../README.md) · [Player guide](MANUAL.md) · [Watch the LCD and hear the stereo DAC](../evidence/choir/duet.mp4)
 
-## Playing with two hands or one
+This release adds a two-bar call-and-answer game, one persistent favourite and pressure-controlled vocal expression to standalone Monster Keys. HOME opens the four-seat instrument. ARP goes straight into a duet from the solo screen. The approved [2.0.1 package](../builds/abyss-1-monster-keys-2.0.1.fwsc) remains available.
 
-Start with Hydra. Hold a white key and turn K1 slowly from closed to open. Two resonances move through the voice while the sung pitch stays on the key. Add another finger. There are four voices. The white keys play a pentatonic scale. Rock a finger onto the raised key beside a white note to bend and brighten that same voice; it no longer retriggers or steals a voice from a four-note chord.
+## What the target firmware did
 
-| Control | What the child sees and hears |
+The packaged FM-1 image ran in the chip emulator at 60 and 100 MHz. These measurements use its DAC output. RMS values are fractions of full scale on the left channel. The film uses both channels.
+
+| Exercise | Result |
 |---|---|
-| SELECT or PRESETS | Browse all 20 creatures in either direction. Each introduces itself with a short call. SEL advances by one. |
-| K1 · Mouth | The lip symbol opens. The mix of resonances moves between four vowel shapes. |
-| K2 · Teeth | The teeth lengthen. The voice gains a rougher edge or metallic modulation. |
-| K3 · Wobble | The wave grows. The pitch and articulation move more deeply or quickly. |
-| K4 · Cave | The echo symbol widens. The delay repeats at different times in the left and right ears. |
-| PLAY | Hear a short call, or play the current take. A fresh key press interrupts replay. |
-| REC | Arm a take. The first played note or audition starts the clock. REC finishes it. PLAY can finish and immediately replay it. |
-| HOME, OCT−, OCT+ | Restore this creature’s four knobs, or move the keyboard down or up one octave. |
+| Trade calls | A held Hydra note followed by silence produced RMS 0.0622, then zero. With all keys released, Bloop answered in bar two at 0.0756. Both occupied the same steps in their respective bars. |
+| Recall a favourite | SAVE wrote the favourite to the first storage sector at 0xD8000. After a new boot with the retained flash, HOME and PLAY reproduced the two voices and rests. The call and answer measured 0.0635 and 0.0736. |
+| Four independent singers | Hydra, Bloop, SCP-682 and Jacob Leviathan sounded together from one key with zero missed DAC refills during the measured chord. Two additional lines were recorded on the same transport. The saved payload contained four independent lines with rests. |
+| Record expression and undo | The fourth part retained the raised-key bend and multiple Mouth values. Undo restored that lane to silence and preserved the first three parts byte-for-byte for the tested note, bend and mouth fields. |
+| Whisper to growl | With ENV enabled, the same simulated held key landed at velocity 32 in both runs. Increasing its held force from 32 to 126 changed RMS from 0.0654 to 0.0924. Capture uses the same key and elapsed time in each run. |
+| Browser and solo regression | In touch Chromium the exact packaged firmware booted, displayed Hydra, responded audibly to a key, released to silence and auditioned the next portrait. The solo regression separately exercised all 20 creatures, four-note chords, finger rocking and one-shot replay. |
 
-Turn a knob with the keys released to hear what the knob does. Holding a note gives continuous control. Keyboard lights match the suggested or sounding keys. Changing creature loads that creature’s own four settings.
+[60 MHz results](../evidence/choir/results-60.json) · [100 MHz results](../evidence/choir/results-100.json) · [Native four-seat display](../evidence/choir/four-singers.png)
 
-The recorder keeps one take in RAM, for up to 30 seconds or 512 gesture changes. A take includes key releases, chords, creature selections and knob turns. Arming and cancelling an empty take preserves the previous performance. Power cycling clears the take. See the [choir design](backlog.md) for the proposed two-bar, four-singer recorder.
+## Reproduce
 
-## Sound and artwork
+Use the [build and test commands](../BUILDING.md). Firmware identity is `FM-1_709020100`. The package is 858216 bytes with SHA-256 `9d6d60c411e1621956c29a6bfe1f53ed522862a368cab61f04ad8800f51367c6`. The [choir test](../scripts/test-choir.mjs) plays through the panel, restores a saved flash snapshot, and injects velocity and aftertouch at the emulated key contacts.
 
-Monster Keys is a standalone fm1-base application. Its audio interrupt generates all sound. Each monster combines a pitched oscillator, a per-species bank of four spectral shapes and a call model. A hard-synchronised pair of damped resonances supplies the vocal tract for the choir, growl and whale voices. The other models use whistle bends, pulsed metallic clacks or ring-modulated transmissions. A soft output curve leaves room for four voices and stereo echoes.
+## Limits
 
-The new atlas holds twenty original generated interpretations of the supplied monster descriptions. Each portrait occupies 168 × 168 pixels on the 240 × 240 display and has its own 64-colour palette. Fixed side symbols leave the portrait visible while either hand plays. [Atlas](../monster-keys/bestiary.png) · [Credits](../LICENSING.md)
-
-## Reproduce the release
-
-The tested build environment used Linux x86-64, Python 3.12 and Pillow 13.0.0. Target checks ran on Node 24. The wrapper uses Git and curl to obtain the pinned fm1-base, BSP, drop-in compiler and SDK packaging files. Set `JIELI_TOOLCHAIN` and `AC79_SDK` to reuse the project compiler and SDK.
-
-```sh
-sh scripts/build-monsters.sh
-cmp out/monster-keys.fwsc builds/abyss-1-monster-keys-2.0.1.fwsc
-node scripts/test-performance.mjs simulator out/monster-keys.fwsc out/monsters --monsters
-ABYSS_MHZ=100 node scripts/test-performance.mjs simulator out/monster-keys.fwsc out/monsters-100 --monsters
-python3 scripts/test-simulator-launch.py simulator out/monster-keys.fwsc
-```
-
-The last command requires Python Playwright and Chromium. Set `CHROMIUM` when using a system executable. The capture writes native RGB565 frames and interleaved signed 16-bit stereo samples taken from the simulated DAC at 44.1 kHz.
-
-| Input or result | Verified value |
-|---|---|
-| fm1-base / BSP | `bc68fcd635a918e16019767acad67cc1d773dd6a` / `fdd709fd0066b878b03c144776404d63811db13e` |
-| Compiler / SDK | pi32v2 LLVM `4f631b31b-e575321` / AC79NN SDK V1.2.1 packaging inputs |
-| Package | 858,216 bytes, identity `FM-1_709020001` |
-| SHA-256, also matched in a fresh build directory | `db9ceddaab95290201db3cde63d951a52d9f349bba763784d69f2b4483db6371` |
-
-## What the target tests found
-
-- At 60 MHz all 20 portraits changed on navigation and on a held note. All 20 creatures produced sound on the same key and accepted a four-note chord. The emulator reported zero missed DAC refills for those tests. The largest measured chord peak was 0.606 of digital full scale after smoothing the louder radio voices.
-- A four-note chord remained audible after all four fingers rocked onto and off their paired raised keys. Plain, bent and released-bend chord RMS measured 0.127, 0.124 and 0.125; the same result passed at 60 and 100 MHz.
-- The Bloop put 89% of its measured sustained-note energy below 250 Hz. The Crab put 23% above 8 kHz. All four knobs altered the DAC output. The [measurement file](../evidence/monsters/measurements-2.0.1.json) includes the windowed frequency-band energy fractions, chord peaks and finger-bend levels.
-- A recorded two-note take retained the intervening rest after an empty REC cycle. Replay RMS measured 0.060 on the first note, 0.000047 in the gap and 0.063 on the second note.
-- The public 2.0.1 link booted the exact raw GitHub package at 60 MHz, rendered the Hydra screen and responded to a panel-key click with the matching highlighted keyboard cue. The target simulator separately measured the resulting firmware’s native LCD and stereo DAC stream.
-
-The frequency measurements describe the emulator’s electrical output. Listening on the physical speaker, pressure response, and whether a child discovers the side symbols unaided remain untested. The firmware currently uses on/off contacts; the raised-key bend is discrete rather than pressure-sensitive. A next physical experiment is to measure whether that rocking gesture feels natural on the FM-1 keybed.
-
-[Player guide](MANUAL.md) · [Proposed choir and looping controls](backlog.md)
+The choir supports one note per singer, a fixed 100 BPM and one favourite. Each cell captures one note and its expression. Multiple attacks within one sixteenth collapse into that cell. A browser favourite is specific to its storage and firmware package. Continuous hardware pressure is opt-in and supported on the lower 20 keys. The paired-key growl also works through ordinary key switches. Physical key feel, physical power-loss recovery, speaker balance and unaided child use remain open.

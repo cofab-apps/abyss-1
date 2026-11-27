@@ -1,27 +1,19 @@
-# ABYSS-1 · Monster Keys
+# ABYSS-1 · Monster Choir 2.1
 
-**[Play Monster Keys 2.0.1](https://joakimeriksson.github.io/fm1-emu/?package=https%3A%2F%2Fraw.githubusercontent.com%2Fcofab-apps%2Fabyss-1%2Fmain%2Fbuilds%2Fabyss-1-monster-keys-2.0.1.fwsc&name=ABYSS-1%20Monster%20Keys&embed=1&mhz=60)** · [Download the FM-1 firmware](builds/abyss-1-monster-keys-2.0.1.fwsc) · [Watch and hear four monster calls](evidence/monsters/monster-calls-2.0.1.mp4)
+**[Play Monster Choir](https://joakimeriksson.github.io/fm1-emu/?package=https%3A%2F%2Fraw.githubusercontent.com%2Fcofab-apps%2Fabyss-1%2Fmain%2Fbuilds%2Fabyss-1-monster-choir-2.1.0.fwsc&name=ABYSS-1%20Monster%20Choir&embed=1&mhz=60)** · [Download the firmware](builds/abyss-1-monster-choir-2.1.0.fwsc) · [Watch and hear the duet](evidence/choir/duet.mp4)
 
-Tap **Start**. Hydra appears on the FM-1 screen. Hold a white key and slowly turn the first knob to hear its mouth open. Keep the note held and touch the raised key beside it to bend the call. Turn **SELECT** to hear the next monster introduce itself.
+Tap **Start**, press **ARP**, then play two notes and lift your fingers. Hydra sings your call. In the second bar Bloop sings it back. When the arrow returns, try another rhythm. Press **PLAY** to finish the exchange.
 
-![Hydra with four sound controls and a suggested key on the native LCD](monster-keys/hydra.png)
+![Four choir seats on the native FM-1 display](evidence/choir/four-singers.png)
 
-## What you can play today
-
-| On the FM-1 | What happens in 2.0.1 |
+| To play | On the FM-1 |
 |---|---|
-| SELECT or PRESETS | Browse 20 illustrated sea monsters. Each has its own call and starting knob settings. |
-| Keyboard | Play a melody or up to four notes of the selected monster. White keys follow a pentatonic scale. Paired raised keys bend a held note. |
-| Four knobs | **Mouth** shapes vowels, **Teeth** adds edge, **Wobble** moves the pitch, and **Cave** adds stereo echoes. The matching symbols beside the portrait change as you turn. |
-| REC | Arm a take. The first note or audition starts the clock. Play, change monster or turn knobs, then press REC again to finish. |
-| PLAY | Play the take once, including rests and gestures. With an empty recorder, PLAY auditions the current monster. A take lives in memory until power-off. |
+| Build a choir | HOME opens four portrait seats. SELECT moves the yellow marker. Turn PRESETS to audition, then press SEL/SCL to invite that singer. |
+| Hear a chord | With transport stopped, hold one white key. The occupied seats add root, fifth, third and low octave. Each sounding monster lights up. |
+| Make a repeating song | REC arms one singer. The first note starts two bars. Your phrase repeats after 32 steps. Arm another seat to join on the next downbeat. PLAY stops or restarts them together. EDIT undoes the most recent take. |
+| Keep a favourite | In the choir, SAVE keeps one complete arrangement. During playback a save waits for STOP and key release. GLO recalls it while stopped. The next boot restores it when you enter the choir. |
+| Whisper and growl | Hold a white note and rock onto its paired raised key. The bend grows into a growl over 0.7 seconds. On the FM-1, press ENV with all keys up to enable continuous finger pressure on the lower 20 keys. |
 
-## Proposed next instrument · Monster Choir
+[Player guide](docs/MANUAL.md) · [Verification and limitations](docs/MONSTER-KEYS.md) · [Rebuild](BUILDING.md) · [All 20 portraits](monster-keys/bestiary.png) · [Credits](LICENSING.md)
 
-Give four monsters a place on screen and a shared **32-step loop**. One key could make the whole choir sing immediately. REC could then give each singer its own tune. For example, record two low Bloop notes, add a tapping Crab, then let Hydra sing a long answer while the first two repeat. A fourth singer can join whenever the child is ready.
-
-The proposed controls, two-bar recording flow and acceptance checks are in the [choir design](docs/backlog.md). The playable firmware above is the solo instrument with one-shot recording.
-
-[Player guide](docs/MANUAL.md) · [All 20 portraits](monster-keys/bestiary.png) · [Build and verification](docs/MONSTER-KEYS.md) · [Credits](LICENSING.md)
-
-Created by Gabor Varga, Zurich. The instrument runs on fm1-base. The browser player uses Joakim Eriksson’s FM-1 emulator.
+Created by Gabor Varga, Zurich. Built on fm1-base. Browser player by Joakim Eriksson.

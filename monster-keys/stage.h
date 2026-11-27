@@ -93,6 +93,7 @@ static void signet(int k)
             cv_line(x,18-h,x+3,18,c);cv_line(x+3,18,x,18+h,c);
         }
     }
+    if(k==0 && touch_is_on()) cv_rect(15,1,6,3,TIDE);
     if(focus==k) cv_rect(9,32,18,2,c);
     cv_blit(left,top);
 }
@@ -134,15 +135,91 @@ void app_ui_init(void)
     lcd_fill(0,0,240,240,OCEAN);
     redraw=1;
 }
+static int grid_visible, grid_id[SEATS]={-2,-2,-2,-2}, grid_light[SEATS];
+static uint16_t thumb[84*84] __attribute__((section(".pool")));
+static void paint_seat(int i,int id,int light)
+{
+    int x=8+(i%2)*119, y=19+(i/2)*91;
+    uint16_t border=i==selected?ink[3]:STONE;
+    if(light) border=TIDE;
+    int marker=x+91;
+    lcd_fill(marker,y,12,84,OCEAN);
+    if(i==selected) {
+        lcd_fill(marker,y+35,3,13,ink[3]); lcd_fill(marker+3,y+38,3,7,ink[3]);
+    }
+    if(light) {
+        int opening=2+light;
+        lcd_fill(marker,y+61-opening,9,2,TIDE);
+        lcd_fill(marker,y+61+opening,9,2,TIDE);
+    }
+    lcd_fill(x-3,y-3,90,2,border); lcd_fill(x-3,y+84,90,2,border);
+    lcd_fill(x-3,y-1,2,85,border); lcd_fill(x+84,y-1,2,85,border);
+    if(id!=grid_id[i]) {
+        if(id==EMPTY) {
+            lcd_fill(x,y,84,84,OCEAN); lcd_fill(x+28,y+40,28,4,STONE);
+            lcd_fill(x+40,y+28,4,28,STONE);
+        } else {
+            const uint8_t *src=monster_pixels+id*TILE*TILE*3/4;
+            for(int row=0;row<84;row++) for(int col=0;col<84;col++) {
+                int off=(row*2*TILE+col*2)*3/4;
+                int index=col%2?((src[off]&15)<<2 | src[off+1]>>6):src[off]>>2;
+                thumb[row*84+col]=monster_palette[id*64+index];
+            }
+            lcd_sync(); lcd_blit(x,y,84,84,thumb); lcd_sync();
+        }
+        grid_id[i]=id;
+    }
+    grid_light[i]=light;
+}
+static void paint_choir(void)
+{
+    const struct choir_sound *voices=sound_frames[sound_front];
+    for(int i=0;i<SEATS;i++) {
+        int id=i==selected && candidate!=EMPTY?candidate:song.seats[i].species;
+        int light=voices[i].note?1+voices[i].pressure/24:0;
+        if(redraw || id!=grid_id[i] || light!=grid_light[i]) paint_seat(i,id,light);
+    }
+    cv_begin(240,15,OCEAN);
+    const char *label=echo_game?(step_index<16?"YOUR CALL":"THE ANSWER"):
+        recording>=0?"RECORD":armed>=0?"READY":running?"CHOIR LOOP":"MONSTER CHOIR";
+    cv_text(6,0,&FONT_S,label,FOAM);
+    if(save_pending || favourite_status) cv_text(167,0,&FONT_S,
+        save_pending?"SAVE ...":favourite_status==2?"RECALLED":favourite_status>0?"SAVED":"NO SAVE",ink[3]);
+    if(echo_game) {
+        int turn=step_index<16?selected:partner;
+        for(int i=0;i<SEATS;i++) cv_rect(136+i*6,5,4,4,i==turn?ink[3]:STONE);
+        chevron(116,6,step_index<16?1:-1,TIDE);
+    }
+    cv_blit(0,0);
+    cv_begin(240,42,OCEAN);
+    const struct syllable *line=recording==selected?draft:song.seats[selected].line;
+    for(int j=0;j<STEPS;j++) {
+        int x=5+(j%16)*14+(j%16)/4, y=1+(j/16)*11;
+        cv_rect(x,y,11,7,j==step_index && running?ink[3]:line[j].note?TIDE:STONE);
+    }
+    cv_text(5,25,&FONT_S,echo_game?"CALL  >  ANSWER":"REC    PLAY    ARP: DUET",FOAM);
+    cv_blit(0,198);
+    plat_lights((running?LED_PLAY_GREEN:0)|((armed>=0||recording>=0)?1u<<B_REC:0),
+                musical_keys,0,0,0);
+    redraw=0;
+}
 void app_frame(void)
 {
     input_monster();
     uint32_t now=plat_ms();
     if(now-previous_paint<65 && !redraw) return;
     previous_paint=now;
+    if(choir_mode!=grid_visible) {
+        grid_visible=choir_mode; lcd_fill(0,0,240,240,OCEAN);
+        portrait_id=-1; redraw=1;
+        for(int i=0;i<SEATS;i++) grid_id[i]=-2;
+    }
+    if(choir_mode) { paint_choir(); return; }
     int guide=4+(int)((now/800u)%3u)*2;
-    int singing=held_keys || (int32_t)(preview_until-now)>0;
-    int motion=singing?2+(int)((now/(110-knob[2]/2))%4):0;
+    int singing=musical_keys || (int32_t)(preview_until-now)>0;
+    unsigned force=0;
+    for(int k=0;k<NKEYS;k++) if((musical_keys&(1u<<k)) && finger_force[k]>force) force=finger_force[k];
+    int motion=singing?force/24+2+(int)((now/(110-knob[2]/2))%4):0;
     int fresh=portrait_id!=animal;
     if(fresh) {unpack_portrait(animal); crown();}
     if(fresh || motion!=last_motion) {
@@ -151,9 +228,9 @@ void app_frame(void)
     }
     if(redraw || fresh || guide!=old_guide || focus!=old_focus) {
         if(redraw || fresh || focus!=old_focus) for(int k=0;k<4;k++) signet(k);
-        guidance(guide,held_keys);
+        guidance(guide,musical_keys);
         uint32_t lights=tape_mode==RECORD?(1u<<B_REC):tape_mode==REPLAY?LED_PLAY_GREEN:0;
-        plat_lights(lights,held_keys,LED_PLAY_GREEN,held_keys?0:1u<<white_ids[guide],2);
+        plat_lights(lights,musical_keys,LED_PLAY_GREEN,musical_keys?0:1u<<white_ids[guide],2);
         old_guide=guide; old_focus=focus; redraw=0;
     }
 }
