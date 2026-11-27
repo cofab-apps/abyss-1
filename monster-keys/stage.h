@@ -187,7 +187,7 @@ static void paint_choir(void)
     }
     cv_begin(240,15,OCEAN);
     const char *label=echo_game?(step_index<16?"TOP ROW CALLS":"BOTTOM REPLIES"):
-        recording>=0?"RECORD":armed>=0?"READY":running?"CHOIR LOOP":sea_page?"SEA FX":"MONSTER CHOIR";
+        recording>=0?"RECORD":armed>=0?"READY":running?"CHOIR LOOP":sea_page?"SEA FX":"SEAMONSTER CHOIR";
     cv_text(6,0,&FONT_S,label,FOAM);
     if(save_pending || favourite_status) cv_text(167,0,&FONT_S,
         save_pending?"SAVE ...":favourite_status==2?"RECALLED":favourite_status>0?"SAVED":"NO SAVE",ink[3]);
@@ -217,12 +217,52 @@ static void paint_choir(void)
                 musical_keys,0,0,0);
     redraw=0;
 }
+static int sample_visible;
+static void paint_sampler(void)
+{
+    static const char *const modes[]={"PITCHED KEYS","BACKWARDS","FOUR SLICES"};
+    cv_begin(240,48,OCEAN);
+    cv_text(8,3,&FONT_B,"SHELL SAMPLER",FOAM);
+    cv_text(8,26,&FONT_S,modes[sample_style],TIDE);
+    cv_blit(0,0);
+    cv_begin(240,65,OCEAN);
+    int size=sample_len, bank=sample_bank;
+    for(int x=0;x<224;x++) {
+        int peak=0, lo=x*size/224, hi=(x+1)*size/224;
+        for(int j=lo;j<hi;j+=4) {
+            int v=clips[bank][j]; if(v<0) v=-v;
+            if(v>peak) peak=v;
+        }
+        int h=clamp(peak/400,1,27);
+        cv_rect(8+x,31-h,1,h*2,sample_style==CLIP_CHOPS?ink[x/56]:TIDE);
+    }
+    if(sample_pos>=0 && size) cv_rect(8+clamp(sample_pos*223/size,0,223),1,2,60,FOAM);
+    cv_blit(0,56);
+    cv_begin(240,63,OCEAN);
+    const char *status=transfer_id>=0?"RECEIVING SAMPLE":sample_arm?(sample_count?"RECORDING":"WAITING FOR SOUND"):"REC TO CATCH A SOUND";
+    cv_text(8,2,&FONT_B,status,sample_arm?ink[0]:FOAM);
+    cv_rect(8,24,224,5,STONE);
+    cv_rect(8,24,1+(transfer_id>=0?transfer_count*223/transfer_length:(sample_arm?sample_count:size)*223/CLIP_MAX),5,TIDE);
+    cv_text(8,38,&FONT_S,sample_usb?"SOURCE: USB AUDIO":creatures[animal].name,ink[1]);
+    cv_blit(0,126);
+    cv_begin(240,42,OCEAN);
+    cv_text(8,1,&FONT_S,"SEL: SOURCE     ARP: STYLE",FOAM);
+    cv_text(8,22,&FONT_S,"PLAY: HEAR IT     SEQ: EXIT",FOAM);
+    cv_blit(0,196);
+    plat_lights((sample_arm?(1u<<B_REC):0)|(sample_pos>=0?LED_PLAY_GREEN:0),musical_keys,0,0,0);
+    redraw=0;
+}
 void app_frame(void)
 {
     input_monster();
     uint32_t now=plat_ms();
     if(now-previous_paint<65 && !redraw) return;
     previous_paint=now;
+    if(sample_visible!=sample_mode) {
+        sample_visible=sample_mode; lcd_fill(0,0,240,240,OCEAN);
+        grid_visible=-1; portrait_id=-1; redraw=1;
+    }
+    if(sample_mode) { paint_sampler(); return; }
     if(choir_mode!=grid_visible) {
         grid_visible=choir_mode; lcd_fill(0,0,240,240,OCEAN);
         portrait_id=-1; redraw=1;

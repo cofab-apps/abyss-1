@@ -1,4 +1,22 @@
-# Monster Choir 2.2.0
+# Seamonster Choir 2.3.0
+
+[Play or download](../README.md) · [Play the sampler or load a sound](MANUAL.md#catch-a-sound) · [Native LCD and stereo sampler recording](../evidence/choir/shell-2.3.0.mp4)
+
+## Shell Sampler
+
+SEQ opens a one-voice sampler with pitched, reverse and four-slice playback. It captures a live solo monster or routed USB audio, or receives a clip over USB MIDI. One two-second mono clip at 11,025 Hz fits in RAM. A second bank holds a recording or incoming file until ready. An interrupted upload or silent take preserves the current clip. The shipped chirp returns on power-up.
+
+| Check | Result |
+|---|---|
+| Target at 60 MHz (Puya) and 100 MHz (UC25HQ80) | A captured monster sounded after all keys were released. Upper keys shortened the clip, reverse produced audio and different slices produced different outputs. A silent USB take preserved the clip. SEQ returned to solo and choir. |
+| File transfer | The browser loaded a stereo WAV and received acknowledgements from the firmware receiver compiled on the host. The Python WAV loader and receiver agreed on all 22,050 sample values. The receiver rejected missing, corrupt and out-of-order data. A known stereo PCM input was captured through the sampler’s USB render path in the host harness. |
+| Regressions | Four-row turns, seat retention, sea controls, previous favourites, 32-step overdubbing, all 20 solo voices, LCD cues and touch browser playback passed. The four-singer chord with maximum sea effects missed zero DAC refills in both target runs. |
+
+Package ID `FM-1_709020300`. Size 858216 bytes. SHA-256 `c9926b9716d600f3eb38a611c1de4b9824a2789431ebe5698179daa27964876f`. The release rebuilt byte-for-byte. Physical upload over USB MIDI, computer-audio capture over the cable and speaker/headphone sound remain to be tested on 2.3.0. The manufacturer documents USB, a built-in speaker, a headphone output and MIDI in. I found no documented onboard microphone. [FM-1 product specifications](https://www.sincoaudio.com/product?id=fm-1) · [Measurements](../evidence/choir/results-2.3.0.json) · [Reproduction](../BUILDING.md)
+
+[Previous 2.2.0 firmware](../builds/abyss-1-monster-choir-2.2.0.fwsc)
+
+## Monster Choir 2.2.0
 
 [Play or download](../README.md) · [Player guide](MANUAL.md) · [Native LCD and stereo audio demo](../evidence/choir/rows-and-sea-2.2.0.mp4)
 

@@ -11,3 +11,6 @@ a61f3d646739c344a8adadc9c811220e35280db4fe8147606b95f07d41a3f847  evidence/choir
 2dbd178950a76ed2e7978f05e78b0dc5a58bca16e3d9c8db4040a462297ff26f  evidence/choir/rows-and-sea-2.2.0.mp4
 de064224ddd68d562824817318c30eafc40dd2691bcbf2cfa4f701c3c056b6a5  evidence/choir/results-2.2.0.json
 5ff4616a940e0427a37afaa53b10a455ebfd2caf57f52a9d4d6012f39a0d9b0d  evidence/choir/four-lanes-2.1.0.bin
+c9926b9716d600f3eb38a611c1de4b9824a2789431ebe5698179daa27964876f  builds/seamonster-choir-2.3.0.fwsc
+f2fddb6518aeab1f97b132546361eec4f337d0ce422dd79664713f8ddf5c1734  evidence/choir/results-2.3.0.json
+2089fefd0940517b60058afb586273ee6cc76833b2a0c436645dbed323680bf2  evidence/choir/shell-2.3.0.mp4

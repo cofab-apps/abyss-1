@@ -47,7 +47,7 @@ with sync_playwright() as playwright:
         }
     }""")
     page.add_init_script("localStorage.setItem('fm1.bigscreen','1')")
-    title = Path(package).stem if use_file_picker else "ABYSS-1"
+    title = Path(package).stem if use_file_picker else ("Seamonster Choir" if Path(package).name.startswith("seamonster-choir") else "ABYSS-1")
     if use_file_picker:
         # Public emulator reads the selected file locally. Disallow network writes
         # during this private-artifact test and identify the bytes at file selection.

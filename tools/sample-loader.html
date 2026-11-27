@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Seamonster Choir · Sample loader</title>
+<style>
+:root{color-scheme:dark;font:17px/1.5 "DM Sans",system-ui,sans-serif;color:#ecfaf5;background:#071d25}
+body{max-width:34rem;margin:6vh auto;padding:1.5rem}h1{font-size:clamp(2rem,8vw,3.8rem);line-height:1.05;letter-spacing:-.045em;margin:.25em 0}header small{color:#80ddcc;font-weight:700}
+fieldset{border:1px solid #42646a;border-radius:12px;padding:1rem 1.2rem;margin:1.25rem 0}legend{color:#9debe1;font-weight:700;padding:0 .4rem}
+label{display:block;margin:.55rem 0}input,select,button{font:inherit}
+select,input[type=number]{display:block;max-width:100%;padding:.4rem;border:1px solid #647d83;border-radius:5px}input[type=file]{max-width:100%}
+button{padding:.65em 1em;background:#8ce2d0;color:#052522;border:0;border-radius:7px;font-weight:700;cursor:pointer}button:disabled{opacity:.45;cursor:default}progress{width:100%;accent-color:#87e1cc}output{display:block;min-height:3em;margin-top:.5em}
+</style>
+<header><small>Seamonster Choir</small><h1>Load a sound</h1><p>Connect the FM-1 by USB and press <strong>SEQ</strong> to open Shell Sampler. A clip lasts up to two seconds and stays until you replace it or switch off.</p></header>
+<fieldset id="ports"><legend>FM-1 connection</legend><button id="connect" type="button">Find MIDI ports</button>
+<label>Send to <select id="dest"><option value="">Choose the FM-1</option></select></label>
+<label>Receive from <select id="src"><option value="">Choose the FM-1</option></select></label></fieldset>
+<fieldset id="clip"><legend>Audio clip</legend><label>Sound file <input type="file" id="file" accept="audio/*,.wav"></label>
+<label>Start at (seconds) <input id="start" type="number" min="0" value="0" step="0.1"></label></fieldset>
+<button id="send" type="button" disabled>Send to sampler</button>
+<progress id="meter" max="1" value="0" aria-label="Transfer progress"></progress><output id="status" role="status"></output>
+<script>
+'use strict';
+const el=id=>document.getElementById(id);
+const RATE=11025, MAX=22050, prefix=[0x7d,83,77,80];
+let midi,busy=false;
+function ready(){el('send').disabled=busy||!midi||!el('dest').value||!el('src').value||!el('file').files.length;}
+for(const id of ['file','dest','src']) el(id).onchange=ready;
+function ports(id,values){
+    const select=el(id);select.length=1;
+    for(const port of values)select.add(new Option(port.name,port.id));
+    const matches=Array.from(select.options).filter(o=>/seamonster choir/i.test(o.text));
+    if(matches.length===1)select.value=matches[0].value;
+}
+el('connect').onclick=async()=>{
+    try{
+        if(!navigator.requestMIDIAccess)throw Error('Open this file in a browser with Web MIDI, or use the USB audio method in the guide.');
+        midi=await navigator.requestMIDIAccess({sysex:true});
+        ports('dest',midi.outputs.values());ports('src',midi.inputs.values());
+        el('status').value='Choose the FM-1 ports and a sound file.';
+    }catch(e){el('status').value=e.message;}
+    ready();
+};
+const pack=n=>[n&127,(n>>7)&127,(n>>14)&127];
+async function audioBytes(file,start){
+    const decode=new OfflineAudioContext(1,1,RATE);
+    const recording=await decode.decodeAudioData(await file.arrayBuffer());
+    if(!Number.isFinite(start)||start<0||start>=recording.duration)throw Error('Choose a start within the clip.');
+    const n=Math.min(MAX,Math.floor((recording.duration-start)*RATE));
+    if(n<64)throw Error('Choose a longer clip.');
+    const offline=new OfflineAudioContext(1,n,RATE), source=offline.createBufferSource();
+    source.buffer=recording;source.connect(offline.destination);source.start(0,start);
+    const mono=(await offline.startRendering()).getChannelData(0), bytes=new Uint8Array(n*2);
+    let crc=65535;
+    for(let i=0;i<n;i++){
+        const v=Math.max(0,Math.min(16383,Math.round(mono[i]*8192)+8192));
+        bytes[2*i]=v&127;bytes[2*i+1]=v>>7;
+    }
+    for(const b of bytes){
+        crc^=b<<8;
+        for(let i=0;i<8;i++)crc=((crc<<1)^((crc&32768)?0x1021:0))&65535;
+    }
+    return {bytes,crc,n};
+}
+function transmit(input,output,tag,cmd,data,end){
+    return new Promise((resolve,reject)=>{
+        const cleanup=()=>{clearTimeout(timer);input.removeEventListener('midimessage',ack);};
+        const ack=event=>{
+            const p=event.data;
+            if(p.length!==13||p[0]!==240||!prefix.every((b,i)=>p[i+1]===b)||p[5]!==4||p[6]!==tag||p[7]!==cmd)return;
+            cleanup();
+            if(p[8]===1&&(p[9]|p[10]<<7|p[11]<<14)===end)resolve();
+            else reject(Error('FM-1 declined the transfer. Open SEQ, finish recording, and try again.'));
+        };
+        const timer=setTimeout(()=>{cleanup();reject(Error('No reply. Check the two FM-1 ports and open SEQ.'));},3000);
+        input.addEventListener('midimessage',ack);
+        try{output.send([240,...prefix,cmd,tag,...data,247]);}catch(e){cleanup();reject(e);}
+    });
+}
+el('send').onclick=async()=>{
+    busy=true;ready();el('ports').disabled=el('clip').disabled=true;el('meter').value=0;
+    let input;
+    try{
+        el('status').value='Preparing the clip…';
+        const {bytes,crc,n}=await audioBytes(el('file').files[0],el('start').valueAsNumber);
+        input=midi.inputs.get(el('src').value);const output=midi.outputs.get(el('dest').value);
+        await input.open();await output.open();
+        const tag=crypto.getRandomValues(new Uint8Array(1))[0]&127;
+        await transmit(input,output,tag,1,[...pack(n),...pack(crc)],0);
+        el('status').value='Sending the clip…';
+        for(let pos=0;pos<n;pos+=96){
+            const end=Math.min(n,pos+96);
+            await transmit(input,output,tag,2,[...pack(pos),...bytes.subarray(2*pos,2*end)],end);
+            el('meter').value=end/n;
+        }
+        await transmit(input,output,tag,3,[],n);
+        el('status').value='Clip received. Press PLAY or a key on the FM-1.';
+    }catch(e){el('status').value=e.message;}
+    finally{busy=false;el('ports').disabled=el('clip').disabled=false;ready();}
+};
+</script>
+</html>

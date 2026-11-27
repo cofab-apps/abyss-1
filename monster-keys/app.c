@@ -137,7 +137,7 @@ static int speaker_sample(int sample, int master)
     return sample*master/8;
 }
 
-void app_render(int32_t *lr, uint32_t n, uint32_t master_q12)
+static void render_monsters(int32_t *lr, uint32_t n, uint32_t master_q12)
 {
     smooth_depth();
     int32_t mix[APP_BLOCK] = {0};
@@ -229,6 +229,17 @@ void app_render(int32_t *lr, uint32_t n, uint32_t master_q12)
     sea_render(lr,n,master_q12);
 }
 
+#include "sampler.h"
+
+void app_render(int32_t *lr,uint32_t n,uint32_t master)
+{
+    if(import_ready) {
+        sample_bank^=1; sample_len=import_ready; sample_pos=-1; import_ready=0;
+    }
+    if(sample_mode) render_sampler(lr,n,master);
+    else render_monsters(lr,n,master);
+}
+
 void app_panic(void)
 {
     musical_keys = played_keys = audition_blocks = 0;
@@ -242,6 +253,7 @@ void app_init(void)
 {
     for (int i=0; i<112; ++i)
         note_step[i] = (uint32_t)(440.f*fm_exp2f((i-69)/12.f)*(4294967296.f/44100.f));
+    sample_init();
     select_animal(2);
     init_choir();
 }
@@ -268,6 +280,21 @@ static void input_monster(void)
         finger_force[i]=force;
     }
     prior_contacts=keys;
+    if((press&(1u<<B_SEQ)) || (sample_mode && (press&(1u<<B_HOME)))) {
+        if(sample_mode) {
+            transfer_id=-1; sample_mode=0; sample_arm=sample_count=sample_stop=0;
+            sample_pos=-1; plat_usb_audio_route(0);
+            if(sample_origin || (press&(1u<<B_HOME))) toggle_choir();
+        } else {
+            if(tape_mode==REPLAY) end_replay();
+            if(tape_mode==RECORD) finish_take(now);
+            sample_origin=choir_mode;
+            if(choir_mode) toggle_choir();
+            sample_mode=1; plat_usb_audio_route(sample_usb);
+        }
+        app_panic(); redraw=1; return;
+    }
+    if(sample_mode) { sampler_input(keys,press,now); return; }
     if ((press & (1u<<B_HOME)) || (!choir_mode && (press & (1u<<B_ARP)))) {
         if (tape_mode==REPLAY) end_replay();
         if (tape_mode==RECORD) finish_take(now);

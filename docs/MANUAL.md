@@ -1,4 +1,4 @@
-# Play Monster Choir
+# Play Seamonster Choir
 
 ## Trade calls
 
@@ -30,6 +30,24 @@ Hold a note, press **FX**, then turn the four knobs. The sea affects the whole i
 | K4 · Cavern | Reflections build into a dark stereo tail that continues after you release the key. |
 
 The choir favourite stores all four sea settings. The 32-step lanes record each singer’s voice controls. Sea controls are shared across the song. The solo gesture recorder also captures live sea-knob movements.
+
+## Catch a sound
+
+Press **SEQ** from a solo monster or the choir. Shell Sampler starts with a playable bubbling chirp. The leftmost white key plays it at its recorded pitch. Higher keys speed it up, and OCT− takes it lower. PLAY auditions a clip. Press SEQ again to return to where you were.
+
+1. With a monster’s name beneath the waveform, press **REC** and play a key. Turn PRESETS to pick a different source monster. Capture begins on the first audible sound.
+2. Press **REC** again to finish, or let the two-second recording fill. The waveform shows the new clip. A silent or cancelled recording keeps the preceding clip.
+3. Press **ARP** to cycle through **Pitched Keys**, **Backwards** and **Four Slices**. In Four Slices the first four white keys play the four quarters of the clip. The pattern repeats across the keyboard. The four sea knobs colour sample playback.
+
+The sampler holds one mono clip in RAM at 11,025 samples per second. It plays one sample voice at a time. Switching out of the sampler keeps the clip for this session. Switching off reloads the starter chirp. SAVE stores the choir arrangement and sea settings. Keep original recordings on the computer.
+
+### Load a sound from a computer
+
+**Transfer an audio file.** Download [sample-loader.html](../tools/sample-loader.html) using GitHub’s download button and open the saved file in a browser with Web MIDI SysEx support. Connect USB, press SEQ on the FM-1, click **Find MIDI ports** and select the FM-1 for both directions. Choose the file and starting second, then **Send to sampler**. Wait for **Clip received** before playing. The loader uses the first two seconds from your chosen start and checks the completed transfer. If the browser requires a local web server, run `python3 -m http.server 8000` in the folder containing the downloaded file and open `http://localhost:8000/sample-loader.html`.
+
+**Capture computer playback.** With the FM-1 connected by USB, choose its audio output in the computer’s sound settings. In Shell Sampler, press SEL until **SOURCE: USB AUDIO** appears. Press REC, play a short sound on the computer, then press REC again. SEL switches back to the monster source. To record somebody’s voice, use the computer’s microphone to make a sound file first. The FM-1 manual identifies the two 3.5 mm sockets as audio out and MIDI in. [FM-1 manual, rear panel](https://m.media-amazon.com/images/I/A1f3AttkBFL.pdf).
+
+For scripted WAV transfers, [load-sample.py](../scripts/load-sample.py) lists ports with `--list` and accepts `clip.wav --out-port "…" --in-port "…"`. Install its optional dependencies with `python3 -m pip install mido python-rtmidi`. The browser loader and the script use the same acknowledged transfer protocol.
 
 ## Loop a phrase
 

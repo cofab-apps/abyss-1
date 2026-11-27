@@ -88,7 +88,10 @@ function movieEnd() {
     fs.closeSync(video);
     if(panelVideo!==undefined) fs.closeSync(panelVideo);
 }
-if (process.argv.includes('--sea')) {
+if (process.argv.includes('--sample')) {
+    const {checkSampler} = await import('./test-sampler.mjs');
+    checkSampler({boot, chip, run, btn, shots, out, movieStart, movieEnd});
+} else if (process.argv.includes('--sea')) {
     const {checkSea} = await import('./test-sea.mjs');
     checkSea({boot, chip, run, enc, btn, shots, out, movieStart, movieEnd});
 } else if (process.argv.includes('--rows')) {
