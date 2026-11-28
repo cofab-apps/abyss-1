@@ -18,7 +18,7 @@ static void enter_shelf(void)
 {
     stop_choir(); audition=-1; shelf=1;
     for(int k=0;k<4;k++) song.sea[k]=sea[k];
-    working_song=song; building_order=-1; shelf_keys=0; shelf_message=0; redraw=1;
+    song.patch=sculpt; working_song=song; building_order=-1; shelf_keys=0; shelf_message=0; redraw=1;
 }
 static void shelf_controls(uint32_t now,uint32_t keys,uint32_t buttons,int move)
 {

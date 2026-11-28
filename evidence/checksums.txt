@@ -20,3 +20,7 @@ ad289835fce7d9bd79caaad79f908b3978f1bf7952d99227b5cdd5d6667f7683  builds/seamons
 6876dcca74febc8da2b08ac318a5d5ef9ad446dc71f894da0bc5600d194bf113  evidence/choir/2.4.0/ensemble.mp4
 234b07842f33960a172ad75b4864870a8cb95f1d04c57b1b9b29875ba4445265  evidence/choir/2.4.0/results.json
 2f464505701059930519f9aa45e112fdcfb4d9fe928a1e93a72daaf039d81606  evidence/choir/2.4.0/screens.png
+d5434501fd780f63f660cf45255d3345bddb6a7cd9525c9cda98572824bff7b1  builds/seamonster-choir-2.5.0.fwsc
+6eee6ec85a1345e5a8cf17d2546cd2314daa347c7b3fa6aec8c9921897c21933  evidence/choir/2.5.0/listen.mp4
+8801e46bbfbc2be27118e10581be77a5677966fe89050c5a702935a0e56bd1ef  evidence/choir/2.5.0/results.json
+976f8ac9f34f507830f7c4ca85deb59b0c20044632e29d03b2fbc7f1daa44118  evidence/choir/2.5.0/sound-pages.png

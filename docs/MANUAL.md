@@ -1,4 +1,4 @@
-# Seamonster Choir 2.4.0 beta — player manual
+# Seamonster Choir 2.5.0 beta — player manual
 
 **Make your first exchange.** Start the [browser instrument](../README.md) or switch on an FM-1 running this beta. From a fresh solo screen, press **ARP**, play two short notes, then lift both fingers. Hydra calls in the first bar. Bloop answers in the next. Leave a gap between the notes and listen for the same gap in the answer.
 
@@ -6,6 +6,7 @@
 
 | If you want to… | Start here |
 |---|---|
+| Play a multi-headed voice, shape a note or arpeggiate a chord | [Sound design controls](#design-a-monsters-sound) |
 | Pick a voice, make it growl or dive | [Shape the voice](#shape-the-voice) · [Dive underwater](#dive-underwater) |
 | Build four singers and trade two calls for two replies | [Pick four singers](#pick-four-singers) · [Trade calls](#trade-calls) |
 | Make Bloop sing a sound of your own | [Give Bloop your sound](#give-bloop-your-sound) · [Load audio from a computer](#load-a-sound-from-a-computer) |
@@ -13,7 +14,7 @@
 | Make a loop and arrange three songs | [Loop a phrase](#loop-a-phrase) · [Put three songs in shells](#put-three-songs-in-shells) |
 | Work out why a control did something unexpected | [Controls by screen](#controls-by-screen) · [Troubleshooting](#when-something-sounds-wrong) |
 
-The pictures below are captures of this firmware running in the FM-1 simulator. For an audible example, the 23-second recording starts with a forward and reverse strum, then plays a sampled reply and three saved songs. [Watch and listen](../evidence/choir/2.4.0/ensemble.mp4)
+The sound-page pictures show 2.5.0 on the native simulator LCD. The choir, sampler and song-shelf examples were recorded on 2.4.0. For an audible example, the 23-second recording starts with a forward and reverse strum, then plays a sampled reply and three saved songs. [Watch and listen](../evidence/choir/2.4.0/ensemble.mp4)
 
 ## Give Bloop your sound
 
@@ -83,11 +84,36 @@ On the solo screen, turn SELECT, PRESETS or ALGORITHM to browse. Each position s
 
 K1 opens the mouth, K2 adds teeth, K3 adds wobble and K4 adds cave echo. In the choir each seat remembers its own settings. A paired raised key bends a held white note. Hold both for up to 0.7 seconds to open and roughen the sound. Releasing the raised key takes you back to the white note.
 
-For continuous force on a physical keyboard, press ENV with all keys released. Let the note settle, then lean into it or ease off. The lower 20 keys support held pressure. The highest seven use the other gestures. Press ENV again with all keys up to return to normal scanning. The browser’s paired-key gesture can be played with two keyboard keys.
+For continuous force on a physical keyboard, hold ENV for at least 0.55 seconds and release it with all keys up on the solo screen, or tap ENV in the choir. Let the note settle, then lean into it or ease off. The lower 20 keys support held pressure. The highest seven use the other gestures. Repeat the same gesture with all keys up to return to normal scanning. The browser’s paired-key gesture can be played with two keyboard keys.
+
+## Design a monster’s sound
+
+Start on the large portrait. Choose **Lernaean Hydra** and hold one white key. Listen for the root, minor third, fifth and upper octave entering about 30 milliseconds apart. Choose **Crab Monster** and play three short notes like a drummer. Then play one long **Colossal Whale** note. Give it time to swell. These sound designs interpret the portraits. The instrument generates them each time you play.
+
+![Native solo LCD showing LFO rates and destinations, the four envelope stages, and filter and oscillator amounts.](../evidence/choir/2.5.0/sound-pages.png)
+
+| Press on the solo screen | K1 | K2 | K3 | K4 |
+|---|---|---|---|---|
+| LFO | Rate of the repeating motion | Vibrato bends pitch up and down | Tremolo pulses the volume | Sweep moves the low-pass filter |
+| ENV | Attack sets how long the voice takes to open | Decay sets the time to settle after the attack | Sustain sets the level while held | Release sets how long the note fades after lifting |
+| EDIT | Muffle lowers the low-pass cutoff | Thin raises the high-pass cutoff | Overtone blends a sine at three times the root frequency | Sub blends a sine one octave down |
+| FX | Depth lowers pitch and darkens the mix | Anger adds distortion | Current adds a moving stereo comb filter | Cavern adds reflected sound and a tail |
+
+Tap the same editor button again to return to the four voice controls. The meters on the editor show all four assignments. Turning SELECT changes creature and keeps the shared sound edits. To get the original articulation back, turn the three LFO depths, all four EDIT controls, and ENV attack, decay and release fully left. Put ENV sustain at the middle. Turn the four Sea FX fully left for a dry comparison. Each species keeps its own underlying rise, fall and tone.
+
+**Make a breathing note.** On Ness, turn Wobble and Cave left. Tap LFO, raise K3 and slowly turn K1. The volume pulses faster. Lower K3 and raise K2 to hear pitch move instead. For a filter that opens and closes, lower K2 and raise K4. Rate becomes audible when at least one destination is raised.
+
+**Make a creature surface.** On ENV, turn K1 up and hold a white key while the note grows. Turn K3 down for a quieter held note, or all the way left for a note that dies away under your finger. Raise K4 and release to hear its tail. On EDIT, try K1 and K2 separately. Muffle softens the upper harmonics. Thin takes weight out of the bottom. Try the Sub blend on headphones as well as the built-in speaker.
+
+**Play an octave arpeggio.** Hold **ARP** for at least 0.55 seconds on the solo portrait, then release. The keyboard guide reads **OCTAVE ARP**. Hold one key to alternate its pitch and octave. Hold two or three keys to play them low to high and then again an octave higher. Changing the set starts the pattern again. Each step lasts about 163 milliseconds. OCT− and OCT+ transpose newly struck notes. Hold and release ARP again to turn it off. A short tap still starts Call & Answer. The arpeggiator is a solo playing mode with its own fixed rate.
+
+LFO, ENV and EDIT affect all synthesized singers. A sampled guest keeps its recorded envelope and timbre. Choir shell SAVE stores the twelve shared values alongside the individual singers’ four voice knobs. The solo gesture recorder captures these values and the arpeggiator switch while you perform. Songs from earlier versions start with neutral edits and play through the new creature voices.
+
+[Hear the same key on five creatures in 2.4.0 and 2.5.0](../evidence/choir/2.5.0/listen.mp4) · [Sound design for all twenty](FEATURES.md#the-twenty-voices)
 
 ## Dive underwater
 
-Hold a note, press **FX**, then turn the four knobs. The sea affects the whole instrument, including a playing choir. Turn a knob fully left to remove that effect. Press **FX** again to edit Mouth, Teeth, Wobble and Cave. The sea settings continue to sound while you edit the voice. **LFO** opens the sea controls with Current highlighted.
+Hold a note, press **FX**, then turn the four knobs. The sea affects the whole instrument, including a playing choir. Turn a knob fully left to remove that effect. Press **FX** again to edit Mouth, Teeth, Wobble and Cave. The sea settings continue to sound while you edit the voice. In the choir, **LFO** also opens the sea controls with Current highlighted. On the large solo portrait it opens oscillator modulation.
 
 | Knob | What you hear |
 |---|---|

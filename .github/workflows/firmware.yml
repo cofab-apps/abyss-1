@@ -16,14 +16,14 @@ jobs:
       - run: python3 -m pip install Pillow==13.0.0
       - run: python3 scripts/check-player-docs.py
       - run: sh scripts/build-monsters.sh
-      - run: cmp out/monster-keys.fwsc builds/seamonster-choir-2.4.0.fwsc
+      - run: cmp out/monster-keys.fwsc builds/seamonster-choir-2.5.0.fwsc
       - run: sha256sum -c evidence/checksums.txt
       - run: node scripts/test-performance.mjs simulator out/monster-keys.fwsc out/check-60 --monsters
       - run: ABYSS_MHZ=100 node scripts/test-performance.mjs simulator out/monster-keys.fwsc out/check-100 --monsters
       - run: node scripts/test-performance.mjs simulator out/monster-keys.fwsc out/choir-60 --choir
       - run: ABYSS_MHZ=100 node scripts/test-performance.mjs simulator out/monster-keys.fwsc out/choir-100 --choir
       - run: |
-          for mode in rows sea sample ensemble; do
+          for mode in rows sea sample ensemble sound; do
             node scripts/test-performance.mjs simulator out/monster-keys.fwsc "out/$mode-60" "--$mode"
             ABYSS_FLASH=uc25hq80 ABYSS_MHZ=100 node scripts/test-performance.mjs simulator out/monster-keys.fwsc "out/$mode-100" "--$mode"
           done

@@ -1,6 +1,25 @@
-# Seamonster Choir 2.4.0 beta — feature definition
+# Seamonster Choir 2.5.0 beta — feature definition
 
-Seamonster Choir turns the M-VAVE FM-1 into an instrument for playing by ear. A child can give each creature a voice, decide who enters a chord, record a musical exchange, and arrange three short songs into a performance. This page defines the behavior of the downloadable beta. The player manual gives the button sequences. [Illustrated manual](MANUAL.md) · [Play or download](../README.md) · [Release measurements](MONSTER-KEYS.md#combined-hardware-beta-240)
+Seamonster Choir turns the M-VAVE FM-1 into an instrument for playing by ear. A child can give each creature a voice, decide who enters a chord, record a musical exchange, and arrange three short songs into a performance. This page defines the behavior of the downloadable beta. The player manual gives the button sequences. [Illustrated manual](MANUAL.md) · [Play or download](../README.md) · [Release measurements](MONSTER-KEYS.md#sound-design-beta-250)
+
+## The twenty voices
+
+Play the same key and hold it for one second. The first sound, the pitches that join it and the sustained rhythm are part of each preset. These are original musical interpretations of the portraits. [Hear five before-and-after examples](../evidence/choir/2.5.0/listen.mp4) · [Portrait provenance](../LICENSING.md)
+
+| Monster | Listen for | Monster | Listen for |
+|---|---|---|---|
+| Crab Monster | Two quick claw strikes and a gap | SCP-682 | Low jaw grind with a slow pulse |
+| Lernaean Hydra | Root, minor third, fifth and octave enter in succession | Bake-Kujira | A struck, slightly inharmonic ring gives way to a hollow whale tone |
+| Ningen | A slow breath with an octave halo | Loch Ness Monster | A rounded high whistle with a scooped attack |
+| Jacob Leviathan | Modulated, pulsing metallic plates | Scylla | A fifth and octave answer a pulsing attack |
+| Terrible Dogfish | Repeated short, raspy bites | The Bloop | A rounded pitch drop above a low fundamental layer |
+| The Dark Bloop | A slower, deeper throbbing growl | El Gran Maja | A buzzy jaw with faster pulsing |
+| Julia Beast | Bright split cry with a delayed octave | Lyngbakr | A slow horn swell with a high overtone above the low drone |
+| Sea Eater | Rapid rough bites with an audible sub | SCP-3000 | A winding reed with a slow pulse |
+| Colossal Whale | A low swell with a fifth arriving later | SCP-169 | A hard descending impact that settles into a sub drone |
+| World Serpent | Fifth and octave accumulate slowly around the root | Space Bloop | A sustained key cycles root–fifth–octave–fifth beneath the upper layers |
+
+The solo keyboard can play four notes, including four independent Hydra chords. Harmony inside a voice leaves each choir seat available. The solo OCTAVE ARP walks a held chord across two octaves. The shared LFO modulates pitch, amplitude and low-pass cutoff independently. Each synth note has a four-stage amplitude envelope. Low-pass, high-pass, third-harmonic and sub-octave controls operate before the existing sea effects. The four sea effects retain their fixed routing. [Control mapping, reset positions and exercises](MANUAL.md#design-a-monsters-sound)
 
 ## The musical building blocks
 
@@ -36,10 +55,10 @@ Seamonster Choir turns the M-VAVE FM-1 into an instrument for playing by ear. A 
 
 **Behavior.** Shelf REC starts a three-position order. Three taps on occupied slots set and store the order, including repeats such as A–A–C. Shelf PLAY performs those three 32-step arrangements once and stops. Each phrase is 4.8 seconds, giving 14.4 seconds for the three phrases. An empty song slot is different from an occupied slot with silent lanes. The former shows EMPTY SHELL when requested. The latter can play a full phrase of rests.
 
-**Persistence.** Each slot holds the seats, voice settings, recorded lines, four sea settings and guest association. The order is stored separately. Shell A reuses the earlier favourite. Quick choir SAVE and GLO continue to write and recall A, including after B or C was loaded. Saving on the shelf replaces the highlighted slot. An interrupted or abandoned three-tap order leaves the last completed order available.
+**Persistence.** Each slot holds the seats, voice settings, recorded lines, four sea settings, twelve synth edits and guest association. The order is stored separately. Shell A reuses the earlier favourite. Quick choir SAVE and GLO continue to write and recall A, including after B or C was loaded. Saving on the shelf replaces the highlighted slot. An interrupted or abandoned three-tap order leaves the last completed order available.
 
 **Acceptance.** Save distinctive first notes in A, B and C, enter C–A–B, power-cycle and play. Check the active shell at each boundary and listen for its first note. Previewing and performing should leave both the stored songs and the original working arrangement available. [Shell controls and pictures](MANUAL.md#put-three-songs-in-shells) · [Flash and DAC results](../evidence/choir/2.4.0/results.json)
 
 ## Verification and hardware scope
 
-The tested package is `FM-1_85020400`. All six target suites passed on simulated Puya P25Q80 at 60 MHz and UC25HQ80 at 100 MHz. USB file transfer also ran through the browser loader and a compiled firmware receiver. Gabor’s documented physical boot, portraits and played notes apply to 2.1.0 on a Puya FM-1. Physical 2.4.0 acceptance covers boot, speaker and headphones, touch timing, recall after power-off, and both USB input paths. [Current and earlier hardware evidence](MONSTER-KEYS.md) · [Run the checks](../BUILDING.md)
+The 2.5.0 package is `FM-1_85020500`. The release report records the emulator runs and DAC comparisons. Gabor’s documented physical boot, portraits and played notes apply to 2.1.0 on a Puya FM-1. The remaining listening test is whether a player can identify the new voices without the screen and hear the low layers on the built-in speaker. [Current and earlier hardware evidence](MONSTER-KEYS.md) · [Run the checks](../BUILDING.md)

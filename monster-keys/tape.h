@@ -6,6 +6,8 @@ struct gesture_state {
     uint32_t keys;
     uint8_t animal, value[4], ocean[4], preview;
     int8_t oct;
+    uint8_t arp;
+    struct sculpture patch;
 };
 struct tape_event { uint32_t at; struct gesture_state state; };
 static struct tape_event takes[2][EVENTS];
@@ -16,13 +18,13 @@ static uint8_t prior_preview;
 
 static struct gesture_state get_state(uint32_t keys)
 {
-    struct gesture_state s={.keys=keys,.animal=animal,.oct=register_shift,.preview=preview_serial};
+    struct gesture_state s={.keys=keys,.animal=animal,.oct=register_shift,.arp=tide_arp,.patch=sculpt,.preview=preview_serial};
     for(int k=0;k<4;k++) { s.value[k]=knob[k]; s.ocean[k]=sea[k]; }
     return s;
 }
 static void set_state(const struct gesture_state *s)
 {
-    animal=s->animal; register_shift=s->oct;
+    sculpt=s->patch; tide_arp=s->arp; animal=s->animal; register_shift=s->oct;
     for(int k=0;k<4;k++) { knob[k]=s->value[k]; sea[k]=s->ocean[k]; }
     redraw=1;
 }
@@ -47,7 +49,7 @@ static void capture_event(uint32_t now,uint32_t keys)
         struct gesture_state *last=&draft[draft_count-1].state;
         int same=last->keys==s.keys && last->animal==s.animal && last->oct==s.oct && last->preview==s.preview;
         for(int k=0;k<4;k++) same &= last->value[k]==s.value[k] && last->ocean[k]==s.ocean[k];
-        if(same) return;
+        if(same && last->arp==s.arp && !memcmp(&last->patch,&s.patch,sizeof(s.patch))) return;
     }
     draft[draft_count++]=(struct tape_event){now-tape_start,s};
 }

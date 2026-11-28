@@ -65,11 +65,11 @@ function chipInput(bytes) {
     new Uint8Array(chip.memory.buffer, at, bytes.length).set(bytes);
     return at;
 }
-function boot(saved) {
+function boot(saved, packageBytes=file) {
     // Select the flash before each boot, including the saved-favourite restart.
     chip.fm1_flash_part(flashPart === 'uc25hq80' ? 1 : 0);
-    const at = chipInput(file);
-    assert.equal(chip.fm1_boot_fwsc(at, file.length, 0, 0, clock), 0);
+    const at = chipInput(packageBytes);
+    assert.equal(chip.fm1_boot_fwsc(at, packageBytes.length, 0, 0, clock), 0);
     if (saved?.length) assert.equal(chip.fm1_flash_restore(chipInput(saved),saved.length),0);
     run(1300, false, true);
 }
@@ -77,6 +77,7 @@ function btn(id){chip.fm1_key(id,1);run(50);chip.fm1_key(id,0);run(70);}
 function enc(id,d){chip.fm1_enc(id,d);run(105);}
 
 function movieStart(name) {
+    count=videoFrames=0;
     audio=fs.openSync(path.join(out,name+'.s16'),'w');
     video=fs.openSync(path.join(out,name+'.rgb'),'w');
     if(process.env.ABYSS_PANEL_FILM) panelVideo=fs.openSync(path.join(out,name+'-panel.rgba'),'w');
@@ -88,7 +89,10 @@ function movieEnd() {
     fs.closeSync(video);
     if(panelVideo!==undefined) fs.closeSync(panelVideo);
 }
-if (process.argv.includes('--ensemble')) {
+if (process.argv.includes('--sound') || process.argv.includes('--cast')) {
+    const {checkSound}=await import('./test-sound.mjs');
+    checkSound({boot,chip,run,enc,btn,shots,out,movieStart,movieEnd},process.argv.includes('--cast'));
+} else if (process.argv.includes('--ensemble')) {
     const {checkEnsemble} = await import('./test-ensemble.mjs');
     checkEnsemble({boot,chip,run,enc,btn,shots,screen,out,movieStart,movieEnd});
 } else if (process.argv.includes('--sample')) {

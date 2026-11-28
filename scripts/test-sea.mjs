@@ -49,7 +49,7 @@ export function checkSea({boot,chip,run,enc,btn,shots,out,movieStart,movieEnd}) 
     const angry=run(80,true);
     const cleanHigh=harmonicRatio(clean,surface), angryHigh=harmonicRatio(angry,surface);
     assert.ok(angryHigh>cleanHigh+.01,'Anger adds upper harmonics');
-    enc(3,-24);btn(5);enc(4,24);shots('current');run(100);
+    enc(3,-24);enc(4,24);shots('current');run(100);
     const widths=[], correlations=[];
     for(let j=0;j<28;j++) {
         run(25);

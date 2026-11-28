@@ -68,10 +68,30 @@ static void bubbles(int side,int voice)
 static void signet(int k)
 {
     int left=k%2?204:0, top=k<2?40:144;
-    int amt=sea_page?sea[k]:knob[k], span=2+amt/21;
+    int amt=editor?page_values()[k]:sea_page?sea[k]:knob[k], span=2+amt/21;
     uint16_t c=ink[k];
     cv_begin(36,36,OCEAN);
-    if(sea_page && k==0) {
+    if(editor==CONTOUR) {
+        int x=7+amt/9, y=26-amt/7;
+        if(k==0) cv_line(4,28,x+8,6,c);
+        else if(k==1) cv_line(4,6,x+8,23,c);
+        else if(k==2) cv_rect(3,y,30,2,c);
+        else cv_line(4,10,x+8,28,c);
+    } else if(editor==MOTION) {
+        int cycles=k==0?1+amt/32:2;
+        for(int x=2;x<33;x++) {
+            int y=17+(sine_wave[(x*cycles*8)&255]*(k==0?11:2+amt/12)>>7);
+            cv_rect(x,y,2,2,c);
+        }
+    } else if(editor==FILTER) {
+        if(k<2) {
+            int x=5+(k?amt:127-amt)/6;
+            cv_line(2,k?28:8,x,8,c);
+            cv_line(x,8,32,k?8:28,c);
+        } else {
+            for(int x=2;x<33;x++) cv_rect(x,17+(sine_wave[(x*(k==2?24:8))&255]*(3+amt/12)>>7),2,2,c);
+        }
+    } else if(sea_page && k==0) {
         cv_rect(5,5,26,2,c);
         int y=10+span*2;
         cv_line(18,8,18,y,c); cv_line(13,y-4,18,y,c); cv_line(18,y,23,y-4,c);
@@ -105,6 +125,16 @@ static void signet(int k)
 static void guidance(int guide,uint32_t keys)
 {
     cv_begin(240,47,OCEAN);
+    if(editor) {
+        uint8_t *values=page_values();
+        cv_text(8,0,&FONT_S,page_title[editor],FOAM);
+        for(int k=0;k<4;k++) {
+            int x=6+58*k;
+            cv_text(x,18,&FONT_T,parameter[editor][k],ink[k]);
+            cv_rect(x,32,49,4,STONE); cv_rect(x,32,1+48*values[k]/127,4,ink[k]);
+        }
+        cv_blit(0,193); return;
+    }
     for(int k=0;k<4;k++) {
         int x=11+k*59;
         cv_rect(x,3,8,6,ink[k]); cv_rect(x+2,1,4,2,ink[k]);
@@ -118,7 +148,7 @@ static void guidance(int guide,uint32_t keys)
         cv_rect(x,23,full,7,STONE);
         cv_rect(x,23,1+(sea_page?sea[focus]:knob[focus])*(full-1)/127,7,ink[focus]);
     } else {
-        if(sea_page) cv_text(9,9,&FONT_T,"SEA FX",TIDE);
+        if(sea_page || tide_arp) cv_text(9,9,&FONT_T,sea_page?"SEA FX":"OCTAVE ARP",TIDE);
         for(int w=0;w<16;w++) {
             int key=white_ids[w], x=8+w*14;
             int active=(keys>>key)&1u;

@@ -2,7 +2,7 @@
 enum { SEATS=4, STEPS=32, STEP_MS=150, EMPTY=255 };
 struct syllable { uint8_t note, bend, pressure, strike, knobs[4]; };
 struct singer { uint8_t species, knobs[4]; struct syllable line[STEPS]; };
-struct arrangement { uint32_t format; struct singer seats[SEATS]; uint8_t sea[4]; uint32_t guest_seat, guest_hash; };
+struct arrangement { uint32_t format; struct singer seats[SEATS]; uint8_t sea[4]; uint32_t guest_seat, guest_hash; struct sculpture patch; };
 static const uint32_t choir_format=0x314b434d; /* MCK1 */
 static struct arrangement song, shells[3], working_song;
 static uint8_t shell_used[3], order[3]={0,1,2}, new_order[3];
@@ -57,8 +57,10 @@ static int load_shell(int slot)
     static struct arrangement saved;
     memset(&saved,0,sizeof(saved));
     int bytes=plat_store_load(OBJ_FAVOURITE+slot,&saved,sizeof(saved));
-    if(bytes!=(int)sizeof(saved) && bytes!=(int)__builtin_offsetof(struct arrangement,guest_seat)
+    if(bytes!=(int)sizeof(saved) && bytes!=(int)__builtin_offsetof(struct arrangement,patch) && bytes!=(int)__builtin_offsetof(struct arrangement,guest_seat)
        && bytes!=(int)__builtin_offsetof(struct arrangement,sea)) return 0;
+    if(bytes<(int)sizeof(saved)) saved.patch.contour[2]=64;
+    for(unsigned i=0;i<sizeof(saved.patch);i++) if(((uint8_t *)&saved.patch)[i]>127) return 0;
     if(saved.guest_seat>SEATS || (saved.guest_seat && !saved.guest_hash)) return 0;
     for(int k=0;k<4;k++) if(saved.sea[k]>127) return 0;
     if (saved.format!=choir_format || saved.seats[0].species>=SPECIES) return 0;
@@ -77,7 +79,7 @@ static int load_shell(int slot)
 }
 static void use_song(const struct arrangement *a)
 {
-    song=*a;
+    song=*a; sculpt=a->patch;
     for(int k=0;k<4;k++) sea[k]=a->sea[k];
 }
 static int recall_favourite(void)
@@ -88,6 +90,7 @@ static int recall_favourite(void)
 static int store_shell(int slot)
 {
     for(int k=0;k<4;k++) song.sea[k]=sea[k];
+    song.patch=sculpt;
     if(plat_store_save(OBJ_FAVOURITE+slot,&song,sizeof(song))!=0) return 0;
     shells[slot]=song; shell_used[slot]=1; return 1;
 }

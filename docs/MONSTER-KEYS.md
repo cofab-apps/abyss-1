@@ -2,6 +2,24 @@
 
 For the current instrument, see the [feature definition](FEATURES.md) and [illustrated player manual](MANUAL.md). This page records versioned tests, hardware evidence and open checks.
 
+## Sound design beta 2.5.0
+
+[Compare five voices by ear](../evidence/choir/2.5.0/listen.mp4) · [Native editor screens](../evidence/choir/2.5.0/sound-pages.png) · [Target measurements](../evidence/choir/2.5.0/results.json) · [Firmware](../builds/seamonster-choir-2.5.0.fwsc) · [Reproduce](../BUILDING.md)
+
+The FM-1 package identifies as `FM-1_85020500`. A clean rebuild reproduced all 858216 bytes, SHA-256 `d5434501fd780f63f660cf45255d3345bddb6a7cd9525c9cda98572824bff7b1`. The 14-second comparison plays 2.4.0, then 2.5.0, for each portrait. Both receive the same held key at the same master setting. The video uses the actual 240 × 240 LCD and stereo DAC, with no loudness normalization.
+
+| Check | Observed on the packaged simulator |
+|---|---|
+| Notes inside a monster | One dry Hydra key produced components near 165, 196, 247 and 330 Hz. Four held Hydra keys with LFO, filters and all Sea FX active missed zero DAC refills at 60 MHz on Puya P25Q80 and 100 MHz on UC25HQ80. |
+| Heard as a pattern | Ness repeated root, upper octave and root. Two held notes played low–high, then the same pair an octave up. |
+| Synth controls | A held pitch moved between approximately 290 and 370 Hz in the vibrato test. Low-pass reduced the upper partial relative to the root. High-pass reduced the root. A long attack rose gradually and release faded to silence. The held sustain could close and reopen. |
+| Song compatibility | 2.4.0 itself saved a nonempty phrase. 2.5.0 recalled and played it, saved a filter edit, and recalled that edited arrangement after another boot. The earlier 2.1.0 four-lane fixture also played. |
+| Existing modes and player | All seven target suites passed on both simulated chips. They exercised all 20 portraits and voices, choir rows, looping, guest, strum, shell storage and sampler. The bundled player also passed a touch Chromium launch with audio. Browser sample transfer and the host receiver passed. |
+
+Two pairs that had sounded alike separated in the sustained-note spectral check. On a scale from zero for identical octave-band proportions to one for disjoint proportions, Bloop versus Lyngbakr went from 0.067 to 0.308, and Hydra versus Ningen from 0.065 to 0.463. Across all 190 pairs, the average went from 0.472 to 0.455. That measure leaves out note attacks, pulses and the order of pitches. Overall identification by ear remains a listening test.
+
+**Physical UAT.** At a comfortable fixed volume, hide the screen and alternate Hydra, Crab, Bloop, Colossal Whale and SCP-169. Record which pairs the listener confuses on the FM-1 speaker, then repeat on headphones. Check whether the low impact reads at ordinary volume and whether a child can play the octave pattern and return to Call & Answer. Keep Firmware Hub submission on hold while the sound design is being tested.
+
 ## Combined hardware beta 2.4.0
 
 [Play or download the firmware](../README.md) · [22-second native LCD and stereo DAC capture](../evidence/choir/2.4.0/ensemble.mp4) · [Three native screens](../evidence/choir/2.4.0/screens.png) · [Measured results on both simulated flash chips](../evidence/choir/2.4.0/results.json) · [Reproduce the runs](../BUILDING.md)

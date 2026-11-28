@@ -75,7 +75,7 @@ export async function checkChoir({boot,chip,run,btn,enc,shots,out,chipInput,movi
     btn(7); // GLO recalls while stopped. The four portraits return.
     shots('four-part-favourite');
     function pressureTrial(force) {
-        boot();btn(4);const t=chip.fm1_ms();
+        boot();chip.fm1_key(4,1);run(230);chip.fm1_key(4,0);run(70);const t=chip.fm1_ms();
         script((t+15)+':21@32,'+(t+1000)+':21~'+force);
         run(520);const level=run(160);shots('force-'+force);return level;
     }
